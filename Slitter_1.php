@@ -30,7 +30,7 @@ $COMBINED_SERIAL = $ELECTRODE_SERIAL_1 ;
 	} else{
 	}
 
-} else{ 
+} else{
 echo "ERROR: No serial number entered!!!";
 }
 if(empty($ELECTRODE_SERIAL_2) ===! true){
@@ -40,7 +40,7 @@ $COMBINED_SERIAL = $COMBINED_SERIAL ."/". $ELECTRODE_SERIAL_2 ;
 	$ELECTRODE_SERIAL_2 = $ELECTRODE_SERIAL_2 ."-PF";
 	} else{
 	}
-} else{ 
+} else{
 
 }
 if(empty($ELECTRODE_SERIAL_3) ===! true){
@@ -50,7 +50,7 @@ if($PERFORATED === "1"){
 	$ELECTRODE_SERIAL_3 = $ELECTRODE_SERIAL_3 ."-PF";
 	} else{
 	}
-} else{ 
+} else{
 
 }
 
@@ -70,7 +70,7 @@ $sql = "INSERT INTO SLITTER (DATE, SLIT_OP, COMBINED_SERIAL, STRIP_LENGTH_FEET, 
 if(mysqli_query($link, $sql)){
 echo "Records added successfully.";
 /* Get the port for the service. */
-for ($x =1; $x<=2; $x++) { 
+for ($x =1; $x<=2; $x++) {
 /* Get the port for the service. */
 $port = "9100";
 
@@ -128,4 +128,4 @@ echo "ERROR: Could not able to execute $inventory_sql. " . mysqli_error($link);
 
 mysqli_close($link);
 header("Location:http://10.1.10.215/Slitter.php");
-?> 
+?>

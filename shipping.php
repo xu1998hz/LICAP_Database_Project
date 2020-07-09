@@ -11,7 +11,7 @@
     </head>
 
     <body>
-	
+
     <form action="shipping_1.php" method="post">
 
         <p>
@@ -24,8 +24,8 @@ if($link->connect_errno){
 }
 $sql = "SELECT PACKAGE_OP, PALLET_NUM, BOX_NUM FROM SLITTER ORDER BY ID DESC LIMIT 1";
 $result = mysqli_query($link,$sql);
-$row = mysqli_fetch_assoc($result); 
-  
+$row = mysqli_fetch_assoc($result);
+
 	$PACKAGE_OP_RESULT = $row['PACKAGE_OP'];
 	$PALLET_NUM_RESULT = $row['PALLET_NUM'];
 	$BOX_NUM_RESULT = $row['BOX_NUM'];
@@ -66,7 +66,7 @@ mysqli_close($link);
 <p>
 <hr>
 <label for="NOTES">Notes:</label>
-<input type="text" name="NOTES" id="NOTES"> 
+<input type="text" name="NOTES" id="NOTES">
 </p>
 <input type="submit" value="Submit">
 
@@ -75,4 +75,3 @@ mysqli_close($link);
     </body>
 
     </html>
-

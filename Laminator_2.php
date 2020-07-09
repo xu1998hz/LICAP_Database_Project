@@ -11,7 +11,7 @@
     </head>
 
     <body>
-	
+
     <form action="Laminator.php" method="post">
 
         <p>
@@ -24,8 +24,8 @@ if($link->connect_errno){
 }
 $sql = "SELECT LAM_OP, FOIL_TYPE, CAF_BATCH_NUM, CAF_BATCH_NUM_2, LAM_TEMP_UPPER, LAM_TEMP_LOWER, LAM_SPEED, GAP_OP, GAP_MACHINE, THICKNESS FROM LAMINATOR WHERE LAM_ID=2 ORDER BY ID DESC LIMIT 1";
 $result = mysqli_query($link,$sql);
-$row = mysqli_fetch_assoc($result); 
-	
+$row = mysqli_fetch_assoc($result);
+
 	$LAM_OP_RESULT = $row['LAM_OP'];
 	$LAM_TEMP_RESULT_UPPER = $row['LAM_TEMP_UPPER'];
 	$LAM_TEMP_RESULT_LOWER = $row['LAM_TEMP_LOWER'];
@@ -41,7 +41,7 @@ $CAF_BATCH_NUM_FINAL_RESULT = $CAF_BATCH_NUM_RESULT;
 }
 else { $CAF_BATCH_NUM_FINAL_RESULT = $CAF_BATCH_NUM_RESULT_2;
 }
-	
+
 //Pull last Film Lot Number
 $myquery = "SELECT ELECTRODE_SERIAL FROM LAMINATOR ORDER BY ID DESC LIMIT 1";
 $result = mysqli_query($link, $myquery);
@@ -53,7 +53,7 @@ $Batch_Digit = explode("-",$Last_Film_ID);
 $DATE_TEST = date("mdY");
 
 if($Batch_Digit[2] === $DATE_TEST){
-	$INC_DIGIT = $Batch_Digit[3] + 1;	
+	$INC_DIGIT = $Batch_Digit[3] + 1;
 	$ELECTRODE_SERIAL = "E-". $THICKNESS_RESULT . "-" . $Batch_Digit[2] . "-" . $INC_DIGIT;
 		}
 else{
@@ -175,7 +175,7 @@ echo "<h1>" . "Current Roll:" . $ELECTRODE_SERIAL . "</h1>";
 <p>
 </p>
 <label for="NOTES">Note:</label>
-<input type="text" name="NOTES" id="NOTES">  
+<input type="text" name="NOTES" id="NOTES">
 </p>
 <input type="submit" value="Submit">
 
@@ -184,4 +184,3 @@ echo "<h1>" . "Current Roll:" . $ELECTRODE_SERIAL . "</h1>";
     </body>
 
     </html>
-

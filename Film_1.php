@@ -14,11 +14,11 @@
       require_once('sql_task_manager.php');
       $sql_task_manager = new sql_task_manager("localhost", "operator", "Licap123!", "Manufacture");
       $sql_command = "SELECT FILM_1_OP, FILM_2_OP, MIX_BATCH_NUM, MIX_BATCH_NUM_2, THICKNESS, MILL_TEMP, CAL_1_TEMP, CAL_2_TEMP, LINE_SPEED FROM FILM WHERE FILM_MILL=1 ORDER BY ID DESC LIMIT 1";
-      $row = $sql_task_manager->connect_sql_row_fetch($sql_command);
+      $row = $sql_task_manager->pdo_sql_row_fetch($sql_command);
 
       //Pull last Film Lot Number
       $sql_command = "SELECT FILM_ID FROM FILM ORDER BY ID DESC LIMIT 1";
-      $row_2 = $sql_task_manager->connect_sql_row_fetch($sql_command);
+      $row_2 = $sql_task_manager->pdo_sql_row_fetch($sql_command);
 
       //Compare last batch date with current date
       $Batch_Digit = explode("-", $row_2['FILM_ID']);

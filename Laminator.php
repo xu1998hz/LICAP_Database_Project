@@ -1,5 +1,5 @@
-<?php // Build Date 4/17/2019 8:45AM 
-$link = mysqli_connect("localhost", "operator", "Licap123!", "Manufacture"); // Checks Manufacturing connection 
+<?php // Build Date 4/17/2019 8:45AM
+$link = mysqli_connect("localhost", "operator", "Licap123!", "Manufacture"); // Checks Manufacturing connection
 if($link->connect_errno){
     die('ERROR: Could not connect. ' . $link->connect_error);
 }
@@ -111,7 +111,7 @@ $E_ID = explode("-",$UPPER_FILM_BATCH_NUM);
 
 $NUM_DEFECT = $NUM_SPLICE + $NUM_HOLE + $NUM_DELAM;
 if($Batch_Digit[3] === $DATE_TEST){
-	$INC_DIGIT = $Batch_Digit[4] + 1;	
+	$INC_DIGIT = $Batch_Digit[4] + 1;
 	$ELECTRODE_SERIAL = $LAM_ID . "E-".$E_ID[0]."-". $THICKNESS . "-" . $DATE_TEST . "-" . $INC_DIGIT;
 		}
 else{
@@ -123,7 +123,7 @@ $ELECTRODE_TOTAL_LENGTH = $ELECTRODE_LENGTH + $ELECTRODE_LENGTH_2;
 //SQL Insert Statement
 $sql = "INSERT INTO LAMINATOR (LAM_DATE, LAM_OP, FOIL_TYPE, LAM_ID, ELECTRODE_SERIAL, ELECTRODE_LENGTH, THICKNESS, CAF_BATCH_NUM, CAF_BATCH_NUM_2, ROLL_DIAMETER, UPPER_FILM_BATCH_NUM, LOWER_FILM_BATCH_NUM, UPPER_FILM_BATCH_NUM_2, LOWER_FILM_BATCH_NUM_2, LAM_TEMP_UPPER, LAM_TEMP_LOWER, LAM_SPEED, GAP_OP, GAP_MACHINE, TAPE_TEST, BEGIN_OP, BEGIN_CENTER, BEGIN_MACHINE, END_OP, END_CENTER, END_MACHINE, NUM_HOLE, NUM_DELAM, NUM_SPLICE, AVG_THICKNESS, NOTES, TIMESTAMP, NUM_DEFECT) VALUES ('$LAM_DATE','$LAM_OP','$FOIL_TYPE','$LAM_ID','$ELECTRODE_SERIAL','$ELECTRODE_TOTAL_LENGTH','$THICKNESS','$CAF_BATCH_NUM','$CAF_BATCH_NUM_2','$ROLL_DIAMETER','$UPPER_FILM_BATCH_NUM','$LOWER_FILM_BATCH_NUM','$UPPER_FILM_BATCH_NUM_2','$LOWER_FILM_BATCH_NUM_2','$LAM_TEMP_UPPER','$LAM_TEMP_LOWER','$LAM_SPEED','$GAP_OP','$GAP_MACHINE','$TAPE_TEST','$BEGIN_OP','$BEGIN_CENTER','$BEGIN_MACHINE','$END_OP','$END_CENTER','$END_MACHINE','$NUM_HOLE','$NUM_DELAM','$NUM_SPLICE','$AVG_THICKNESS','$NOTES','$TIMESTAMP','$NUM_DEFECT')";
 //Creates new label
-for ($x =1; $x<=3; $x++) { 
+for ($x =1; $x<=3; $x++) {
 /* Get the port for the service. */
 $port = "9100";
 
@@ -181,4 +181,4 @@ else { echo "ERROR: Incorrect BATCH NUMBER!". "TEST 1: ". $TEST_1 . "TEST 2: " .
 // close connection
 
 mysqli_close($link);
-?> 
+?>
