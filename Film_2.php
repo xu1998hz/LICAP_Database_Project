@@ -19,8 +19,7 @@
      //Pull last Film Lot Number
      $sql_command = "SELECT FILM_ID FROM FILM ORDER BY ID DESC LIMIT 1";
      $row_2 = $sql_task_manager->pdo_sql_row_fetch($sql_command);
-
-     //Compare last batch date with current date, because
+     //Compare last batch date with current date
      $FILM_ID = $sql_task_manager->ID_computation($row_2, $row['THICKNESS'],'');
      echo "<h1>" . "Current Roll:" . $FILM_ID . "</h1>";
    ?>
