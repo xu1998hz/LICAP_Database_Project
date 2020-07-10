@@ -5,13 +5,13 @@
       private $password;
       private $db_name;
       private $pdo;
-      private $link; # optional variable will be deleted in the future
 
       public function __construct($hostname, $username, $password, $db_name) {
         $this->username = $username;
         $this->hostname = $hostname;
         $this->password = $password;
         $this->db_name = $db_name;
+        # set up the PPO computatiion with database at localhost port 3306
         try {
           $this->pdo = new PDO("mysql:host=$this->hostname; port=3306; dbname=$this->db_name", $this->username, $this->password);
         } catch (PDOException $e) {
@@ -20,38 +20,52 @@
       }
 
       # set up the conncection of local host on the web server, execute sql comamnds
-      public function connect_sql_row_fetch($sql) {
-        $this->link = mysqli_connect($this->hostname, $this->username, $this->password, $this->db_name);
-        // Check connection
-        if($this->link->connect_errno){
-            die('ERROR: Could not connect. ' . $this->link->connect_error);
-        }
-        $sql_result = mysqli_query($this->link,$sql);
-        $row_values = mysqli_fetch_assoc($sql_result);
-        return $row_values;
-      }
-
-      # it provides the same functionalities as connect_sql_row_fetch, except of using pdo object
-      # later code will move to use PDO object
       public function pdo_sql_row_fetch($sql) {
         $sql_result = $this->pdo->query($sql);
         $row_values = $sql_result->fetch(PDO::FETCH_ASSOC);
         return $row_values;
       }
 
-      public function date_compare($Batch_Digit, $THICKNESS) {
+      # generate sql insert commands based on both userinput features and features require further computation
+      private function sql_insert_generator($request_array, $computed_vals) {
+        $str_cmd = "INSERT INTO FILM (";
+        $temp = array_keys($request_array);
+        array_pop($temp);
+        $str_cmd .= implode(",", $temp).',';
+        $out_temp = array_map(function($val) { return ':'.$val; }, $temp);
+        $out_computed_vals = array_map(function($val) { return ':'.$val; }, $computed_vals);
+        $str_cmd .= implode(",", $computed_vals).') VALUES (';
+        $out_total = implode(",", $out_temp).','.implode(",", $out_computed_vals);
+        $str_cmd .= $out_total;
+        $str_cmd .= ')';
+        return array($str_cmd, explode(',', $out_total));
+      }
+
+      # error handling for sql injection and executes sql insertion commands
+      public function pdo_sql_insert($request_array, $computed_names, $vals_array) {
+        # error detection setup in both codes for sql and php
+        $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $sql = $this->sql_insert_generator($request_array, $computed_names)[0];
+        $key_array = $this->sql_cmd_parser($request_array, $computed_names)[1];
+        $stmt = $this->pdo->prepare($sql);
+        return $stmt->execute(array_combine($key_array,  $vals_array));
+      }
+
+      # compute general ID in the specific algorithm and input parameters
+      public function ID_computation($row_values, $THICKNESS, $prefix) {
+        $Batch_Digit = explode("-", $row_values['FILM_ID']);
         $DATE_TEST = date("mdY");
         if ($Batch_Digit[2] === $DATE_TEST) {
           	$INC_DIGIT = $Batch_Digit[3] + 1;
-          	$FILM_ID = "F-". $THICKNESS . "-" . $Batch_Digit[2] . "-" . $INC_DIGIT;
+          	$FILM_ID = $prefix . "F-". $THICKNESS . "-" . $Batch_Digit[2] . "-" . $INC_DIGIT;
         } else {
-          	$FILM_ID = "F-" . $THICKNESS . "-" . $DATE_TEST . "-1";
+          	$FILM_ID = $prefix . "F-" . $THICKNESS . "-" . $DATE_TEST . "-1";
         }
-        echo "<h1>" . "Current Roll:" . $FILM_ID . "</h1>";
+        return $FILM_ID;
       }
 
+      # release the PDO object and close connection
       public function __destructor() {
-        // connection will be closed when pdo object no longer exists
         $this->pdo = NULL;
       }
   }
