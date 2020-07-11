@@ -31,15 +31,42 @@
         for($i=0; $i<count($spec_arr); $i++) {
           if ((!($request_array[$spec_arr[$i]]>=($val1-$uncertainty) && $request_array[$spec_arr[$i]]<=($val1+$uncertainty)))
           && (!($request_array[$spec_arr[$i]]>=($val2-$uncertainty) && $request_array[$spec_arr[$i]]<=($val2+$uncertainty)))) {
-            echo "$spec_arr[$i] has the value out of bound";
+            echo "$spec_arr[$i] has the value out of bound\n";
             return false;
           }
         }
         return true;
       }
 
+      public function pdo_sql_vali_execute($sql, $pdo_exec_arr) {
+        $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $stmt = $this->pdo->prepare($sql);
+        $state_exec = $stmt->execute($pdo_exec_arr);
+        return array($state_exec, $stmt);
+      }
+
+      public function user_Input_batch_vali($col_name, $table_name, $request_array, $target) {
+        $sql_cmd = "SELECT ".$col_name." FROM ".$table_name." WHERE ".$col_name."=:str_1";
+        $stmt = $this->pdo_sql_vali_execute($sql_cmd, array(':str_1'=>$request_array[$target]))[1];
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ? true : false;
+      }
+
+      # compute general ID in the specific algorithm and input parameters
+      public function ID_computation($row_values, $THICKNESS, $prefix) {
+        $Batch_Digit = explode("-", $row_values['FILM_ID']);
+        $DATE_TEST = date("mdY");
+        if ($Batch_Digit[2] === $DATE_TEST) {
+          	$INC_DIGIT = $Batch_Digit[3] + 1;
+          	$FILM_ID = $prefix . "F-". $THICKNESS . "-" . $Batch_Digit[2] . "-" . $INC_DIGIT;
+        } else {
+          	$FILM_ID = $prefix . "F-" . $THICKNESS . "-" . $DATE_TEST . "-1";
+        }
+        return $FILM_ID;
+      }
+
       # generate sql insert commands based on both userinput features and features require further computation
-      private function sql_insert_generator($request_array, $computed_vals,$computed_vals_arr) {
+      public function sql_insert_gen_exec($request_array, $computed_vals,$computed_vals_arr) {
         $str_cmd = "INSERT INTO FILM (";
         $temp = array_keys($request_array);
         array_pop($temp);
@@ -55,30 +82,8 @@
         for ($i=0; $i<count($computed_vals_arr); $i++) {
           array_push($vals_array, $computed_vals_arr[$i]);
         }
-        return array($str_cmd, explode(',', $out_total), $vals_array);
-      }
-
-      # error handling for sql injection and executes sql insertion commands
-      public function pdo_sql_insert($request_array, $computed_names, $computed_vals_arr) {
-        # error detection setup in both codes for sql and php
-        $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $output = $this->sql_insert_generator($request_array, $computed_names, $computed_vals_arr);
-        $sql = $output[0]; $key_array = $output[1]; $vals_array = $output[2];
-        $stmt = $this->pdo->prepare($sql);
-        return $stmt->execute(array_combine($key_array,  $vals_array));
-      }
-
-      # compute general ID in the specific algorithm and input parameters
-      public function ID_computation($row_values, $THICKNESS, $prefix) {
-        $Batch_Digit = explode("-", $row_values['FILM_ID']);
-        $DATE_TEST = date("mdY");
-        if ($Batch_Digit[2] === $DATE_TEST) {
-          	$INC_DIGIT = $Batch_Digit[3] + 1;
-          	$FILM_ID = $prefix . "F-". $THICKNESS . "-" . $Batch_Digit[2] . "-" . $INC_DIGIT;
-        } else {
-          	$FILM_ID = $prefix . "F-" . $THICKNESS . "-" . $DATE_TEST . "-1";
-        }
-        return $FILM_ID;
+        $pdo_exec_arr = array_combine(explode(',', $out_total),  $vals_array);
+        return $this->pdo_sql_vali_execute($str_cmd, $pdo_exec_arr)[0];
       }
 
       # release the PDO object and close connection
