@@ -31,7 +31,7 @@
         for($i=0; $i<count($spec_arr); $i++) {
           if ((!($request_array[$spec_arr[$i]]>=($val1-$uncertainty) && $request_array[$spec_arr[$i]]<=($val1+$uncertainty)))
           && (!($request_array[$spec_arr[$i]]>=($val2-$uncertainty) && $request_array[$spec_arr[$i]]<=($val2+$uncertainty)))) {
-            echo "$spec_arr[$i] has the value out of bound\n";
+            echo "<br/>"."$spec_arr[$i] has the value out of bound!"."<br/>";
             return false;
           }
         }

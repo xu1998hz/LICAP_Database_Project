@@ -5,7 +5,7 @@
 <title>FILM DATA ENTRY PAGE</title>
 </head>
   <body>
-    <form action="Film.php" method="post">
+    <form action="Film_1.php" method="post">
 
     <p>
       <H1>FILM MILL 1 Log</H1>
