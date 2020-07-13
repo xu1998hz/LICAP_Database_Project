@@ -122,63 +122,6 @@ $AVG_THICKNESS = ($END_OP + $END_CENTER + $END_MACHINE)/3;
 $ELECTRODE_TOTAL_LENGTH = $ELECTRODE_LENGTH + $ELECTRODE_LENGTH_2;
 //SQL Insert Statement
 $sql = "INSERT INTO LAMINATOR (LAM_DATE, LAM_OP, FOIL_TYPE, LAM_ID, ELECTRODE_SERIAL, ELECTRODE_LENGTH, THICKNESS, CAF_BATCH_NUM, CAF_BATCH_NUM_2, ROLL_DIAMETER, UPPER_FILM_BATCH_NUM, LOWER_FILM_BATCH_NUM, UPPER_FILM_BATCH_NUM_2, LOWER_FILM_BATCH_NUM_2, LAM_TEMP_UPPER, LAM_TEMP_LOWER, LAM_SPEED, GAP_OP, GAP_MACHINE, TAPE_TEST, BEGIN_OP, BEGIN_CENTER, BEGIN_MACHINE, END_OP, END_CENTER, END_MACHINE, NUM_HOLE, NUM_DELAM, NUM_SPLICE, AVG_THICKNESS, NOTES, TIMESTAMP, NUM_DEFECT) VALUES ('$LAM_DATE','$LAM_OP','$FOIL_TYPE','$LAM_ID','$ELECTRODE_SERIAL','$ELECTRODE_TOTAL_LENGTH','$THICKNESS','$CAF_BATCH_NUM','$CAF_BATCH_NUM_2','$ROLL_DIAMETER','$UPPER_FILM_BATCH_NUM','$LOWER_FILM_BATCH_NUM','$UPPER_FILM_BATCH_NUM_2','$LOWER_FILM_BATCH_NUM_2','$LAM_TEMP_UPPER','$LAM_TEMP_LOWER','$LAM_SPEED','$GAP_OP','$GAP_MACHINE','$TAPE_TEST','$BEGIN_OP','$BEGIN_CENTER','$BEGIN_MACHINE','$END_OP','$END_CENTER','$END_MACHINE','$NUM_HOLE','$NUM_DELAM','$NUM_SPLICE','$AVG_THICKNESS','$NOTES','$TIMESTAMP','$NUM_DEFECT')";
-//Creates new label
-for ($x =1; $x<=3; $x++) {
-/* Get the port for the service. */
-$port = "9100";
-
-/* Get the IP address for the target host. */
-$host = "10.1.10.191";
-
-/* construct the label */
-$label = "﻿CT~~CD,~CC^~CT~
-^XA~TA000~JSN^LT0^MNW^MTD^PON^PMN^LH0,0^JMA^PR5,5~SD15^JUS^LRN^CI0^XZ
-^XA
-^MMT
-^PW609
-^LL0203
-^LS0
-^FO192,96^GFA,03584,03584,00028,:Z64:
-eJzt1D1u7CAQB3CQC0qSE3AUzpQTQJRiy1zJuQlPuQDuKAiTGQZ7MbaeXvM6Rivvip/X5uMPQsyaNWvWfywJn4BfCrywQQiTLZSLiYUaySAc9mhmAFa21JkXQoNwAJEtD1YEUGO1ctgHPgptAWqsBmczWQE1svnd3tk0mWdbn4Z9tsmQrQb74Z7m2SwE/JCpfYBkkf+HjZFMDuaizvi7mqCGZo7eFFV89S5Vc4MFFbZoL2arya8N5dZW+diKZrNP45EJvYEuvVk4zGzw6G2B3XAKX9TJaBK9hn16l97sYYIf0xkNzdesXA2aqVLv++5MVluQ2f50tuym7yxLtnxjAU3CemOKgMykS1+wh2gCo5AuYzisze7JSjX3N4u7dfOpd3OYrGGNmtlEhmv7eWtrtT4T7X0m4bJTXsyNZbwsmDObL+PTP3hR4S207J6MIqEThX2cTzIcQsGhx3Ed8Bag6GBwwri2aIVjxXuzz0Q7ddqePmeJTbezYDAJdSfzGXLOJ5tsZ89hplniZ0Qx7gdsTpz/0JtsxhNBM9Dvza6Os3HWrFmz/qF+AdfROhU=:6460
-^FT593,94^A0I,23,24^FH\^FDSerial: " . $ELECTRODE_SERIAL . "^FS
-^BY2,3,32^FT593,53^BCI,,N,N
-^FD>:" . $ELECTRODE_SERIAL . "^FS
-^FT593,11^A0I,28,28^FH\
-^FT593,9^A0I,23,24^FH\^FDLENGTH: " . $ELECTRODE_TOTAL_LENGTH . "meters Diameter:" . $ROLL_DIAMETER."^FS
-^PQ1,0,1,Y^XZ";
-$socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
-if ($socket === false) {
-    echo "socket_create() failed: reason: " . socket_strerror(socket_last_error    ()) . "\n";
-} else {
-    echo "OK.\n";
-}
-
-echo "Attempting to connect to '$host' on port '$port'...";
-$result = socket_connect($socket, $host, $port);
-if ($result === false) {
-    echo "socket_connect() failed.\nReason: ($result) " . socket_strerror    (socket_last_error($socket)) . "\n";
-} else {
-    echo "OK.\n";
-}
-
-socket_write($socket, $label, strlen($label));
-socket_close($socket);
-}
-
-if(mysqli_query($link, $sql)){
-echo "Records added successfully.";
-header("Location:http://10.1.10.190/Laminator_".$LAM_ID.".php");
-} else{
-
-    echo "ERROR: Could not able to execute $sql. " . mysqli_error($link);
-
-}
-}
-else { echo "ERROR: Incorrect BATCH NUMBER!". "TEST 1: ". $TEST_1 . "TEST 2: " . $TEST_2 . "TEST 3: " . $TEST_3 . "TEST 4: " . $TEST_4 . "TEST 5: " . $TEST_5 . "TEST 6:" . $TEST_6;
-}
-
-
-// close connection
 
 mysqli_close($link);
 ?>

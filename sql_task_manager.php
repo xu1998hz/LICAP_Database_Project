@@ -1,21 +1,38 @@
 <?php
   class sql_task_manager{
-      private $username;
-      private $hostname;
-      private $password;
-      private $db_name;
-      public $pdo;
+      private $pdo;
+      private $color_ls;
+      private $err_msgs;
 
-      public function __construct($hostname, $username, $password, $db_name) {
-        $this->username = $username;
-        $this->hostname = $hostname;
-        $this->password = $password;
-        $this->db_name = $db_name;
+      public function __construct($hostname, $username, $password, $db_name, $color_arr) {
+        $this->err_msgs = array();
+        // initialize all the text colors
+        for ($i=0; $i<count($color_arr); $i++) {
+          $this->color_ls[$color_arr[$i]] = "color:black;";
+        }
         # set up the PPO computatiion with database at localhost port 3306
         try {
-          $this->pdo = new PDO("mysql:host=$this->hostname; port=3306; dbname=$this->db_name", $this->username, $this->password);
+          $this->pdo = new PDO("mysql:host=$hostname; port=3306; dbname=$db_name", $username, $password);
         } catch (PDOException $e) {
           echo 'Connection failed: ' . $e->getMessage();
+        }
+      }
+
+      public function color_ls_read($ele) {
+        return $this->color_ls[$ele];
+      }
+
+      public function color_ls_update($ele) {
+        $this->color_ls[$ele] = "color:red;";
+      }
+
+      public function error_msg_append($str_msg) {
+        array_push($this->err_msgs, $str_msg);
+      }
+
+      public function error_msg_print() {
+        for ($i=0; $i <count($this->err_msgs); $i++) {
+          echo $this->err_msgs[$i];
         }
       }
 
@@ -28,14 +45,16 @@
 
       # check if specifc spec values are out of bounds, leave val1 and val2 for two versions, val2 can be optional
       public function user_Input_spec_vali($request_array, $spec_arr, $val1, $val2, $uncertainty) {
+        $state = true;
         for($i=0; $i<count($spec_arr); $i++) {
           if ((!($request_array[$spec_arr[$i]]>=($val1-$uncertainty) && $request_array[$spec_arr[$i]]<=($val1+$uncertainty)))
           && (!($request_array[$spec_arr[$i]]>=($val2-$uncertainty) && $request_array[$spec_arr[$i]]<=($val2+$uncertainty)))) {
-            echo "<br/>"."$spec_arr[$i] has the value out of bound!"."<br/>";
-            return false;
+            $this->error_msg_append("<br/>"."$spec_arr[$i] has the value out of bound!"."<br/>");
+            $this->color_ls_update($spec_arr[$i]);
+            $state = false;
           }
         }
-        return true;
+        return $state ? true : false;
       }
 
       public function pdo_sql_vali_execute($sql, $pdo_exec_arr) {
@@ -53,14 +72,14 @@
       }
 
       # compute general ID in the specific algorithm and input parameters
-      public function ID_computation($row_values, $THICKNESS, $prefix) {
-        $Batch_Digit = explode("-", $row_values['FILM_ID']);
+      public function ID_computation($row_value, $THICKNESS, $prefix, $letter, $indice) {
+        $Batch_Digit = explode("-", $row_value);
         $DATE_TEST = date("mdY");
-        if ($Batch_Digit[2] === $DATE_TEST) {
-          	$INC_DIGIT = $Batch_Digit[3] + 1;
-          	$FILM_ID = $prefix . "F-". $THICKNESS . "-" . $Batch_Digit[2] . "-" . $INC_DIGIT;
+        if ($Batch_Digit[$indice] === $DATE_TEST) {
+          	$INC_DIGIT = $Batch_Digit[$indice+1] + 1;
+          	$FILM_ID = $prefix . $letter . $THICKNESS . "-" . $Batch_Digit[$indice] . "-" . $INC_DIGIT;
         } else {
-          	$FILM_ID = $prefix . "F-" . $THICKNESS . "-" . $DATE_TEST . "-1";
+          	$FILM_ID = $prefix . $letter . $THICKNESS . "-" . $DATE_TEST . "-1";
         }
         return $FILM_ID;
       }
@@ -70,7 +89,9 @@
         $str_cmd = "INSERT INTO FILM (";
         $temp = array_keys($request_array);
         array_pop($temp);
+        array_pop($temp);
         $vals_array = array_values($request_array);
+        array_pop($vals_array);
         array_pop($vals_array);
         $str_cmd .= implode(",", $temp).',';
         $out_temp = array_map(function($val) { return ':'.$val; }, $temp);
