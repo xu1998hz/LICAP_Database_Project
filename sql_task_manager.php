@@ -3,9 +3,11 @@
       private $pdo;
       private $color_ls;
       private $err_msgs;
+      private $langs_trans;
 
-      public function __construct($hostname, $username, $password, $db_name, $color_arr) {
+      public function __construct($hostname, $username, $password, $db_name, $color_arr, $langs_trans) {
         $this->err_msgs = array();
+        $this->langs_trans = $langs_trans;
         // initialize all the text colors
         for ($i=0; $i<count($color_arr); $i++) {
           $this->color_ls[$color_arr[$i]] = "color:black;";
@@ -49,7 +51,7 @@
         for($i=0; $i<count($spec_arr); $i++) {
           if ((!($request_array[$spec_arr[$i]]>=($val1-$uncertainty) && $request_array[$spec_arr[$i]]<=($val1+$uncertainty)))
           && (!($request_array[$spec_arr[$i]]>=($val2-$uncertainty) && $request_array[$spec_arr[$i]]<=($val2+$uncertainty)))) {
-            $this->error_msg_append("<br/>"."$spec_arr[$i] has the value out of bound!"."<br/>");
+            $this->error_msg_append("<br/>".$this->langs_trans[$spec_arr[$i]]." has the value out of bound!"."<br/>");
             $this->color_ls_update($spec_arr[$i]);
             $state = false;
           }

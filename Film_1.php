@@ -7,7 +7,8 @@
  <body>
    <?php
      require_once('sql_task_manager.php');
-     $sql_task_manager = new sql_task_manager("localhost", "operator", "Licap123!", "Manufacture", array('END_OP','END_CENTER', 'END_MACHINE', 'MIX_BATCH_NUM', 'MIX_BATCH_NUM_2'));
+     $langs_trans = array("END_OP" => "Ending Operator Thickness", "END_CENTER" => "End Center Thickness", "END_MACHINE" => "Ending Machine Side Thickness");
+     $sql_task_manager = new sql_task_manager("localhost", "operator", "Licap123!", "Manufacture", array('END_OP','END_CENTER', 'END_MACHINE', 'MIX_BATCH_NUM', 'MIX_BATCH_NUM_2'), $langs_trans);
      $sql_command = "SELECT FILM_1_OP, FILM_2_OP, MIX_BATCH_NUM, MIX_BATCH_NUM_2, THICKNESS, MILL_TEMP, CAL_1_TEMP, CAL_2_TEMP, LINE_SPEED FROM FILM WHERE FILM_MILL=1 ORDER BY ID DESC LIMIT 1";
      $row = $sql_task_manager->pdo_sql_row_fetch($sql_command);
      // check if this is before user inputs
@@ -30,6 +31,7 @@
          $sql_task_manager->color_ls_update('MIX_BATCH_NUM_2');
        }
        $spec_state = $sql_task_manager->user_Input_spec_vali($_REQUEST, array('END_OP', 'END_CENTER', 'END_MACHINE'), 156, 94, 2);
+       $state = $spec_state && $sql_task_manager->user_Input_batch_vali('BATCH_NUM', 'BLEND', $_REQUEST, 'MIX_BATCH_NUM') && $opt_batch_state;
      }
    ?>
 
@@ -42,7 +44,7 @@
    <input id="FILM_MILL" name="FILM_MILL" type="hidden" value="1"/>
    <p>
      <label for="LENGTH">Length:</label>
-     <input type="text" name="LENGTH" id="LENGTH", value="<?php echo isset($_POST['LENGTH']) ? $_POST['LENGTH'] : '' ?>">
+     <input type="text" name="LENGTH" id="LENGTH", value="<?php echo isset($_POST['LENGTH'])&&(!$state) ? $_POST['LENGTH'] : '' ?>">
      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
      <label for="THICKNESS">Thickness Spec</label>
@@ -51,15 +53,15 @@
 
    <p style="<?php echo $sql_task_manager->color_ls_read("END_OP") ?>">
      <label for="END_OP">Ending Operator Thickness:</label>
-     <input id="END_OP" name="END_OP" value="<?php echo isset($_POST['END_OP']) ? $_POST['END_OP'] : '' ?>" type="text" onchange="changeBackground4(this);" />
+     <input id="END_OP" name="END_OP" value="<?php echo isset($_POST['END_OP'])&&(!$state) ? $_POST['END_OP'] : '' ?>" type="text" onchange="changeBackground4(this);" />
    </p>
    <p style="<?php echo $sql_task_manager->color_ls_read("END_CENTER") ?>">
      <label for="END_CENTER">End Center Thickness:</label>
-     <input id="END_CENTER" name="END_CENTER" value="<?php echo isset($_POST['END_CENTER']) ? $_POST['END_CENTER'] : '' ?>" type="text" onchange="changeBackground6(this);" />
+     <input id="END_CENTER" name="END_CENTER" value="<?php echo isset($_POST['END_CENTER'])&&(!$state) ? $_POST['END_CENTER'] : '' ?>" type="text" onchange="changeBackground6(this);" />
    </p>
    <p style="<?php echo $sql_task_manager->color_ls_read("END_MACHINE") ?>">
      <label for="END_MACHINE">Ending Machine Side Thickness:</label>
-     <input id="END_MACHINE" name="END_MACHINE" value="<?php echo isset($_POST['END_MACHINE']) ? $_POST['END_MACHINE'] : '' ?>" type="text" onchange="changeBackground6(this);" />
+     <input id="END_MACHINE" name="END_MACHINE" value="<?php echo isset($_POST['END_MACHINE'])&&(!$state) ? $_POST['END_MACHINE'] : '' ?>" type="text" onchange="changeBackground6(this);" />
    </p>
 
    <hr>
@@ -77,18 +79,18 @@
 
    <p>
      <label for="DEFECT_NUM">Number of Defects:</label>
-     <input type="text" name="DEFECT_NUM" id="DEFECT_NUM" value="<?php echo isset($_POST['DEFECT_NUM']) ? $_POST['DEFECT_NUM'] : '' ?>">
+     <input type="text" name="DEFECT_NUM" id="DEFECT_NUM" value="<?php echo isset($_POST['DEFECT_NUM'])&&(!$state) ? $_POST['DEFECT_NUM'] : '' ?>">
    </p>
 
    <p>
      <label for="FILM_WEIGHT">Weight of 8-Layer Punch:</label>
-     <input type="text" name="FILM_WEIGHT" id="FILM_WEIGHT" value="<?php echo isset($_POST['FILM_WEIGHT']) ? $_POST['FILM_WEIGHT'] : '' ?>">
+     <input type="text" name="FILM_WEIGHT" id="FILM_WEIGHT" value="<?php echo isset($_POST['FILM_WEIGHT'])&&(!$state) ? $_POST['FILM_WEIGHT'] : '' ?>">
      <label for="FILM_WEIGHT">g</label>
    </p>
 
    <p>
      <label for="FILM_NOTE">Note:</label>
-     <input type="text" name="FILM_NOTE" id="FILM_NOTE" value="<?php echo isset($_POST['FILM_NOTE']) ? $_POST['FILM_NOTE'] : '' ?>">
+     <input type="text" name="FILM_NOTE" id="FILM_NOTE" value="<?php echo isset($_POST['FILM_NOTE'])&&(!$state) ? $_POST['FILM_NOTE'] : '' ?>">
    </p>
 
    <hr>
@@ -124,7 +126,8 @@
 
    <?php
      if (count($_REQUEST)!==2) {
-       if (!(($spec_state) && $sql_task_manager->user_Input_batch_vali('BATCH_NUM', 'BLEND', $_REQUEST, 'MIX_BATCH_NUM') && $opt_batch_state)) {
+       if (!($state)) {
+            echo "<h2>Error Messages:</h2>";
             $sql_task_manager->error_msg_print();
             echo "<br/>"."Above user inputs are not in standards. Records are not added!"."<br/>";
             return;
@@ -146,9 +149,9 @@
        # computed values from above features
        $computed_vals_arr = array($FILM_ID, $TIMESTAMP, $DATE, $AVG_THICKNESS, $FILM_DENSITY);
        if ($sql_task_manager->sql_insert_gen_exec($_REQUEST, $computed_names, $computed_vals_arr)) {
-         echo "<br/>"."Records added successfully!"."<br/>";
+         echo "<h2>"."Records added successfully!"."</h2>";
        } else {
-         echo "<br/>"."Internal ERROR! Unsuccessful insertion. Contact IT Department"."<br/>";
+         echo "<h2>"."Internal ERROR! Unsuccessful insertion. Contact IT Department"."</h2>";
        }
      }
    ?>
