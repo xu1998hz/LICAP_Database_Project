@@ -9,6 +9,7 @@
     require_once('sql_task_manager.php');
     $sql_task_manager = new sql_task_manager("localhost", "operator", "Licap123!", "Manufacture");
     $sql_check_col = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'SLITTER' AND COLUMN_NAME = 'BAGHOUSE_WEIGHT'";
+    // check if the required column exists here
     if (!$sql_task_manager->pdo_sql_row_fetch($sql_check_col)) {
       $sql_task_manager->pdo_sql_row_fetch("ALTER TABLE SLITTER ADD BAGHOUSE_WEIGHT FLOAT(24)");
     }
@@ -35,7 +36,7 @@
       if ($sql_task_manager->sql_insert_gen_exec($_REQUEST, array_keys($row), array_values($row), 'SLITTER')) {
         echo "<h3>"."Records added successfully!"."</h3>";
       } else {
-        echo "<h2>"."Internal ERROR! Unsuccessful insertion. Contact IT Department"."</h2>";
+        echo "<h2>"."Bad insertion. Contact IT Department for further assitance"."</h2>";
       }
     }
    ?>

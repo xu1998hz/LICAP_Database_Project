@@ -12,7 +12,7 @@
      $sql_command = "SELECT FILM_1_OP, FILM_2_OP, MIX_BATCH_NUM, MIX_BATCH_NUM_2, THICKNESS, MILL_TEMP, CAL_1_TEMP, CAL_2_TEMP, LINE_SPEED FROM FILM WHERE FILM_MILL=1 ORDER BY ID DESC LIMIT 1";
      $row = $sql_task_manager->pdo_sql_row_fetch($sql_command);
      // check if this is before user inputs
-     if (count($_REQUEST)===2) {
+     if (count($_REQUEST)===0) {
        //Pull last Film Lot Number
        $sql_command = "SELECT FILM_ID FROM FILM ORDER BY ID DESC LIMIT 1";
        $row_2 = $sql_task_manager->pdo_sql_row_fetch($sql_command);
@@ -126,7 +126,7 @@
    </form>
 
    <?php
-     if (count($_REQUEST)!==2) {
+     if (count($_REQUEST)!==0) {
        if (!($state)) {
             echo "<h2>Error Messages:</h2>";
             $sql_task_manager->error_msg_print();

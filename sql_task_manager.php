@@ -62,8 +62,12 @@
 
       public function pdo_sql_vali_execute($sql, $pdo_exec_arr) {
         $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $stmt = $this->pdo->prepare($sql);
-        $state_exec = $stmt->execute($pdo_exec_arr);
+        try{
+          $stmt = $this->pdo->prepare($sql);
+          $state_exec = $stmt->execute($pdo_exec_arr);
+        } catch (Exception $ex) {
+          return array(false);
+        }
         return array($state_exec, $stmt);
       }
 
