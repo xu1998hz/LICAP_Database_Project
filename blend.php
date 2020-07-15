@@ -7,11 +7,11 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
     <title>POWDER MIXTURE DATA ENTRY PAGE</title>
-	
+
     </head>
 
     <body>
-	
+
     <form action="blend_1.php" method="post">
 
         <p>
@@ -24,14 +24,14 @@ if($link->connect_errno){
 }
 $sql = "SELECT ACETONE_WEIGHT, STRIP_RECYCLE, BAGHOUSE_RECYCLE,MIX_TIME, OUTSIDE_RECYCLE,PTFE_WEIGHT,BATCH_NUM,INJECTOR_PRESSURE,PERIPHERAL_PRESSURE,MIXER_RPM,AC_WEIGHT,ACETONE_WEIGHT,ACETONE_WEIGHT, MIXING_OP, AC_LOT_NUM_2, ACETONE_LOT, PTFE_LOT, GRIND_OP FROM blend ORDER BY ID DESC LIMIT 1";
         $result = mysqli_query($link, $sql);
-    	$row = mysqli_fetch_assoc($result); 
-	$BAG_WEIGHT_RESULT = $row['BAG_WEIGHT'];
+    	$row = mysqli_fetch_assoc($result);
+	//$BAG_WEIGHT_RESULT = $row['BAG_WEIGHT'];
 	$AC_WEIGHT_RESULT = $row['AC_WEIGHT'];
   	$BATCH_NUM_LAST = $row['BATCH_NUM'];
 	$MIXING_OP_RESULT = $row['MIXING_OP'];
 	$AC_LOT_NUM_2 = $row['AC_LOT_NUM_2'];
 	$ACETONE_LOT_RESULT = $row['ACETONE_LOT'];
-	$ACETONE_WEIGHT_RESULT = $row['ACETONE_WEIGHT']; 
+	$ACETONE_WEIGHT_RESULT = $row['ACETONE_WEIGHT'];
 	$PTFE_LOT_RESULT = $row['PTFE_LOT'];
 	$GRIND_OP_RESULT = $row['GRIND_OP'];
 	$INJECTOR_PRESSURE_RESULT = $row['INJECTOR_PRESSURE'];
@@ -52,7 +52,7 @@ $Batch_Digit = explode("-",$BATCH_NUM_LAST);
 $DATE_TEST = date("mdY");
 
 if($Batch_Digit[1] === $DATE_TEST){
-	$INC_DIGIT = $Batch_Digit[2] + 1;	
+	$INC_DIGIT = $Batch_Digit[2] + 1;
 	$NEW_BATCH_NUM = "M-" . $Batch_Digit[1] . "-" . $INC_DIGIT;
 		}
 else{
@@ -64,25 +64,25 @@ mysqli_close($link);
 
 ?>
 <p>
-<label> Mixer Operator:</label>	
+<label> Mixer Operator:</label>
 <input type="text" name="MIX_OP" value="<?php echo htmlentities($MIXING_OP_RESULT); ?>" />
 </p>
 <hr>
-<p>         
+<p>
 <label for="AC_LOT_1">AC Lot Number 1:</label>
 <input type="text" name="AC_LOT_1"value="<?php echo htmlentities($AC_LOT_NUM_RESULT_2); ?>"/>
 <label for="AC_NUM_1">AC Bag Number 1:</label>
 <input type="text" name="AC_NUM_1"/>
 
 </p>
-<p>         
+<p>
 <label for="AC_LOT_2">AC Lot Number 2:</label>
 <input type="text" name="AC_LOT_2"value="<?php echo htmlentities($AC_LOT_NUM_RESULT_2); ?>"/>
 <label for="AC_NUM_2">AC Bag Number 2:</label>
 <input type="text" name="AC_NUM_2"/>
 
 </p>
-<!---<p>         
+<!---<p>
 <label for="AC_LOT_3">AC Lot Number 3:</label>
 <input type="text" name="AC_LOT_3"value="<?php echo htmlentities($AC_LOT_NUM_RESULT_3); ?>"/>
 <label for="AC_NUM_3">AC Bag Number 3:</label>
@@ -158,4 +158,3 @@ mysqli_close($link);
     </body>
 
     </html>
-

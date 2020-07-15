@@ -5,7 +5,7 @@
 <title>LAMINATOR 1</title>
 </head>
   <body>
-    <form action="Laminator.php" method="post">
+    <form action="Laminator_1.php" method="post">
 
     <p>
 

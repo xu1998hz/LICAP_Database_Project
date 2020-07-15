@@ -5,7 +5,7 @@
       private $err_msgs;
       private $langs_trans;
 
-      public function __construct($hostname, $username, $password, $db_name, $color_arr, $langs_trans) {
+      public function __construct($hostname, $username, $password, $db_name, $color_arr=array(), $langs_trans=array()) {
         $this->err_msgs = array();
         $this->langs_trans = $langs_trans;
         // initialize all the text colors
@@ -51,7 +51,8 @@
         for($i=0; $i<count($spec_arr); $i++) {
           if ((!($request_array[$spec_arr[$i]]>=($val1-$uncertainty) && $request_array[$spec_arr[$i]]<=($val1+$uncertainty)))
           && (!($request_array[$spec_arr[$i]]>=($val2-$uncertainty) && $request_array[$spec_arr[$i]]<=($val2+$uncertainty)))) {
-            $this->error_msg_append("<br/>".$this->langs_trans[$spec_arr[$i]]." has the value out of bound!"."<br/>");
+            $this->error_msg_append("<br/>"."The value of ".$this->langs_trans[$spec_arr[$i]]." must be in between ".($val1-$uncertainty)
+            ." to ".($val1+$uncertainty)." or ".($val2-$uncertainty)." to ".($val2+$uncertainty)."<br/>");
             $this->color_ls_update($spec_arr[$i]);
             $state = false;
           }
@@ -87,14 +88,10 @@
       }
 
       # generate sql insert commands based on both userinput features and features require further computation
-      public function sql_insert_gen_exec($request_array, $computed_vals,$computed_vals_arr) {
-        $str_cmd = "INSERT INTO FILM (";
+      public function sql_insert_gen_exec($request_array, $computed_vals,$computed_vals_arr, $table) {
+        $str_cmd = "INSERT INTO ".$table." (";
         $temp = array_keys($request_array);
-        array_pop($temp);
-        array_pop($temp);
         $vals_array = array_values($request_array);
-        array_pop($vals_array);
-        array_pop($vals_array);
         $str_cmd .= implode(",", $temp).',';
         $out_temp = array_map(function($val) { return ':'.$val; }, $temp);
         $out_computed_vals = array_map(function($val) { return ':'.$val; }, $computed_vals);

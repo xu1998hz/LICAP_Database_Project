@@ -12,7 +12,7 @@
      $sql_command = "SELECT FILM_1_OP, FILM_2_OP, MIX_BATCH_NUM, MIX_BATCH_NUM_2, THICKNESS, MILL_TEMP, CAL_1_TEMP, CAL_2_TEMP, LINE_SPEED FROM FILM WHERE FILM_MILL=1 ORDER BY ID DESC LIMIT 1";
      $row = $sql_task_manager->pdo_sql_row_fetch($sql_command);
      // check if this is before user inputs
-     if (count($_REQUEST)===2) {
+     if (count($_REQUEST)===0) {
        //Pull last Film Lot Number
        $sql_command = "SELECT FILM_ID FROM FILM ORDER BY ID DESC LIMIT 1";
        $row_2 = $sql_task_manager->pdo_sql_row_fetch($sql_command);
@@ -122,10 +122,11 @@
 
     <input type="submit" value="Submit">
 
+  <hr>
    </form>
 
    <?php
-     if (count($_REQUEST)!==2) {
+     if (count($_REQUEST)!==0) {
        if (!($state)) {
             echo "<h2>Error Messages:</h2>";
             $sql_task_manager->error_msg_print();
@@ -148,7 +149,7 @@
 
        # computed values from above features
        $computed_vals_arr = array($FILM_ID, $TIMESTAMP, $DATE, $AVG_THICKNESS, $FILM_DENSITY);
-       if ($sql_task_manager->sql_insert_gen_exec($_REQUEST, $computed_names, $computed_vals_arr)) {
+       if ($sql_task_manager->sql_insert_gen_exec($_REQUEST, $computed_names, $computed_vals_arr, 'Film')) {
          echo "<h2>"."Records added successfully!"."</h2>";
        } else {
          echo "<h2>"."Internal ERROR! Unsuccessful insertion. Contact IT Department"."</h2>";
