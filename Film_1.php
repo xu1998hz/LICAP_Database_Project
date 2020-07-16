@@ -11,18 +11,19 @@
      $sql_task_manager = new sql_task_manager("localhost", "operator", "Licap123!", "Manufacture", array('END_OP','END_CENTER', 'END_MACHINE', 'MIX_BATCH_NUM', 'MIX_BATCH_NUM_2'), $langs_trans);
      $sql_command = "SELECT FILM_1_OP, FILM_2_OP, MIX_BATCH_NUM, MIX_BATCH_NUM_2, THICKNESS, MILL_TEMP, CAL_1_TEMP, CAL_2_TEMP, LINE_SPEED FROM FILM WHERE FILM_MILL=1 ORDER BY ID DESC LIMIT 1";
      $row = $sql_task_manager->pdo_sql_row_fetch($sql_command);
-     // check if this is before user inputs
-     if (count($_REQUEST)===0) {
-       //Pull last Film Lot Number
-       $sql_command = "SELECT FILM_ID FROM FILM ORDER BY ID DESC LIMIT 1";
-       $row_2 = $sql_task_manager->pdo_sql_row_fetch($sql_command);
-       //Compare last batch date with current date
-       $FILM_ID = $sql_task_manager->ID_computation($row_2['FILM_ID'], $row['THICKNESS'], 1, 'F-', 2);
-       echo "<h1>" . "Current Roll:" . $FILM_ID . "</h1>";
-     } else {
+     //Pull last Film Lot Number
+     $sql_command = "SELECT FILM_ID FROM FILM ORDER BY ID DESC LIMIT 1";
+     $row_2 = $sql_task_manager->pdo_sql_row_fetch($sql_command);
+     //Compare last batch date with current date
+     $FILM_ID = $sql_task_manager->ID_computation($row_2['FILM_ID'], $row['THICKNESS'], 1, 'F-', 2);
+     echo "<H1>FILM MILL 1 Log</H1>";
+     echo "<h1>" . "Current Roll:" . $FILM_ID . "</h1>";
+     // check if this is before user inputs, error handlings on the existing user inputs
+     if (count($_REQUEST)!==0) {
        # error handling on userinput for END_OP, END_CENTER and END_MACHINE
        $opt_batch_state = $_REQUEST['MIX_BATCH_NUM_2'] ? $sql_task_manager->user_Input_batch_vali('BATCH_NUM', 'BLEND', $_REQUEST, 'MIX_BATCH_NUM_2') : true;
-       if (!($sql_task_manager->user_Input_batch_vali('BATCH_NUM', 'BLEND', $_REQUEST, 'MIX_BATCH_NUM'))) {
+       $batch_state = $sql_task_manager->user_Input_batch_vali('BATCH_NUM', 'BLEND', $_REQUEST, 'MIX_BATCH_NUM');
+       if (!$batch_state) {
          $sql_task_manager->error_msg_append("<br/>"."Powder Batch 1 is out of Spec!"."<br/>");
          $sql_task_manager->color_ls_update('MIX_BATCH_NUM');
        }
@@ -31,15 +32,11 @@
          $sql_task_manager->color_ls_update('MIX_BATCH_NUM_2');
        }
        $spec_state = $sql_task_manager->user_Input_spec_vali($_REQUEST, array('END_OP', 'END_CENTER', 'END_MACHINE'), 156, 94, 2);
-       $state = $spec_state && $sql_task_manager->user_Input_batch_vali('BATCH_NUM', 'BLEND', $_REQUEST, 'MIX_BATCH_NUM') && $opt_batch_state;
+       $state = $spec_state && $batch_state && $opt_batch_state;
      }
    ?>
 
    <form action="Film_1.php" method="post">
-
-   <p>
-     <H1>FILM MILL 1 Log</H1>
-
 
    <input id="FILM_MILL" name="FILM_MILL" type="hidden" value="1"/>
    <p>
@@ -128,9 +125,9 @@
    <?php
      if (count($_REQUEST)!==0) {
        if (!($state)) {
-            echo "<h2>Error Messages:</h2>";
+            echo "<h3>Error Messages:</h3>";
             $sql_task_manager->error_msg_print();
-            echo "<br/>"."Above user inputs are not in standards. Records are not added!"."<br/>";
+            echo "Above user inputs are not in standards. Records are not added!"."<br/>";
             return;
        }
        # Those are the column names which require further computation
@@ -142,17 +139,16 @@
        $sql_command = "SELECT FILM_ID FROM FILM ORDER BY ID DESC LIMIT 1";
        $row_3 = $sql_task_manager->pdo_sql_row_fetch($sql_command);
        $FILM_ID = $sql_task_manager->ID_computation($row_3['FILM_ID'], $_REQUEST['THICKNESS'], $_REQUEST['FILM_MILL'], 'F-', 2);
-       //Currently optional, only default to 2.o, $AVG_THICKNESS = ($END_OP + $END_CENTER + $END_MACHINE)/3
-       $AVG_THICKNESS = 2.0;
+       $AVG_THICKNESS = ($_REQUEST['END_OP'] + $_REQUEST['END_CENTER'] + $_REQUEST['END_MACHINE'])/3;
        $NORMALIZE_WEIGHT = $_REQUEST['FILM_WEIGHT']/8;
        $FILM_DENSITY = $NORMALIZE_WEIGHT/(5.064506 * $AVG_THICKNESS/10000);
 
        # computed values from above features
        $computed_vals_arr = array($FILM_ID, $TIMESTAMP, $DATE, $AVG_THICKNESS, $FILM_DENSITY);
        if ($sql_task_manager->sql_insert_gen_exec($_REQUEST, $computed_names, $computed_vals_arr, 'Film')) {
-         echo "<h2>"."Records added successfully!"."</h2>";
+         echo "<h3>"."Records added successfully!"."</h3>";
        } else {
-         echo "<h2>"."Internal ERROR! Unsuccessful insertion. Contact IT Department"."</h2>";
+         echo "<h3>"."Unsuccessful insertion! Check all the input values! Contact IT Department if you need further assitance"."</h3>";
        }
      }
    ?>

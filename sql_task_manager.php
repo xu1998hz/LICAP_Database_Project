@@ -51,7 +51,7 @@
         for($i=0; $i<count($spec_arr); $i++) {
           if ((!($request_array[$spec_arr[$i]]>=($val1-$uncertainty) && $request_array[$spec_arr[$i]]<=($val1+$uncertainty)))
           && (!($request_array[$spec_arr[$i]]>=($val2-$uncertainty) && $request_array[$spec_arr[$i]]<=($val2+$uncertainty)))) {
-            $this->error_msg_append("<br/>"."The value of ".$this->langs_trans[$spec_arr[$i]]." must be in between ".($val1-$uncertainty)
+            $this->error_msg_append("The value of ".$this->langs_trans[$spec_arr[$i]]." must be in between ".($val1-$uncertainty)
             ." to ".($val1+$uncertainty)." or ".($val2-$uncertainty)." to ".($val2+$uncertainty)."<br/>");
             $this->color_ls_update($spec_arr[$i]);
             $state = false;
@@ -66,6 +66,7 @@
           $stmt = $this->pdo->prepare($sql);
           $state_exec = $stmt->execute($pdo_exec_arr);
         } catch (Exception $ex) {
+          print($ex->getMessage());
           return array(false);
         }
         return array($state_exec, $stmt);
@@ -76,6 +77,28 @@
         $stmt = $this->pdo_sql_vali_execute($sql_cmd, array(':str_1'=>$request_array[$target]))[1];
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         return $row ? true : false;
+      }
+
+      public function batch_opt_db_vali($batch_str, $size, $col_name, $table_name) {
+        $batch_state = true;
+        for ($j=0; $j<count($batch_str); $j++) {
+          $cur_state = $this->user_Input_batch_vali($col_name, $table_name, $_REQUEST, $batch_str[$j]);
+          $batch_state = $batch_state && $cur_state;
+          if (!$cur_state) {
+            $this->error_msg_append($size[$j]." Film Batch Number is out of Spec!"."<br/>");
+            $this->color_ls_update($batch_str[$j]);
+          }
+          for ($i=2; $i<2+count($batch_str); $i++) {
+              $request_str =$batch_str[$j].'_'.$i;
+              $cur_state = $_REQUEST[$request_str] ? $this->user_Input_batch_vali($col_name, $table_name, $_REQUEST, $request_str) : true;
+              $batch_state = $batch_state && $cur_state;
+              if (!$cur_state) {
+                $this->error_msg_append($size[$j]." Film Batch Number ".$i." is out of Spec!"."<br/>");
+                $this->color_ls_update($request_str);
+              }
+          }
+        }
+        return $batch_state;
       }
 
       # compute general ID in the specific algorithm and input parameters

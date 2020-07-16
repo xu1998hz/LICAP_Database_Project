@@ -36,7 +36,7 @@
       if ($sql_task_manager->sql_insert_gen_exec($_REQUEST, array_keys($row), array_values($row), 'SLITTER')) {
         echo "<h3>"."Records added successfully!"."</h3>";
       } else {
-        echo "<h2>"."Bad insertion. Contact IT Department for further assitance"."</h2>";
+        echo "<h3>"."Unsuccessful insertion. Check the input value. Contact IT Department if you need further assitance"."</h3>";
       }
     }
    ?>

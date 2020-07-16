@@ -5,25 +5,28 @@
 <title>LAMINATOR 2</title>
 </head>
   <body>
-    <form action="Laminator.php" method="post">
-
-    <p>
+    <form action="Laminator_2.php" method="post">
 
     <?php
       require_once('sql_task_manager.php');
-      $sql_task_manager = new sql_task_manager("localhost", "operator", "Licap123!", "Manufacture");
-      $sql_command = "SELECT LAM_OP, FOIL_TYPE, CAF_BATCH_NUM, CAF_BATCH_NUM_2, LAM_TEMP_UPPER, LAM_TEMP_LOWER, LAM_SPEED, GAP_OP, GAP_MACHINE, THICKNESS FROM LAMINATOR WHERE LAM_ID=1 ORDER BY ID DESC LIMIT 1";
+      $langs_trans = array("END_OP" => "Ending Operator Side Thickness", "END_CENTER" => "End Center Thickness", "END_MACHINE" => "Ending Machine Side Thickness");
+      $sql_task_manager = new sql_task_manager("localhost", "operator", "Licap123!", "Manufacture", array('END_OP','END_CENTER', 'END_MACHINE', 'UPPER_FILM_BATCH_NUM',
+      'UPPER_FILM_BATCH_NUM_2', 'UPPER_FILM_BATCH_NUM_3', 'LOWER_FILM_BATCH_NUM','LOWER_FILM_BATCH_NUM_2','LOWER_FILM_BATCH_NUM_3'), $langs_trans);
+      $sql_command = "SELECT LAM_OP, FOIL_TYPE, CAF_BATCH_NUM, CAF_BATCH_NUM_2, LAM_TEMP_UPPER, LAM_TEMP_LOWER, LAM_SPEED, GAP_OP, GAP_MACHINE, THICKNESS FROM LAMINATOR WHERE LAM_ID=2 ORDER BY ID DESC LIMIT 1";
       $row = $sql_task_manager->pdo_sql_row_fetch($sql_command);
-
       $CAF_BATCH_NUM_FINAL_RESULT = $row['CAF_BATCH_NUM_2'] ? $row['CAF_BATCH_NUM_2'] : $row['CAF_BATCH_NUM'];
-
       //Pull last Film Lot Number
       $sql_command = "SELECT ELECTRODE_SERIAL FROM LAMINATOR ORDER BY ID DESC LIMIT 1";
       $row_2 = $sql_task_manager->pdo_sql_row_fetch($sql_command);
-
       $ELECTRODE_SERIAL = $sql_task_manager->ID_computation($row_2['ELECTRODE_SERIAL'], $row['THICKNESS'], '', 'E-', 3);
-      echo "<h1> LAMINATOR 1 </h1>";
+      echo "<h1> LAMINATOR 2 </h1>";
       echo "<h1>" . "Current Roll:" . $ELECTRODE_SERIAL . "</h1>";
+      // check if this is before user inputs, error handlings on existing user inputs
+      if (count($_REQUEST)!==0) {
+        $batch_state = $sql_task_manager->batch_opt_db_vali(array('UPPER_FILM_BATCH_NUM', 'LOWER_FILM_BATCH_NUM'), array("Upper", "Lower"), 'FILM_ID', 'FILM');
+        $spec_state = $sql_task_manager->user_Input_spec_vali($_REQUEST, array('END_OP', 'END_CENTER', 'END_MACHINE'), 315, 210, 5);
+        $state = $spec_state && $batch_state;
+      }
     ?>
 
     <p>
@@ -42,26 +45,29 @@
     <p>
       <label for="CAF_BATCH_NUM_2">Foil Batch Number 2:</label>
       <input id="CAF_BATCH_NUM_2" name="CAF_BATCH_NUM_2" type="text" />
-      <input id="LAM_ID" name="LAM_ID" value ="1" type="hidden"/>
     </p>
     <hr>
-    <p>
+    <p style="<?php echo $sql_task_manager->color_ls_read("UPPER_FILM_BATCH_NUM") ?>">
       <label for="UPPER_FILM_BATCH_NUM">Upper Film Batch Number:</label>
-      <input id="UPPER_FILM_BATCH_NUM" name="UPPER_FILM_BATCH_NUM" type="text" />
-      &nbsp;&nbsp;
-      <label for="LOWER_FILM_BATCH_NUM">Lower Film Batch Number:</label>
-      <input id="LOWER_FILM_BATCH_NUM" name="LOWER_FILM_BATCH_NUM" type="text" />
+      <input id="UPPER_FILM_BATCH_NUM" name="UPPER_FILM_BATCH_NUM" type="text" value="<?php echo isset($_POST['UPPER_FILM_BATCH_NUM'])&&(!$state) ? $_POST['UPPER_FILM_BATCH_NUM'] : '' ?>"/>
     </p>
-    <p>
+    <p style="<?php echo $sql_task_manager->color_ls_read("LOWER_FILM_BATCH_NUM") ?>">
+      <label for="LOWER_FILM_BATCH_NUM">Lower Film Batch Number:</label>
+      <input id="LOWER_FILM_BATCH_NUM" name="LOWER_FILM_BATCH_NUM" type="text" value="<?php echo isset($_POST['LOWER_FILM_BATCH_NUM'])&&(!$state) ? $_POST['LOWER_FILM_BATCH_NUM'] : '' ?>"/>
+    </p>
+    <p style="<?php echo $sql_task_manager->color_ls_read("UPPER_FILM_BATCH_NUM_2") ?>">
       <label for="UPPER_FILM_BATCH_NUM_2">Upper Film Batch Number 2:</label>
       <input id="UPPER_FILM_BATCH_NUM_2" name="UPPER_FILM_BATCH_NUM_2" type="text" />
-      &nbsp;&nbsp;
+    </p>
+    <p style="<?php echo $sql_task_manager->color_ls_read("LOWER_FILM_BATCH_NUM_2") ?>">
       <label for="LOWER_FILM_BATCH_NUM_2">Lower Film Batch Number 2:</label>
       <input id="LOWER_FILM_BATCH_NUM_2" name="LOWER_FILM_BATCH_NUM_2" type="text" />
     </p>
+    <p style="<?php echo $sql_task_manager->color_ls_read("UPPER_FILM_BATCH_NUM_3") ?>">
       <label for="UPPER_FILM_BATCH_NUM_3">Upper Film Batch Number 3:</label>
       <input id="UPPER_FILM_BATCH_NUM_3" name="UPPER_FILM_BATCH_NUM_3" type="text" />
-      &nbsp;&nbsp;
+    </p>
+    <p style="<?php echo $sql_task_manager->color_ls_read("LOWER_FILM_BATCH_NUM_3") ?>">
       <label for="LOWER_FILM_BATCH_NUM_3">Lower Film Batch Number 3:</label>
       <input id="LOWER_FILM_BATCH_NUM_3" name="LOWER_FILM_BATCH_NUM_3" type="text" />
     </p>
@@ -69,13 +75,16 @@
     <p>
       <label for="ELECTRODE_LENGTH">Length:</label>
       <input type="text" name="ELECTRODE_LENGTH" >
-    <p>
+    </p>
+    <p style="<?php echo $sql_task_manager->color_ls_read("END_OP") ?>">
       <label for="END_OP">Ending Operator Side Thickness:</label>
       <input id="END_OP" name="END_OP" type="text" style="max-width: 100px;" />
-      &nbsp;&nbsp;
+    </p>
+    <p style="<?php echo $sql_task_manager->color_ls_read("END_CENTER") ?>">
       <label for="END_CENTER">Ending Center Thickness:</label>
       <input id="END_CENTER" name="END_CENTER" type="text" style="max-width: 100px;"/>
-      &nbsp;&nbsp;
+    </p>
+    <p style="<?php echo $sql_task_manager->color_ls_read("END_MACHINE") ?>">
       <label for="END_MACHINE">Ending Machine Side Thickness:</label>
       <input id="END_MACHINE" name="END_MACHINE" type="text" style="max-width: 100px;"/>
     </p>
@@ -117,5 +126,39 @@
     </p>
     <input type="submit" value="Submit">
     </form>
+
+    <?php
+      if (count($_REQUEST)!==0) {
+        if (!($state)) {
+             echo "<hr>";
+             echo "<h3>Error Messages:</h3>";
+             $sql_task_manager->error_msg_print();
+             echo "Above user inputs are not in standards. Records are not added!"."<br/>";
+             return;
+        }
+        //Sets date and timestamp
+        $_REQUEST['LAM_DATE'] = date("m/d/Y");
+        $_REQUEST['TIMESTAMP'] = date("m/d/Y-H:i:s");
+        //Update Amount of CAF used based on serial number
+        $update_length = "UPDATE INVENTORY_TABLE SET AMOUNT_USED = AMOUNT_USED + ".$_REQUEST['ELECTRODE_LENGTH']." WHERE SERIAL=:str_1";
+        $sql_task_manager->pdo_sql_vali_execute($update_length, array('str_1'=>$_REQUEST['CAF_BATCH_NUM']));
+
+        $sql_task_manager->pdo_sql_vali_execute($update_length, array('str_1'=>$_REQUEST['CAF_BATCH_NUM_2']));
+
+        $row = $sql_task_manager->pdo_sql_row_fetch("SELECT ELECTRODE_SERIAL FROM LAMINATOR ORDER BY ID DESC LIMIT 1");
+        # sprcific ELECTRODE seiral compuation in Laminator
+        $ELECTRODE_SERIAL = $sql_task_manager->ID_computation($row['ELECTRODE_SERIAL'], $_REQUEST['THICKNESS'], $_REQUEST['LAM_ID'], "E-".explode("-", $_REQUEST['UPPER_FILM_BATCH_NUM'])[0], 3);
+        $AVG_THICKNESS = ($_REQUEST['END_OP'] + $_REQUEST['END_CENTER'] + $_REQUEST['END_MACHINE'])/3;
+        $NUM_DEFECT = $_REQUEST['NUM_SPLICE'] + $_REQUEST['NUM_HOLE'] + $_REQUEST['NUM_DELAM'];
+        # Those are the column names which require further computation
+        $computed_names = array('ELECTRODE_SERIAL', 'AVG_THICKNESS', 'NUM_DEFECT');
+        $computed_vals_arr = array($ELECTRODE_SERIAL, $AVG_THICKNESS, $NUM_DEFECT);
+        if ($sql_task_manager->sql_insert_gen_exec($_REQUEST, $computed_names, $computed_vals_arr, 'LAMINATOR')) {
+          echo "<h3>"."Records added successfully!"."</h3>";
+        } else {
+          echo "<h3>"."Unsuccessful insertion! Check all the input values! Contact IT Department if you need further assitance"."</h3>";
+        }
+      }
+    ?>
   </body>
 </html>
