@@ -142,18 +142,14 @@
         //Update Amount of CAF used based on serial number
         $update_length = "UPDATE INVENTORY_TABLE SET AMOUNT_USED = AMOUNT_USED + ".$_REQUEST['ELECTRODE_LENGTH']." WHERE SERIAL=:str_1";
         $sql_task_manager->pdo_sql_vali_execute($update_length, array('str_1'=>$_REQUEST['CAF_BATCH_NUM']));
-
         $sql_task_manager->pdo_sql_vali_execute($update_length, array('str_1'=>$_REQUEST['CAF_BATCH_NUM_2']));
-
+        # get the last record
         $row = $sql_task_manager->pdo_sql_row_fetch("SELECT ELECTRODE_SERIAL FROM LAMINATOR ORDER BY ID DESC LIMIT 1");
         # sprcific ELECTRODE seiral compuation in Laminator
-        $ELECTRODE_SERIAL = $sql_task_manager->ID_computation($row['ELECTRODE_SERIAL'], $_REQUEST['THICKNESS'], $_REQUEST['LAM_ID'], "E-".explode("-", $_REQUEST['UPPER_FILM_BATCH_NUM'])[0], 3);
-        $AVG_THICKNESS = ($_REQUEST['END_OP'] + $_REQUEST['END_CENTER'] + $_REQUEST['END_MACHINE'])/3;
-        $NUM_DEFECT = $_REQUEST['NUM_SPLICE'] + $_REQUEST['NUM_HOLE'] + $_REQUEST['NUM_DELAM'];
-        # Those are the column names which require further computation
-        $computed_names = array('ELECTRODE_SERIAL', 'AVG_THICKNESS', 'NUM_DEFECT');
-        $computed_vals_arr = array($ELECTRODE_SERIAL, $AVG_THICKNESS, $NUM_DEFECT);
-        if ($sql_task_manager->sql_insert_gen_exec($_REQUEST, $computed_names, $computed_vals_arr, 'LAMINATOR')) {
+        $_REQUEST['ELECTRODE_SERIAL'] = $sql_task_manager->ID_computation($row['ELECTRODE_SERIAL'], $_REQUEST['THICKNESS'], $_REQUEST['LAM_ID'], "E-".explode("-", $_REQUEST['UPPER_FILM_BATCH_NUM'])[0], 3);
+        $_REQUEST['AVG_THICKNESS'] = ($_REQUEST['END_OP'] + $_REQUEST['END_CENTER'] + $_REQUEST['END_MACHINE'])/3;
+        $_REQUEST['NUM_DEFECT'] = $_REQUEST['NUM_SPLICE'] + $_REQUEST['NUM_HOLE'] + $_REQUEST['NUM_DELAM'];
+        if ($sql_task_manager->sql_insert_gen($_REQUEST, 'LAMINATOR')) {
           echo "<h3>"."Records added successfully!"."</h3>";
         } else {
           echo "<h3>"."Unsuccessful insertion! Check all the input values! Contact IT Department if you need further assitance"."</h3>";

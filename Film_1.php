@@ -130,22 +130,18 @@
             echo "Above user inputs are not in standards. Records are not added!"."<br/>";
             return;
        }
-       # Those are the column names which require further computation
-       $computed_names = array('FILM_ID', 'TIMESTAMP', 'DATE', 'AVG_THICKNESS', 'FILM_DENSITY');
        # compute values from above features
-       $DATE = date("m/d/Y");
-       $TIMESTAMP = date("m/d/Y-H:i:s");
+       $_REQUEST['DATE'] = date("m/d/Y");
+       $_REQUEST['TIMESTAMP'] = date("m/d/Y-H:i:s");
        //Compute the film ID
        $sql_command = "SELECT FILM_ID FROM FILM ORDER BY ID DESC LIMIT 1";
        $row_3 = $sql_task_manager->pdo_sql_row_fetch($sql_command);
-       $FILM_ID = $sql_task_manager->ID_computation($row_3['FILM_ID'], $_REQUEST['THICKNESS'], $_REQUEST['FILM_MILL'], 'F-', 2);
-       $AVG_THICKNESS = ($_REQUEST['END_OP'] + $_REQUEST['END_CENTER'] + $_REQUEST['END_MACHINE'])/3;
+       $_REQUEST['FILM_ID'] = $sql_task_manager->ID_computation($row_3['FILM_ID'], $_REQUEST['THICKNESS'], $_REQUEST['FILM_MILL'], 'F-', 2);
+       $_REQUEST['AVG_THICKNESS'] = ($_REQUEST['END_OP'] + $_REQUEST['END_CENTER'] + $_REQUEST['END_MACHINE'])/3;
        $NORMALIZE_WEIGHT = $_REQUEST['FILM_WEIGHT']/8;
-       $FILM_DENSITY = $NORMALIZE_WEIGHT/(5.064506 * $AVG_THICKNESS/10000);
+       $_REQUEST['FILM_DENSITY'] = $NORMALIZE_WEIGHT/(5.064506 * $_REQUEST['AVG_THICKNESS']/10000);
 
-       # computed values from above features
-       $computed_vals_arr = array($FILM_ID, $TIMESTAMP, $DATE, $AVG_THICKNESS, $FILM_DENSITY);
-       if ($sql_task_manager->sql_insert_gen_exec($_REQUEST, $computed_names, $computed_vals_arr, 'Film')) {
+       if ($sql_task_manager->sql_insert_gen($_REQUEST, 'Film')) {
          echo "<h3>"."Records added successfully!"."</h3>";
        } else {
          echo "<h3>"."Unsuccessful insertion! Check all the input values! Contact IT Department if you need further assitance"."</h3>";

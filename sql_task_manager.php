@@ -115,21 +115,14 @@
       }
 
       # generate sql insert commands based on both userinput features and features require further computation
-      public function sql_insert_gen_exec($request_array, $computed_vals,$computed_vals_arr, $table) {
+      public function sql_insert_gen($request_array, $table) {
         $str_cmd = "INSERT INTO ".$table." (";
-        $temp = array_keys($request_array);
+        $key_array = array_keys($request_array);
         $vals_array = array_values($request_array);
-        $str_cmd .= implode(",", $temp).',';
-        $out_temp = array_map(function($val) { return ':'.$val; }, $temp);
-        $out_computed_vals = array_map(function($val) { return ':'.$val; }, $computed_vals);
-        $str_cmd .= implode(",", $computed_vals).') VALUES (';
-        $out_total = implode(",", $out_temp).','.implode(",", $out_computed_vals);
-        $str_cmd .= $out_total;
-        $str_cmd .= ')';
-        for ($i=0; $i<count($computed_vals_arr); $i++) {
-          array_push($vals_array, $computed_vals_arr[$i]);
-        }
-        $pdo_exec_arr = array_combine(explode(',', $out_total),  $vals_array);
+        $out_vals_array = implode(',', array_map(function($val) { return ':'.$val; }, $key_array));
+        $str_cmd .= implode(",", $key_array);
+        $str_cmd .= ') VALUES ('.$out_vals_array.')';
+        $pdo_exec_arr = array_combine(explode(',', $out_vals_array),  $vals_array);
         return $this->pdo_sql_vali_execute($str_cmd, $pdo_exec_arr)[0];
       }
 
