@@ -5,7 +5,7 @@
 <title>SLITTER DATA ENTRY PAGE</title>
 </head>
   <body>
-    <form action="Slitter_1.php" method="post">
+    <form action="Slitter.php" method="post">
 
     <?php
       require_once('sql_task_manager.php');
@@ -50,8 +50,8 @@
         </select>
     <hr>
     <p>
-        <label for="NUM_HOLES">Number of Hole Defects</label>
-        <input id="NUM_HOLES" name="NUM_HOLES" type="text">
+        <label for="NUM_HOLE">Number of Hole Defects</label>
+        <input id="NUM_HOLE" name="NUM_HOLE" type="text">
         &nbsp;&nbsp;&nbsp;
         <label for="NUM_DELAM">Number of Delaminations</label>
         <input id="NUM_DELAM" name="NUM_DELAM" type="text">
@@ -67,9 +67,31 @@
     </form>
 
     <?php
-       $_REQUEST['DATE'] = date("m/d/Y");
-       
+      // without user inputs, this part of user codes are not executing
+      if (count($_REQUEST)===0){
+        return;
+      }
+      $_REQUEST['DATE'] = date("m/d/Y");
+      $_REQUEST['TIMESTAMP'] = date("m/d/Y-H:i:s");
+      $_REQUEST['STRIP_LENGTH_FEET'] = $_REQUEST['ELECTRODE_LENGTH_1'] + $_REQUEST['ELECTRODE_LENGTH_2'] + $_REQUEST['ELECTRODE_LENGTH_3'];
+      $_REQUEST['STRIP_LENGTH_METERS'] = round($_REQUEST['STRIP_LENGTH_FEET'] / 3.28084);
+      $_REQUEST['ELECTRODE_AREA'] = $_REQUEST['STRIP_LENGTH_METERS'] / 4;
+      $_REQUEST['NUM_DEFECT'] = $_REQUEST['NUM_HOLE'] + $_REQUEST['NUM_DELAM'] + $_REQUEST['NUM_SPLICE'];
+      // intermediate procees of ELECTRODE serial numbers
+      $electrode_arr_vals = array($_REQUEST['ELECTRODE_SERIAL_1'], $_REQUEST['ELECTRODE_SERIAL_2'], $_REQUEST['ELECTRODE_SERIAL_3']);
+      // number of processes within pipeline, compute serial number and remove the intermediate results
+      for ($i=0; $i<3; $i++) {
+        if ($_REQUEST['PERFORATED'] === '1') $electrode_arr_vals[$i] .= $electrode_arr_vals[$i].'-PF';
+        else $electrode_arr_vals[$i] .= $electrode_arr_vals[$i];
+        unset($_REQUEST['ELECTRODE_SERIAL_'.($i+1)]);
+        unset($_REQUEST['ELECTRODE_LENGTH_'.($i+1)]);
+      }
+     $_REQUEST['COMBINED_SERIAL']= implode("/", $electrode_arr_vals);
+     if ($sql_task_manager->sql_insert_gen($_REQUEST, 'SLITTER')) {
+       echo "<h3>"."Records added successfully!"."</h3>";
+     } else {
+       echo "<h3>"."Unsuccessful insertion! Check all the input values! Contact IT Department if you need further assitance"."</h3>";
+     }
     ?>
-
   </body>
 </html>
