@@ -94,14 +94,12 @@
       // intermediate procees of ELECTRODE serial numbers
       $electrode_arr_vals = array($_REQUEST['ELECTRODE_SERIAL_1'], $_REQUEST['ELECTRODE_SERIAL_2'], $_REQUEST['ELECTRODE_SERIAL_3']);
       // number of processes within pipeline, compute serial number and remove the intermediate results
-      $_REQUEST['COMBINED_SERIAL']= $_REQUEST["ELECTRODE_SERIAL_1"];
      for ($i=0; $i<3; $i++) {
-     //    if ($_REQUEST['PERFORATED'] === '1') $electrode_arr_vals[$i] .= $electrode_arr_vals[$i].'-PF';
-     //    else $electrode_arr_vals[$i] .= $electrode_arr_vals[$i];
-        unset($_REQUEST['ELECTRODE_SERIAL_'.($i+1)]);
-        unset($_REQUEST['ELECTRODE_LENGTH_'.($i+1)]);
+       if ($_REQUEST['PERFORATED'] === '1') $electrode_arr_vals[$i] = $electrode_arr_vals[$i].'-PF';
+       unset($_REQUEST['ELECTRODE_SERIAL_'.($i+1)]);
+       unset($_REQUEST['ELECTRODE_LENGTH_'.($i+1)]);
      }
-     // $_REQUEST['COMBINED_SERIAL']= implode("/", $electrode_arr_vals);
+     $_REQUEST['COMBINED_SERIAL']= implode("/", $electrode_arr_vals);
 
      if ($sql_task_manager->sql_insert_gen($_REQUEST, 'SLITTER')) {
        echo "<h3>"."Records added successfully!"."</h3>";
