@@ -22,26 +22,29 @@
       <input id="SLIT_OP" name="SLIT_OP" type="text" value="<?php echo htmlentities($row['SLIT_OP']); ?>" />
     </p>
     <HR>
-    <p>
+    <p style="<?php echo $sql_task_manager->color_ls_read("ELECTRODE_SERIAL_1") ?>">
         <label for="ELECTRODE_SERIAL_1">Electrode Serial 1</label>
         <input id="ELECTRODE_SERIAL_1" name="ELECTRODE_SERIAL_1" type="text">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    </p>
+    <p>
         <label for="ELECTRODE_LENGTH_1">Electrode Length 1</label>
         <input id="ELECTRODE_LENGTH_1" name="ELECTRODE_LENGTH_1" type="text">
         <label for="ELECTRODE_LENGTH_1">ft</label>
     </p>
-    <p>
+    <p style="<?php echo $sql_task_manager->color_ls_read("ELECTRODE_SERIAL_2") ?>">
         <label for="ELECTRODE_SERIAL_2">Electrode Serial 2</label>
         <input id="ELECTRODE_SERIAL_2" name="ELECTRODE_SERIAL_2" type="text">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    </p>
+    <p>
         <label for="ELECTRODE_LENGTH_2">Electrode Length 2</label>
         <input id="ELECTRODE_LENGTH_2" name="ELECTRODE_LENGTH_2" type="text">
         <label for="ELECTRODE_LENGTH_2">ft</label>
     </p>
-    <p>
+    <p style="<?php echo $sql_task_manager->color_ls_read("ELECTRODE_SERIAL_3") ?>">
         <label for="ELECTRODE_SERIAL_3">Electrode Serial 3</label>
         <input id="ELECTRODE_SERIAL_3" name="ELECTRODE_SERIAL_3" type="text">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    </p>
+    <p>
         <label for="ELECTRODE_LENGTH_3">Electrode Length 3</label>
         <input id="ELECTRODE_LENGTH" name="ELECTRODE_LENGTH_3" type="text">
         <label for="ELECTRODE_LENGTH_3">ft</label>
