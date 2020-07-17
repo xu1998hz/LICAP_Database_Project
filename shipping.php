@@ -60,33 +60,35 @@
     echo "Above user inputs are not in standards. Records are not added!"."<br/>";
     return;
   }
-  $sql_cmd = "SELECT 1 AS TEST FROM SLITTER WHERE COMBINED_SERIAL = ':str_1'";
-  if ($sql_task_manager->pdo_sql_vali_execute($sql_cmd, array(':str_1' => $_REQUEST['COMBINED_SERIAL']))) {
-    $sql = "UPDATE SLITTER SET WEIGHT = ".$_REQUEST['WEIGHT'].','."ROLL_DIAMETER =".$_REQUEST['ROLL_DIAMETER'].', PALLET_NUM = '
-    .$_REQUEST['PALLET_NUM'].', BOX_NUM = '.$_REQUEST['BOX_NUM'].',NOTES = '.$_REQUEST['NOTES'].', PACKAGE_OP	= '.$_REQUEST['PACKAGE_OP'].
-    " WHERE COMBINED_SERIAL = :str_2";
-    if ($sql_task_manager->pdo_sql_vali_execute($sql_cmd, array(':str_2' => $_REQUEST['COMBINED_SERIAL']))) {
+  //print_r($sql_task_manager->pdo_sql_vali_execute($sql_cmd, array(':str_1' => $_REQUEST['COMBINED_SERIAL']))[0]);
+  if ($sql_task_manager->query_record_exists('COMBINED_SERIAL', 'SLITTER', $_REQUEST['COMBINED_SERIAL'])) {
+    $sql = "UPDATE SLITTER SET WEIGHT = ".$_REQUEST['WEIGHT'].", ROLL_DIAMETER = ".$_REQUEST['ROLL_DIAMETER'].", PALLET_NUM = "
+    .$_REQUEST['PALLET_NUM'].", BOX_NUM = ".$_REQUEST['BOX_NUM'].", NOTES = ".$_REQUEST['NOTES']." WHERE COMBINED_SERIAL = :str_2";
+    $result_arr = $sql_task_manager->pdo_sql_vali_execute($sql, array(':str_2' => $_REQUEST['COMBINED_SERIAL']));
+    if ($result_arr[1]) {
+      //print_r($_REQUEST['COMBINED_SERIAL']);
       echo "<h3>"."Records updated successfully!"."</h3>";
+    } elseif (!$result_arr[0]) {
+      echo "<h3>"."Internal Error! Contact IT Department for further helps"."</h3>";
     } else {
-      echo "<h3>"."Unsuccessful Update! Check all the input values! Contact IT Department if you need further assitance"."</h3>";
+      echo "<h3>"."Inputs are the same in the current record!"."</h3>";
     }
   } else {
-    $sql_command = "SELECT 1 AS TEST FROM LAMINATOR WHERE ELECTRODE_SERIAL = ':str_1'";
-    if ($sql_task_manager->pdo_sql_vali_execute($sql_cmd, array(':str_1' => $_REQUEST['COMBINED_SERIAL']))) {
-      $FETCH = "SELECT ELECTRODE_LENGTH, NUM_DEFECT, NUM_HOLE, NUM_DELAM, NUM_SPLICE FROM LAMINATOR WHERE ELECTRODE_SERIAL = 'COMBINED_SERIAL' LIMIT 1";
-      $row_result = $sql_task_manager->pdo_sql_row_fetch($FETCH);
+    if ($sql_task_manager->query_record_exists('ELECTRODE_SERIAL', 'LAMINATOR', $_REQUEST['COMBINED_SERIAL'])) {
+      $FETCH = "SELECT ELECTRODE_LENGTH, NUM_DEFECT, NUM_HOLE, NUM_DELAM, NUM_SPLICE FROM LAMINATOR WHERE ELECTRODE_SERIAL = :str_1 LIMIT 1";
+      $sql_task_manager->pdo_sql_vali_execute($FETCH, array('str_1'=>$_REQUEST['COMBINED_SERIAL']));
+      $row_result = $sql_task_manager->row_fetch();
       $_REQUEST['NUM_DEFECT'] = $row_result['NUM_DEFECT'];
       $_REQUEST['NUM_HOLE'] = $row_result['NUM_HOLE'];
       $_REQUEST['NUM_DELAM'] = $row_result['NUM_DELAM'];
       $_REQUEST['NUM_SPLICE'] = $row_result['NUM_SPLICE'];
-      $_REQUEST['$ELECTRODE_LENGTH_METERS'] = $row_result['ELECTRODE_LENGTH'];
+      $_REQUEST['STRIP_LENGTH_METERS'] = $row_result['ELECTRODE_LENGTH'];
       $_REQUEST['STRIP_LENGTH_FEET'] = $row_result['ELECTRODE_LENGTH']*3.28;
       $_REQUEST['SLIT_OP'] = "NO SLITTER";
       $_REQUEST['PERFORATED'] = "0";
       $_REQUEST['ELECTRODE_AREA'] = $row_result['ELECTRODE_LENGTH']/4;
       $_REQUEST['TIMESTAMP'] = date("m/d/Y-H:i:s");
       $_REQUEST['DATE'] = date("m/d/Y");
-      $_REQUEST['ELECTRODE_LENGTH'] = $row_result['ELECTRODE_LENGTH'];
       if ($sql_task_manager->sql_insert_gen($_REQUEST, 'SLITTER')) {
         echo "<h3>"."Records created successfully!"."</h3>";
       } else {

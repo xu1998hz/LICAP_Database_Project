@@ -4,6 +4,7 @@
       private $color_ls;
       private $err_msgs;
       private $langs_trans;
+      private $stmt;
 
       public function __construct($hostname, $username, $password, $db_name, $color_arr=array(), $langs_trans=array()) {
         $this->err_msgs = array();
@@ -63,18 +64,30 @@
       public function pdo_sql_vali_execute($sql, $pdo_exec_arr) {
         $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         try{
-          $stmt = $this->pdo->prepare($sql);
-          $state_exec = $stmt->execute($pdo_exec_arr);
+          $this->stmt = $this->pdo->prepare($sql);
+          $state_exec = $this->stmt->execute($pdo_exec_arr);
         } catch (Exception $ex) {
           print($ex->getMessage());
           return array(false);
         }
-        return array($state_exec, $stmt);
+        return array($state_exec, $this->stmt->rowCount());
       }
 
       public function user_Input_batch_vali($col_name, $table_name, $request_array, $target) {
         $sql_cmd = "SELECT ".$col_name." FROM ".$table_name." WHERE ".$col_name."=:str_1";
-        $stmt = $this->pdo_sql_vali_execute($sql_cmd, array(':str_1'=>$request_array[$target]))[1];
+        $this->pdo_sql_vali_execute($sql_cmd, array(':str_1'=>$request_array[$target]));
+        $row = $this->stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ? true : false;
+      }
+
+      public function row_fetch() {
+        return $this->stmt->fetch(PDO::FETCH_ASSOC);
+      }
+
+      public function query_record_exists($col_name, $table_name, $content) {
+        $sql_cmd = "SELECT ".$col_name." FROM ".$table_name." WHERE ".$col_name." = :str_1";
+        $stmt = $this->pdo->prepare($sql_cmd);
+        $state_exec = $stmt->execute(array(':str_1'=>$content));
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         return $row ? true : false;
       }
