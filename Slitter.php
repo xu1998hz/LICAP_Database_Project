@@ -12,6 +12,10 @@
       $sql_task_manager = new sql_task_manager("localhost", "operator", "Licap123!", "Manufacture");
       $sql_command = "SELECT SLIT_OP FROM SLITTER ORDER BY ID DESC LIMIT 1";
       $row = $sql_task_manager->pdo_sql_row_fetch($sql_command);
+      if (count($_REQUEST)!==0) {
+        $state = $sql_task_manager->batch_opt_db_vali(array('ELECTRODE_SERIAL_1', 'ELECTRODE_SERIAL_2', 'ELECTRODE_SERIAL_3'),
+        array("Electrode Serial 1", "Electrode Serial 2", "Electrode Serial 3"), 'ELECTRODE_SERIAL', 'LAMINATOR', 0);
+      }
     ?>
     <p>
       <label for="SLIT_OP">Slitter Operator:</label>
@@ -71,6 +75,13 @@
       if (count($_REQUEST)===0){
         return;
       }
+      if (!($state)) {
+        echo "<hr>";
+        echo "<h3>Error Messages:</h3>";
+        $sql_task_manager->error_msg_print();
+        echo "Above user inputs are not in standards. Records are not added!"."<br/>";
+        return;
+      }
       $_REQUEST['DATE'] = date("m/d/Y");
       $_REQUEST['TIMESTAMP'] = date("m/d/Y-H:i:s");
       $_REQUEST['STRIP_LENGTH_FEET'] = $_REQUEST['ELECTRODE_LENGTH_1'] + $_REQUEST['ELECTRODE_LENGTH_2'] + $_REQUEST['ELECTRODE_LENGTH_3'];
@@ -80,13 +91,15 @@
       // intermediate procees of ELECTRODE serial numbers
       $electrode_arr_vals = array($_REQUEST['ELECTRODE_SERIAL_1'], $_REQUEST['ELECTRODE_SERIAL_2'], $_REQUEST['ELECTRODE_SERIAL_3']);
       // number of processes within pipeline, compute serial number and remove the intermediate results
-      for ($i=0; $i<3; $i++) {
-        if ($_REQUEST['PERFORATED'] === '1') $electrode_arr_vals[$i] .= $electrode_arr_vals[$i].'-PF';
-        else $electrode_arr_vals[$i] .= $electrode_arr_vals[$i];
+      $_REQUEST['COMBINED_SERIAL']= $_REQUEST["ELECTRODE_SERIAL_1"];
+     for ($i=0; $i<3; $i++) {
+     //    if ($_REQUEST['PERFORATED'] === '1') $electrode_arr_vals[$i] .= $electrode_arr_vals[$i].'-PF';
+     //    else $electrode_arr_vals[$i] .= $electrode_arr_vals[$i];
         unset($_REQUEST['ELECTRODE_SERIAL_'.($i+1)]);
         unset($_REQUEST['ELECTRODE_LENGTH_'.($i+1)]);
-      }
-     $_REQUEST['COMBINED_SERIAL']= implode("/", $electrode_arr_vals);
+     }
+     // $_REQUEST['COMBINED_SERIAL']= implode("/", $electrode_arr_vals);
+
      if ($sql_task_manager->sql_insert_gen($_REQUEST, 'SLITTER')) {
        echo "<h3>"."Records added successfully!"."</h3>";
      } else {

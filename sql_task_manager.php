@@ -79,21 +79,21 @@
         return $row ? true : false;
       }
 
-      public function batch_opt_db_vali($batch_str, $size, $col_name, $table_name) {
+      public function batch_opt_db_vali($batch_str, $size, $col_name, $table_name, $opt_num) {
         $batch_state = true;
         for ($j=0; $j<count($batch_str); $j++) {
           $cur_state = $this->user_Input_batch_vali($col_name, $table_name, $_REQUEST, $batch_str[$j]);
           $batch_state = $batch_state && $cur_state;
           if (!$cur_state) {
-            $this->error_msg_append($size[$j]." Film Batch Number is out of Spec!"."<br/>");
+            $this->error_msg_append($size[$j]." is out of Spec!"."<br/>");
             $this->color_ls_update($batch_str[$j]);
           }
-          for ($i=2; $i<2+count($batch_str); $i++) {
+          for ($i=2; $i<$opt_num+2; $i++) {
               $request_str =$batch_str[$j].'_'.$i;
               $cur_state = $_REQUEST[$request_str] ? $this->user_Input_batch_vali($col_name, $table_name, $_REQUEST, $request_str) : true;
               $batch_state = $batch_state && $cur_state;
               if (!$cur_state) {
-                $this->error_msg_append($size[$j]." Film Batch Number ".$i." is out of Spec!"."<br/>");
+                $this->error_msg_append($size[$j]." ".$i." is out of Spec!"."<br/>");
                 $this->color_ls_update($request_str);
               }
           }
