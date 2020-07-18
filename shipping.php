@@ -19,8 +19,8 @@
   ?>
   <p>
   <HR>
-    <label for="PACKAGE_OP">Shipping Operator Name:</label>
-    <input id="PACKAGE_OP" name="PACKAGE_OP" type="text" value="<?php echo htmlentities($row['OP_NAME']); ?>" />
+    <label for='OP_NAME'>Shipping Operator Name:</label>
+    <input id='OP_NAME' name='OP_NAME' type="text" value="<?php echo htmlentities($row['OP_NAME']); ?>" />
   </p>
 
   <p style="<?php echo $sql_task_manager->color_ls_read("COMBINED_SERIAL") ?>">
@@ -65,7 +65,7 @@
   //print_r($sql_task_manager->pdo_sql_vali_execute($sql_cmd, array(':str_1' => $_REQUEST['COMBINED_SERIAL']))[0]);
   if ($sql_task_manager->query_record_exists('COMBINED_SERIAL', 'SLITTER', $_REQUEST['COMBINED_SERIAL'])) {
     $sql = "UPDATE SLITTER SET WEIGHT = ".$_REQUEST['WEIGHT'].", ROLL_DIAMETER = ".$_REQUEST['ROLL_DIAMETER'].", PALLET_NUM = "
-    .$_REQUEST['PALLET_NUM'].", BOX_NUM = ".$_REQUEST['BOX_NUM'].", NOTES = ".$_REQUEST['NOTES']." WHERE COMBINED_SERIAL = :str_2";
+    .$_REQUEST['PALLET_NUM'].", BOX_NUM = ".$_REQUEST['BOX_NUM'].", NOTES = ".$_REQUEST['NOTES'].", OP_NAME=".$_REQUEST['OP_NAME']." WHERE COMBINED_SERIAL = :str_2";
     $result_arr = $sql_task_manager->pdo_sql_vali_execute($sql, array(':str_2' => $_REQUEST['COMBINED_SERIAL']));
     if ($result_arr[1]) {
       //print_r($_REQUEST['COMBINED_SERIAL']);
