@@ -9,7 +9,7 @@
   <?php
     require_once('sql_task_manager.php');
     $sql_task_manager = new sql_task_manager("localhost", "operator", "Licap123!", "Manufacture");
-    $sql_command = "SELECT PACKAGE_OP, PALLET_NUM, BOX_NUM FROM SLITTER ORDER BY ID DESC LIMIT 1";
+    $sql_command = "SELECT OP_NAME, PALLET_NUM, BOX_NUM FROM SLITTER ORDER BY ID DESC LIMIT 1";
     $row = $sql_task_manager->pdo_sql_row_fetch($sql_command);
     $row['BOX_NUM'] = $row['BOX_NUM'] < 16 ? $row['BOX_NUM']++ : 1;
     if (count($_REQUEST)!==0) {
@@ -18,10 +18,11 @@
     }
   ?>
   <p>
-    <label for="PACKAGE_OP">Shipping Operator Name:</label>
-    <input id="PACKAGE_OP" name="PACKAGE_OP" type="text" value="<?php echo htmlentities($row['PACKAGE_OP']); ?>" />
-  </p>
   <HR>
+    <label for="PACKAGE_OP">Shipping Operator Name:</label>
+    <input id="PACKAGE_OP" name="PACKAGE_OP" type="text" value="<?php echo htmlentities($row['OP_NAME']); ?>" />
+  </p>
+
   <p style="<?php echo $sql_task_manager->color_ls_read("COMBINED_SERIAL") ?>">
     <label for="COMBINED_SERIAL">Electrode Serial</label>
     <input id="COMBINED_SERIAL" name="COMBINED_SERIAL" type="text">
@@ -40,6 +41,7 @@
     <label for="ROLL_DIAMETER">Roll Diameter</label>
     <input id="ROLL_DIAMETER" name="ROLL_DIAMETER" type="text" style="max-width: 100px;">
   </p>
+
   <p>
   <hr>
     <label for="NOTES">Notes:</label>
