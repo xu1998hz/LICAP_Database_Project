@@ -15,7 +15,6 @@
     $AC_LOT_NUM_RESULT_2 = explode("-", $row['AC_LOT_NUM_2'])[0] . "-" . explode("-", $row['AC_LOT_NUM_2'])[1];
     $Batch_num = $sql_task_manager->ID_computation($row['BATCH_NUM'], '', '', 'M', 1);
     echo "<h1>" . "Current Batch:" . $Batch_num . "</h1>";
-    //$PTFE = (0.08*$_REQUEST['AC_WEIGHT']/0.92)+(0.018/0.987)*($_REQUEST['BAGHOUSE_REYCLE']+$_REQUEST['STRIP_RECYCLE']+$_REQUEST['OUTSIDE_RECYCLE'])
     // error handlings to check certain values existing at database
   ?>
   <p>
@@ -106,7 +105,7 @@
 
   <?php
     // check whether there is user input
-    if (count($_REQUEST)===0){
+    if (count($_REQUEST)===0) {
       return;
     }
     $_REQUEST['BATCH_NUM'] = $Batch_num;
