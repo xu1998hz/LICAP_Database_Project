@@ -71,6 +71,7 @@
         <input type="text" name="NOTES" id="NOTES">
     </p>
     <input type="submit" value="Submit">
+    <hr>
     </form>
 
     <?php
@@ -89,6 +90,18 @@
       $_REQUEST['TIMESTAMP'] = date("m/d/Y-H:i:s");
       $_REQUEST['STRIP_LENGTH_FEET'] = $_REQUEST['ELECTRODE_LENGTH_1'] + $_REQUEST['ELECTRODE_LENGTH_2'] + $_REQUEST['ELECTRODE_LENGTH_3'];
       $_REQUEST['STRIP_LENGTH_METERS'] = round($_REQUEST['STRIP_LENGTH_FEET'] / 3.28084);
+      # update 3 yield percentage at Laminator based on serial 1, 2, 3
+      for ($i=1; $i<4; $i++) {
+        $cur_sql = "UPDATE LAMINATOR SET YIELD_PERCENTAGE = ".$_REQUEST['STRIP_LENGTH_METERS']."/ELECTRODE_LENGTH*100"." WHERE ELECTRODE_SERIAL = :str_temp";
+        $result_arr = $sql_task_manager->pdo_sql_vali_execute($cur_sql, array(':str_temp' => $_REQUEST['ELECTRODE_SERIAL_'.$i]));
+        if ($result_arr[1]) {
+          echo "<h3>"."Electrode Serial ".$i." updated Laminator yield percentage successfully!"."</h3>";
+        } elseif (!$result_arr[0]) {
+          echo "<h3>"."Internal Error! Contact IT Department for further helps"."</h3>";
+        } else {
+          echo "<h3>"."Electrode Serial ".$i." Input has already updated yield percentage in laminator!"."</h3>";
+        }
+      }
       $_REQUEST['ELECTRODE_AREA'] = $_REQUEST['STRIP_LENGTH_METERS'] / 4;
       $_REQUEST['NUM_DEFECT'] = $_REQUEST['NUM_HOLE'] + $_REQUEST['NUM_DELAM'] + $_REQUEST['NUM_SPLICE'];
       // intermediate procees of ELECTRODE serial numbers
