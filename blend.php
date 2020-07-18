@@ -15,6 +15,7 @@
     $AC_LOT_NUM_RESULT_2 = explode("-", $row['AC_LOT_NUM_2'])[0] . "-" . explode("-", $row['AC_LOT_NUM_2'])[1];
     $Batch_num = $sql_task_manager->ID_computation($row['BATCH_NUM'], '', '', 'M', 1);
     echo "<h1>" . "Current Batch:" . $Batch_num . "</h1>";
+    //$PTFE = (0.08*$_REQUEST['AC_WEIGHT']/0.92)+(0.018/0.987)*($_REQUEST['BAGHOUSE_REYCLE']+$_REQUEST['STRIP_RECYCLE']+$_REQUEST['OUTSIDE_RECYCLE'])
     // error handlings to check certain values existing at database
   ?>
   <p>
@@ -37,8 +38,33 @@
   <hr>
   <p>
     <label for="AC_WEIGHT">Active Carbon Weight:</label>
-    <input type="text" name="AC_WEIGHT" value="<?php echo htmlentities($row['AC_WEIGHT']); ?>"/>
+    <input type="text" id="AC_WEIGHT" name="AC_WEIGHT" value="<?php echo htmlentities($row['AC_WEIGHT']); ?>" onkeyup="PTFE_compute()"/>
   </p>
+  <p>
+    <label for="BAGHOUSE_RECYCLE">Bag House Recycle Weight:</label>
+    <input type="text" id="BAGHOUSE_RECYCLE" name="BAGHOUSE_RECYCLE" value="<?php echo htmlentities($row['BAGHOUSE_RECYCLE']); ?>" onkeyup="PTFE_compute()"/>
+  </p>
+  <p>
+    <label for="STRIP_RECYCLE">Strip Recycle Weight:</label>
+    <input type="text" id="STRIP_RECYCLE" name="STRIP_RECYCLE" value="<?php echo htmlentities($row['STRIP_RECYCLE']); ?>" onkeyup="PTFE_compute()"/>
+    <label for="BAGHOUSE_RECYCLE">*Must enter a zero if no recycle is used!</label>
+  </p>
+  <p>
+    <label for="OUTSIDE_RECYCLE">Outside Recycle Weight:</label>
+    <input type"text" id="OUTSIDE_RECYCLE" name="OUTSIDE_RECYCLE" value="<?php echo htmlentities($row['OUTSIDE_RECYCLE']); ?>" onkeyup="PTFE_compute()"/>
+  </p>
+  <p style="color:red;">
+    Real time PTFE value: <span id="PTFE"></span>
+  </p>
+  <script>
+    function PTFE_compute() {
+      var AC_WEIGHT = document.getElementById("AC_WEIGHT").value;
+      var BAGHOUSE_RECYCLE = document.getElementById("BAGHOUSE_RECYCLE").value;
+      var STRIP_RECYCLE = document.getElementById("STRIP_RECYCLE").value;
+      var OUTSIDE_RECYCLE = document.getElementById("OUTSIDE_RECYCLE").value;
+      document.getElementById("PTFE").innerHTML = (0.08*AC_WEIGHT/0.92)+(0.018/0.987)*(BAGHOUSE_RECYCLE+STRIP_RECYCLE+OUTSIDE_RECYCLE);
+    }
+  </script>
   <p>
     <label for="ACETONE_LOT">Acetone Lot Number:</label>
     <input type="text" name="ACETONE_LOT" value="<?php echo htmlentities($row['ACETONE_LOT']); ?>" />
@@ -46,19 +72,6 @@
   <p>
     <label for="ACETONE_WEIGHT">Acetone Weight:</label>
     <input type="text" name="ACETONE_WEIGHT" value="<?php echo htmlentities($row['ACETONE_WEIGHT']); ?>" />
-  </p>
-  <p>
-    <label for="STIRP_RECYCLE">Strip Recycle Weight:</label>
-    <input type="text" name="STRIP_RECYCLE" id="STRIP_RECYCLE" value="<?php echo htmlentities($row['STRIP_RECYCLE']); ?>" />
-    <label for="BAGHOUSE_RECYCLE">*Must enter a zero if no recycle is used!</label>
-  </p>
-  <p>
-    <label for="BAGHOUSE_RECYCLE">Bag House Recycle Weight:</label>
-    <input type="text" name="BAGHOUSE_RECYCLE" id="BAGHOUSE_RECYCLE" value="<?php echo htmlentities($row['BAGHOUSE_RECYCLE']); ?>" />
-  </p>
-  <p>
-    <label for="OUTSIDE_RECYCLE">Outside Recycle Weight:</label>
-    <input type"text" name="OUTSIDE_RECYCLE" id="OUTSIDE_RECYCLE" value="<?php echo htmlentities($row['OUTSIDE_RECYCLE']); ?>" />
   </p>
   <p>
     <label for="PTFE_LOT">PTFE Lot:</label>

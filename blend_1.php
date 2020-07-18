@@ -14,15 +14,6 @@ $TEST_2 = 1; //$row['TEST'];
 else{ $TEST_2 = 1;}
 
 
-if(empty($AC_LOT_3) !== true){
-$check_ac_3 = "SELECT 1 AS TEST FROM INVENTORY_TABLE WHERE SERIAL = '$AC_LOT_3'";
-$check_ac_result_3 = mysqli_query($inventory_link, $check_ac_3);
-$row = mysqli_fetch_assoc($check_ac_result_3);
-$TEST_3 = 1;//$row['TEST'];
-}
-else{ $TEST_3 = 1;}
-
-
 
 $CHECK_ACETONE = "SELECT 1 AS TEST FROM INVENTORY_TABLE WHERE SERIAL = '$ACETONE_LOT'";
 $CHECK_ACETONE_RESULT = mysqli_query($inventory_link, $CHECK_ACETONE);
