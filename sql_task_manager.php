@@ -43,6 +43,19 @@
         return $row_values;
       }
 
+      public function pdo_sql_rows_fetch($sql, $name_ls) {
+        $sql_result = $this->pdo->query($sql);
+        $sql_arr = array();
+        while ($row = $sql_result->fetch(PDO::FETCH_ASSOC)) {
+          $ret_arr = array();
+          for ($i=0; $i<count($name_ls); $i++) {
+            array_push($ret_arr, $row[$name_ls[$i]]);
+          }
+          array_push($sql_arr, $ret_arr);
+        }
+        return $sql_arr;
+      }
+
       # check if specifc spec values are out of bounds, leave val1 and val2 for two versions, val2 can be optional
       public function user_Input_spec_vali($request_array, $spec_arr, $val1, $val2, $uncertainty) {
         $state = true; $key_arr=array_keys($spec_arr); $val_arr=array_values($spec_arr);
