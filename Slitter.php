@@ -71,7 +71,6 @@
         <input type="text" name="NOTES" id="NOTES" value = "<?php echo isset($_POST['NOTES'])&&(!$state) ? $_POST['NOTES'] : '' ?>">
     </p>
     <input type="submit" value="Submit">
-    <hr>
     </form>
 
     <?php
