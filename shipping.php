@@ -25,7 +25,7 @@
 
   <p style="<?php echo $sql_task_manager->color_ls_read("COMBINED_SERIAL") ?>">
     <label for="COMBINED_SERIAL">Electrode Serial</label>
-    <input id="COMBINED_SERIAL" name="COMBINED_SERIAL" type="text">
+    <input id="COMBINED_SERIAL" name="COMBINED_SERIAL" type="text" value = "<?php echo isset($_POST['COMBINED_SERIAL'])&&(!$state) ? $_POST['COMBINED_SERIAL'] : '' ?>">
   </p>
   <p>
     <label for="PALLET_NUM">Pallet_Number:</label>
@@ -36,16 +36,16 @@
   </p>
   <p>
     <label for="WEIGHT">Shipping Weight</label>
-    <input id="WEIGHT" name="WEIGHT" type="text" style="max-width: 100px;">
+    <input id="WEIGHT" name="WEIGHT" type="text" style="max-width: 100px;" value = "<?php echo isset($_POST['WEIGHT'])&&(!$state) ? $_POST['WEIGHT'] : '' ?>">
     &nbsp;&nbsp;&nbsp;
     <label for="ROLL_DIAMETER">Roll Diameter</label>
-    <input id="ROLL_DIAMETER" name="ROLL_DIAMETER" type="text" style="max-width: 100px;">
+    <input id="ROLL_DIAMETER" name="ROLL_DIAMETER" type="text" style="max-width: 100px;" value = "<?php echo isset($_POST['ROLL_DIAMETER'])&&(!$state) ? $_POST['ROLL_DIAMETER'] : '' ?>">
   </p>
 
   <p>
   <hr>
     <label for="NOTES">Notes:</label>
-    <input type="text" name="NOTES" id="NOTES">
+    <input type="text" name="NOTES" id="NOTES" value = "<?php echo isset($_POST['NOTES'])&&(!$state) ? $_POST['NOTES'] : '' ?>">
   </p>
   <input type="submit" value="Submit">
   </form>
@@ -56,19 +56,13 @@
     return;
   }
   if (!($state)) {
-    echo "<hr>";
-    echo "<h3>Error Messages:</h3>";
     $sql_task_manager->error_msg_print();
-    echo "Above user inputs are not in standards. Records are not added!"."<br/>";
     return;
   }
-  //print_r($sql_task_manager->pdo_sql_vali_execute($sql_cmd, array(':str_1' => $_REQUEST['COMBINED_SERIAL']))[0]);
-  $notes_str=$_REQUEST['NOTES'];
-  $op_str=$_REQUEST['OP_NAME'];
   if ($sql_task_manager->query_record_exists('COMBINED_SERIAL', 'SLITTER', $_REQUEST['COMBINED_SERIAL'])) {
-    $sql = "UPDATE SLITTER SET WEIGHT = ".$_REQUEST['WEIGHT'].", ROLL_DIAMETER = ".$_REQUEST['ROLL_DIAMETER'].", PALLET_NUM = "
-    .$_REQUEST['PALLET_NUM'].", BOX_NUM = ".$_REQUEST['BOX_NUM'].", NOTES = '$notes_str'".", OP_NAME='$op_str' WHERE COMBINED_SERIAL = :str_2";
-    $result_arr = $sql_task_manager->pdo_sql_vali_execute($sql, array(':str_2' => $_REQUEST['COMBINED_SERIAL']));
+    $sql = "UPDATE SLITTER SET WEIGHT = ?, ROLL_DIAMETER = ?, PALLET_NUM = ?, BOX_NUM = ?, NOTES = ?, OP_NAME=? WHERE COMBINED_SERIAL = ?";
+    $result_arr = $sql_task_manager->pdo_sql_vali_execute($sql, array($_REQUEST['WEIGHT'], $_REQUEST['ROLL_DIAMETER'], $_REQUEST['PALLET_NUM'], $_REQUEST['BOX_NUM'],
+    $_REQUEST['NOTES'],  $_REQUEST['OP_NAME'], $_REQUEST['COMBINED_SERIAL']));
     if ($result_arr[1]) {
       //print_r($_REQUEST['COMBINED_SERIAL']);
       echo "<h3>"."Records updated successfully!"."</h3>";

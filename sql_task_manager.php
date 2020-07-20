@@ -3,16 +3,10 @@
       private $pdo;
       private $color_ls;
       private $err_msgs;
-      private $langs_trans;
       private $stmt;
 
-      public function __construct($hostname, $username, $password, $db_name, $color_arr=array(), $langs_trans=array()) {
+      public function __construct($hostname, $username, $password, $db_name) {
         $this->err_msgs = array();
-        $this->langs_trans = $langs_trans;
-        // initialize all the text colors
-        for ($i=0; $i<count($color_arr); $i++) {
-          $this->color_ls[$color_arr[$i]] = "color:black;";
-        }
         # set up the PPO computatiion with database at localhost port 3306
         try {
           $this->pdo = new PDO("mysql:host=$hostname; port=3306; dbname=$db_name", $username, $password);
@@ -34,9 +28,12 @@
       }
 
       public function error_msg_print() {
+        echo "<hr>";
+        echo "<h3>Error Messages:</h3>";
         for ($i=0; $i <count($this->err_msgs); $i++) {
           echo $this->err_msgs[$i];
         }
+        echo "Above user inputs are not in standards. Records are not added!"."<br/>";
       }
 
       # set up the conncection of local host on the web server, execute sql comamnds
@@ -48,13 +45,13 @@
 
       # check if specifc spec values are out of bounds, leave val1 and val2 for two versions, val2 can be optional
       public function user_Input_spec_vali($request_array, $spec_arr, $val1, $val2, $uncertainty) {
-        $state = true;
+        $state = true; $key_arr=array_keys($spec_arr); $val_arr=array_values($spec_arr);
         for($i=0; $i<count($spec_arr); $i++) {
-          if ((!($request_array[$spec_arr[$i]]>=($val1-$uncertainty) && $request_array[$spec_arr[$i]]<=($val1+$uncertainty)))
-          && (!($request_array[$spec_arr[$i]]>=($val2-$uncertainty) && $request_array[$spec_arr[$i]]<=($val2+$uncertainty)))) {
-            $this->error_msg_append("The value of ".$this->langs_trans[$spec_arr[$i]]." must be in between ".($val1-$uncertainty)
+          if ((!($request_array[$key_arr[$i]]>=($val1-$uncertainty) && $request_array[$key_arr[$i]]<=($val1+$uncertainty)))
+          && (!($request_array[$key_arr[$i]]>=($val2-$uncertainty) && $request_array[$key_arr[$i]]<=($val2+$uncertainty)))) {
+            $this->error_msg_append("The value of ".$val_arr[$i]." must be in between ".($val1-$uncertainty)
             ." to ".($val1+$uncertainty)." or ".($val2-$uncertainty)." to ".($val2+$uncertainty)."<br/>");
-            $this->color_ls_update($spec_arr[$i]);
+            $this->color_ls_update($key_arr[$i]);
             $state = false;
           }
         }

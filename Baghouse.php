@@ -33,7 +33,8 @@
       $row['ID']++;
       $row['DATE'] = date("m/d/Y");
       $row['TIMESTAMP'] = date("m/d/Y-H:i:s");
-      if ($sql_task_manager->sql_insert_gen_exec($_REQUEST, array_keys($row), array_values($row), 'SLITTER')) {
+      $row['BAGHOUSE_WEIGHT'] = $_REQUEST['BAGHOUSE_WEIGHT'];
+      if ($sql_task_manager->sql_insert_gen($row, 'SLITTER')) {
         echo "<h3>"."Records added successfully!"."</h3>";
       } else {
         echo "<h3>"."Unsuccessful insertion. Check the input value. Contact IT Department if you need further assitance"."</h3>";

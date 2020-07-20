@@ -8,7 +8,7 @@
    <?php
      require_once('sql_task_manager.php');
      $langs_trans = array("END_OP" => "Ending Operator Thickness", "END_CENTER" => "End Center Thickness", "END_MACHINE" => "Ending Machine Side Thickness");
-     $sql_task_manager = new sql_task_manager("localhost", "operator", "Licap123!", "Manufacture", array('END_OP','END_CENTER', 'END_MACHINE', 'MIX_BATCH_NUM', 'MIX_BATCH_NUM_2'), $langs_trans);
+     $sql_task_manager = new sql_task_manager("localhost", "operator", "Licap123!", "Manufacture");
      $sql_command = "SELECT FILM_1_OP, FILM_2_OP, MIX_BATCH_NUM, MIX_BATCH_NUM_2, THICKNESS, MILL_TEMP, CAL_1_TEMP, CAL_2_TEMP, LINE_SPEED FROM FILM WHERE FILM_MILL=1 ORDER BY ID DESC LIMIT 1";
      $row = $sql_task_manager->pdo_sql_row_fetch($sql_command);
      //Pull last Film Lot Number
@@ -31,7 +31,7 @@
          $sql_task_manager->error_msg_append("<br/>"."Powder Batch 2 is out of Spec!"."<br/>");
          $sql_task_manager->color_ls_update('MIX_BATCH_NUM_2');
        }
-       $spec_state = $sql_task_manager->user_Input_spec_vali($_REQUEST, array('END_OP', 'END_CENTER', 'END_MACHINE'), 156, 94, 2);
+       $spec_state = $sql_task_manager->user_Input_spec_vali($_REQUEST, $langs_trans, 156, 94, 2);
        $state = $spec_state && $batch_state && $opt_batch_state;
      }
    ?>
@@ -119,15 +119,12 @@
 
     <input type="submit" value="Submit">
 
-  <hr>
    </form>
 
    <?php
      if (count($_REQUEST)!==0) {
        if (!($state)) {
-            echo "<h3>Error Messages:</h3>";
             $sql_task_manager->error_msg_print();
-            echo "Above user inputs are not in standards. Records are not added!"."<br/>";
             return;
        }
        # compute values from above features

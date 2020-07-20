@@ -10,8 +10,7 @@
     <?php
       require_once('sql_task_manager.php');
       $langs_trans = array("END_OP" => "Ending Operator Side Thickness", "END_CENTER" => "End Center Thickness", "END_MACHINE" => "Ending Machine Side Thickness");
-      $sql_task_manager = new sql_task_manager("localhost", "operator", "Licap123!", "Manufacture", array('END_OP','END_CENTER', 'END_MACHINE', 'UPPER_FILM_BATCH_NUM',
-      'UPPER_FILM_BATCH_NUM_2', 'UPPER_FILM_BATCH_NUM_3', 'LOWER_FILM_BATCH_NUM','LOWER_FILM_BATCH_NUM_2','LOWER_FILM_BATCH_NUM_3'), $langs_trans);
+      $sql_task_manager = new sql_task_manager("localhost", "operator", "Licap123!", "Manufacture");
       # check whether yield percentage column exists
       $sql_check_col = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'LAMINATOR' AND COLUMN_NAME = 'YIELD_PERCENTAGE'";
       // if yield percentage not exists it will add into the table
@@ -30,7 +29,7 @@
       // check if this is before user inputs, error handlings on existing user inputs
       if (count($_REQUEST)!==0) {
         $batch_state = $sql_task_manager->batch_opt_db_vali(array('UPPER_FILM_BATCH_NUM', 'LOWER_FILM_BATCH_NUM'), array("Upper Film Batch Number", "Lower Film Batch Number"), 'FILM_ID', 'FILM', 2);
-        $spec_state = $sql_task_manager->user_Input_spec_vali($_REQUEST, array('END_OP', 'END_CENTER', 'END_MACHINE'), 315, 210, 5);
+        $spec_state = $sql_task_manager->user_Input_spec_vali($_REQUEST, $langs_trans, 315, 210, 5);
         $state = $spec_state && $batch_state;
       }
     ?>
@@ -136,19 +135,16 @@
     <?php
       if (count($_REQUEST)!==0) {
         if (!($state)) {
-             echo "<hr>";
-             echo "<h3>Error Messages:</h3>";
              $sql_task_manager->error_msg_print();
-             echo "Above user inputs are not in standards. Records are not added!"."<br/>";
              return;
         }
         //Sets date and timestamp
         $_REQUEST['LAM_DATE'] = date("m/d/Y");
         $_REQUEST['TIMESTAMP'] = date("m/d/Y-H:i:s");
         //Update Amount of CAF used based on serial number
-        $update_length = "UPDATE INVENTORY_TABLE SET AMOUNT_USED = AMOUNT_USED + ".$_REQUEST['ELECTRODE_LENGTH']." WHERE SERIAL=:str_1";
-        $sql_task_manager->pdo_sql_vali_execute($update_length, array('str_1'=>$_REQUEST['CAF_BATCH_NUM']));
-        $sql_task_manager->pdo_sql_vali_execute($update_length, array('str_1'=>$_REQUEST['CAF_BATCH_NUM_2']));
+        $update_length = "UPDATE INVENTORY_TABLE SET AMOUNT_USED = AMOUNT_USED + ? WHERE SERIAL=?";
+        $sql_task_manager->pdo_sql_vali_execute($update_length, array($_REQUEST['ELECTRODE_LENGTH'], $_REQUEST['CAF_BATCH_NUM']));
+        $sql_task_manager->pdo_sql_vali_execute($update_length, array($_REQUEST['ELECTRODE_LENGTH'], $_REQUEST['CAF_BATCH_NUM_2']));
         # get the last record
         $row = $sql_task_manager->pdo_sql_row_fetch("SELECT ELECTRODE_SERIAL FROM LAMINATOR ORDER BY ID DESC LIMIT 1");
         # sprcific ELECTRODE seiral compuation in Laminator

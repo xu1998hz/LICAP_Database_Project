@@ -15,11 +15,27 @@
     $AC_LOT_NUM_RESULT_2 = explode("-", $row['AC_LOT_NUM_2'])[0] . "-" . explode("-", $row['AC_LOT_NUM_2'])[1];
     $Batch_num = $sql_task_manager->ID_computation($row['BATCH_NUM'], '', '', 'M', 1);
     echo "<h1>" . "Current Batch:" . $Batch_num . "</h1>";
-    // error handlings to check certain values existing at database
+    // error handlings to check Operator input their names
+    if (count($_REQUEST)!==0) {
+      if ($_REQUEST["MIXING_OP"]==='') {
+        $sql_task_manager->color_ls_update("MIXING_OP");
+        $sql_task_manager->error_msg_append("Mixer Operator name can't be empty"."<br/>");
+        $state = false;
+      }
+      if ($_REQUEST["GRIND_OP"]==='') {
+        $sql_task_manager->color_ls_update("GRIND_OP");
+        $sql_task_manager->error_msg_append("Jet Mill Operator name can't be empty"."<br/>");
+        $state = false;
+      }
+    }
   ?>
-  <p>
+  <p style="<?php echo $sql_task_manager->color_ls_read("MIXING_OP") ?>">
     <label> Mixer Operator:</label>
-    <input type="text" name="MIXING_OP" value="<?php echo htmlentities($row['MIXING_OP']); ?>" />
+    <input type="text" name="MIXING_OP"/>
+  </p>
+  <p style="<?php echo $sql_task_manager->color_ls_read("GRIND_OP") ?>">
+    <label for="GRIND_OP">Jet Mill Operator:</label>
+    <input type="text" name="GRIND_OP"/>
   </p>
   <hr>
   <p>
@@ -93,10 +109,6 @@
     <input type="text" name="PERIPHERAL_PRESSURE" value="<?php echo htmlentities($row['PERIPHERAL_PRESSURE']); ?>" />
   </p>
   <p>
-    <label for="GRIND_OP">Jet Mill Operator:</label>
-    <input type="text" name="GRIND_OP" value="<?php echo htmlentities($row['GRIND_OP']); ?>" />
-  </p>
-  <p>
     <label for="MIXER_RPM">K-Tron RPM:</label>
     <input type="text" name="MIXER_RPM" value="<?php echo htmlentities($row['MIXER_RPM']); ?>" />
   </p>
@@ -106,6 +118,10 @@
   <?php
     // check whether there is user input
     if (count($_REQUEST)===0) {
+      return;
+    }
+    if (!$state) {
+      $sql_task_manager->error_msg_print();
       return;
     }
     $_REQUEST['BATCH_NUM'] = $Batch_num;
