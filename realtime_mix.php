@@ -24,30 +24,30 @@ WHILE($row = mysqli_fetch_assoc($result))
 {
 	echo $row['TIMESTAMP']." |";
 	echo $row['BATCH_NUM']." &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp|";
-	echo $row['AC_WEIGHT']." &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp|";	
+	echo $row['AC_WEIGHT']." &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp|";
 	echo $row['ACETONE_WEIGHT']."&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp|  ";
 	echo $row['PTFE_WEIGHT']." &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp|";
 	echo $row['STRIP_RECYCLE']."&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp|        ";
 	echo $row['BAGHOUSE_RECYCLE']." "."&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp|";
 	echo $row['OUTSIDE_RECYCLE']." "."&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp <br> ";
-	
-$TOTAL_AC = $TOTAL_AC + $row['AC_WEIGHT'];
-$TOTAL_ACETONE = $TOTAL_ACETONE + $row['ACETONE_WEIGHT'];
-$TOTAL_PTFE = $TOTAL_PTFE + $row['PTFE_WEIGHT'];
-$TOTAL_RECYCLE = $TOTAL_RECYCLE + $row['STRIP_RECYCLE'] + $row['BAGHOUSE_RECYCLE'] + $row['OUTSIDE_RECYCLE'];
+
+$TOTAL_AC = $row['AC_WEIGHT'];
+$TOTAL_ACETONE = $row['ACETONE_WEIGHT'];
+$TOTAL_PTFE = $row['PTFE_WEIGHT'];
+$TOTAL_RECYCLE = $row['STRIP_RECYCLE'] + $row['BAGHOUSE_RECYCLE'] + $row['OUTSIDE_RECYCLE'];
 
 }
 	echo "<hr>Total AC Used: " . $TOTAL_AC ."kg". "<br>";
 	echo "Total Acetone Used: " . $TOTAL_ACETONE."kg". "<br>";
 	echo "Total PTFE Used: " . $TOTAL_PTFE."kg". "<br>";
 	echo "Total Recycle Used: " . $TOTAL_RECYCLE."kg";
-	
+
 
 // close connection
 
 mysqli_close($link);
 
-?> 
+?>
 <form action="material_export.php" method="get">
   <input type="submit" value="Download CSV">
 

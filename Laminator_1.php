@@ -124,8 +124,8 @@
       <label for="LAM_SPEED">Line Speed:</label>
       <input type="text" name="LAM_SPEED" value="<?php echo htmlentities($row['LAM_SPEED']); ?>" style="max-width: 100px;"/>
       <label for="LAM_SPEED">meters/minute</label>
-    <p>
     </p>
+    <p>
       <label for="NOTES">Note:</label>
       <input type="text" name="NOTES" id="NOTES">
     </p>
