@@ -15,32 +15,40 @@
         }
       }
 
-      public function color_ls_read($ele) {
-        return $this->color_ls[$ele];
-      }
-
-      public function color_ls_update($ele) {
-        $this->color_ls[$ele] = "color:red;";
-      }
-
-      public function error_msg_append($str_msg) {
-        array_push($this->err_msgs, $str_msg);
-      }
-
-      public function error_msg_print() {
-        echo "<hr>";
-        for ($i=0; $i <count($this->err_msgs); $i++) {
-          echo $this->err_msgs[$i];
+      # validate general user-input based sql command and return the status of the command
+      public function pdo_sql_vali_execute($sql, $pdo_exec_arr) {
+        $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        try{
+          $this->stmt = $this->pdo->prepare($sql);
+          $state_exec = $this->stmt->execute($pdo_exec_arr);
+        } catch (Exception $ex) {
+          print($ex->getMessage());
+          return array(false, 0);
         }
+        return array($state_exec, $this->stmt->rowCount());
       }
 
-      # set up the conncection of local host on the web server, execute sql comamnds
+      # fetch the row from the last query command in which query needs to be validated
+      public function row_fetch() {
+        return $this->stmt->fetch(PDO::FETCH_ASSOC);
+      }
+
+      # check if record exists in the specific table column
+      public function query_record_exists($col_name, $table_name, $content) {
+        $sql_cmd = "SELECT ".$col_name." FROM ".$table_name." WHERE ".$col_name." = :str_1";
+        $this->pdo_sql_vali_execute($sql_cmd, array(':str_1'=>$content));
+        $row = $this->stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ? true : false;
+      }
+
+      # fetch only one row based on sql command
       public function pdo_sql_row_fetch($sql) {
         $sql_result = $this->pdo->query($sql);
         $row_values = $sql_result->fetch(PDO::FETCH_ASSOC);
         return $row_values;
       }
 
+      # fetch multiple rows based on specific sql command
       public function pdo_sql_rows_fetch($sql, $name_ls) {
         $sql_result = $this->pdo->query($sql);
         $sql_arr = array();
@@ -52,6 +60,41 @@
           array_push($sql_arr, $ret_arr);
         }
         return $sql_arr;
+      }
+
+      # generate sql insert commands based on both userinput features and features require further computation
+      public function sql_insert_gen($request_array, $table) {
+        $str_cmd = "INSERT INTO ".$table." (";
+        $key_array = array_keys($request_array);
+        $vals_array = array_values($request_array);
+        $out_vals_array = implode(',', array_map(function($val) { return ':'.$val; }, $key_array));
+        $str_cmd .= implode(",", $key_array);
+        $str_cmd .= ') VALUES ('.$out_vals_array.')';
+        $pdo_exec_arr = array_combine(explode(',', $out_vals_array),  $vals_array);
+        return $this->pdo_sql_vali_execute($str_cmd, $pdo_exec_arr)[0];
+      }
+
+      # show the current color of this text box
+      public function color_ls_read($ele) {
+        return $this->color_ls[$ele];
+      }
+
+      # update color of text box because there is an error or warning
+      public function color_ls_update($ele) {
+        $this->color_ls[$ele] = "color:red;";
+      }
+
+      # adds one specfic error message in the error history
+      public function error_msg_append($str_msg) {
+        array_push($this->err_msgs, $str_msg);
+      }
+
+      # print out all the error messages in this page history
+      public function error_msg_print() {
+        echo "<hr>";
+        for ($i=0; $i <count($this->err_msgs); $i++) {
+          echo $this->err_msgs[$i];
+        }
       }
 
       # check if specifc spec values are out of bounds, leave val1 and val2 for two versions, val2 can be optional
@@ -69,41 +112,11 @@
         return $state ? true : false;
       }
 
-      public function pdo_sql_vali_execute($sql, $pdo_exec_arr) {
-        $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        try{
-          $this->stmt = $this->pdo->prepare($sql);
-          $state_exec = $this->stmt->execute($pdo_exec_arr);
-        } catch (Exception $ex) {
-          print($ex->getMessage());
-          return array(false);
-        }
-        return array($state_exec, $this->stmt->rowCount());
-      }
-
-      private function user_Input_batch_vali($col_name, $table_name, $request_array, $target) {
-        $sql_cmd = "SELECT ".$col_name." FROM ".$table_name." WHERE ".$col_name."=:str_1";
-        $this->pdo_sql_vali_execute($sql_cmd, array(':str_1'=>$request_array[$target]));
-        $row = $this->stmt->fetch(PDO::FETCH_ASSOC);
-        return $row ? true : false;
-      }
-
-      public function row_fetch() {
-        return $this->stmt->fetch(PDO::FETCH_ASSOC);
-      }
-
-      public function query_record_exists($col_name, $table_name, $content) {
-        $sql_cmd = "SELECT ".$col_name." FROM ".$table_name." WHERE ".$col_name." = :str_1";
-        $stmt = $this->pdo->prepare($sql_cmd);
-        $state_exec = $stmt->execute(array(':str_1'=>$content));
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $row ? true : false;
-      }
-
+      # batch validation function which can check both required boxes and optional boxes valeus existed in the specific databse column
       public function batch_opt_db_vali($var_names, $display_names, $col_name, $table_name, $opt_num) {
         $batch_state = true;
         for ($j=0; $j<count($var_names); $j++) {
-          $cur_state = $this->user_Input_batch_vali($col_name, $table_name, $_REQUEST, $var_names[$j]);
+          $cur_state = $this->query_record_exists($col_name, $table_name, $_REQUEST[$var_names[$j]]);
           $batch_state = $batch_state && $cur_state;
           if (!$cur_state) {
             $this->error_msg_append("ERROR: ".$display_names[$j]." ". ($j+1) . " is out of Spec!"."<br/>");
@@ -111,7 +124,7 @@
           }
           for ($i=2; $i<$opt_num+2; $i++) {
               $request_str =$var_names[$j].'_'.$i;
-              $cur_state = $_REQUEST[$request_str] ? $this->user_Input_batch_vali($col_name, $table_name, $_REQUEST, $request_str) : true;
+              $cur_state = $_REQUEST[$request_str] ? $this->query_record_exists($col_name, $table_name, $_REQUEST[$request_str]) : true;
               $batch_state = $batch_state && $cur_state;
               if (!$cur_state) {
                 $this->error_msg_append("ERROR: ".$display_names[$j]." ".$i." is out of Spec!"."<br/>");
@@ -123,28 +136,16 @@
       }
 
       # compute general ID in the specific algorithm and input parameters
-      public function ID_computation($row_value, $THICKNESS, $prefix, $letter, $indice) {
+      public function ID_computation($row_value, $mid_var, $prefix, $letter, $indice) {
         $Batch_Digit = explode("-", $row_value);
         $DATE_TEST = date("mdY");
         if ($Batch_Digit[$indice] === $DATE_TEST) {
           	$INC_DIGIT = $Batch_Digit[$indice+1] + 1;
-          	$FILM_ID = $prefix . $letter . $THICKNESS . "-" . $Batch_Digit[$indice] . "-" . $INC_DIGIT;
+          	$FILM_ID = $prefix . $letter . $mid_var . "-" . $Batch_Digit[$indice] . "-" . $INC_DIGIT;
         } else {
-          	$FILM_ID = $prefix . $letter . $THICKNESS . "-" . $DATE_TEST . "-1";
+          	$FILM_ID = $prefix . $letter . $mid_var . "-" . $DATE_TEST . "-1";
         }
         return $FILM_ID;
-      }
-
-      # generate sql insert commands based on both userinput features and features require further computation
-      public function sql_insert_gen($request_array, $table) {
-        $str_cmd = "INSERT INTO ".$table." (";
-        $key_array = array_keys($request_array);
-        $vals_array = array_values($request_array);
-        $out_vals_array = implode(',', array_map(function($val) { return ':'.$val; }, $key_array));
-        $str_cmd .= implode(",", $key_array);
-        $str_cmd .= ') VALUES ('.$out_vals_array.')';
-        $pdo_exec_arr = array_combine(explode(',', $out_vals_array),  $vals_array);
-        return $this->pdo_sql_vali_execute($str_cmd, $pdo_exec_arr)[0];
       }
 
       # release the PDO object and close connection
