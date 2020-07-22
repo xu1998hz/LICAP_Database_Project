@@ -29,11 +29,9 @@
 
       public function error_msg_print() {
         echo "<hr>";
-        echo "<h3>Error Messages:</h3>";
         for ($i=0; $i <count($this->err_msgs); $i++) {
           echo $this->err_msgs[$i];
         }
-        echo "Above user inputs are not in standards. Records are not added!"."<br/>";
       }
 
       # set up the conncection of local host on the web server, execute sql comamnds
@@ -62,7 +60,7 @@
         for($i=0; $i<count($spec_arr); $i++) {
           if ((!($request_array[$key_arr[$i]]>=($val1-$uncertainty) && $request_array[$key_arr[$i]]<=($val1+$uncertainty)))
           && (!($request_array[$key_arr[$i]]>=($val2-$uncertainty) && $request_array[$key_arr[$i]]<=($val2+$uncertainty)))) {
-            $this->error_msg_append("The value of ".$val_arr[$i]." must be in between ".($val1-$uncertainty)
+            $this->error_msg_append("WARNING: The value of ".$val_arr[$i]." is suggested in between ".($val1-$uncertainty)
             ." to ".($val1+$uncertainty)." or ".($val2-$uncertainty)." to ".($val2+$uncertainty)."<br/>");
             $this->color_ls_update($key_arr[$i]);
             $state = false;
@@ -108,7 +106,7 @@
           $cur_state = $this->user_Input_batch_vali($col_name, $table_name, $_REQUEST, $batch_str[$j]);
           $batch_state = $batch_state && $cur_state;
           if (!$cur_state) {
-            $this->error_msg_append($size[$j]." is out of Spec!"."<br/>");
+            $this->error_msg_append("ERROR: ".$size[$j]." is out of Spec!"."<br/>");
             $this->color_ls_update($batch_str[$j]);
           }
           for ($i=2; $i<$opt_num+2; $i++) {
@@ -116,7 +114,7 @@
               $cur_state = $_REQUEST[$request_str] ? $this->user_Input_batch_vali($col_name, $table_name, $_REQUEST, $request_str) : true;
               $batch_state = $batch_state && $cur_state;
               if (!$cur_state) {
-                $this->error_msg_append($size[$j]." ".$i." is out of Spec!"."<br/>");
+                $this->error_msg_append("ERROR: ".$size[$j]." ".$i." is out of Spec!"."<br/>");
                 $this->color_ls_update($request_str);
               }
           }

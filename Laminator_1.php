@@ -30,7 +30,6 @@
       if (count($_REQUEST)!==0) {
         $batch_state = $sql_task_manager->batch_opt_db_vali(array('UPPER_FILM_BATCH_NUM', 'LOWER_FILM_BATCH_NUM'), array("Upper Film Batch Number", "Lower Film Batch Number"), 'FILM_ID', 'FILM', 2);
         $spec_state = $sql_task_manager->user_Input_spec_vali($_REQUEST, $langs_trans, 315, 210, 5);
-        $state = $spec_state && $batch_state;
       }
     ?>
 
@@ -49,62 +48,62 @@
     </p>
     <p>
       <label for="CAF_BATCH_NUM_2">Foil Batch Number 2:</label>
-      <input id="CAF_BATCH_NUM_2" name="CAF_BATCH_NUM_2" type="text" value="<?php echo isset($_POST["CAF_BATCH_NUM_2"])&&(!$state) ? $_POST["CAF_BATCH_NUM_2"] : '' ?>"/>
+      <input id="CAF_BATCH_NUM_2" name="CAF_BATCH_NUM_2" type="text" value="<?php echo isset($_POST["CAF_BATCH_NUM_2"])&&(!$batch_state) ? $_POST["CAF_BATCH_NUM_2"] : '' ?>"/>
     </p>
     <hr>
     <p style="<?php echo $sql_task_manager->color_ls_read("UPPER_FILM_BATCH_NUM") ?>">
       <label for="UPPER_FILM_BATCH_NUM">Upper Film Batch Number:</label>
-      <input id="UPPER_FILM_BATCH_NUM" name="UPPER_FILM_BATCH_NUM" type="text" value="<?php echo isset($_POST['UPPER_FILM_BATCH_NUM'])&&(!$state) ? $_POST['UPPER_FILM_BATCH_NUM'] : '' ?>"/>
+      <input id="UPPER_FILM_BATCH_NUM" name="UPPER_FILM_BATCH_NUM" type="text" value="<?php echo isset($_POST['UPPER_FILM_BATCH_NUM'])&&(!$batch_state) ? $_POST['UPPER_FILM_BATCH_NUM'] : '' ?>"/>
     </p>
     <p style="<?php echo $sql_task_manager->color_ls_read("LOWER_FILM_BATCH_NUM") ?>">
       <label for="LOWER_FILM_BATCH_NUM">Lower Film Batch Number:</label>
-      <input id="LOWER_FILM_BATCH_NUM" name="LOWER_FILM_BATCH_NUM" type="text" value="<?php echo isset($_POST['LOWER_FILM_BATCH_NUM'])&&(!$state) ? $_POST['LOWER_FILM_BATCH_NUM'] : '' ?>"/>
+      <input id="LOWER_FILM_BATCH_NUM" name="LOWER_FILM_BATCH_NUM" type="text" value="<?php echo isset($_POST['LOWER_FILM_BATCH_NUM'])&&(!$batch_state) ? $_POST['LOWER_FILM_BATCH_NUM'] : '' ?>"/>
     </p>
     <p style="<?php echo $sql_task_manager->color_ls_read("UPPER_FILM_BATCH_NUM_2") ?>">
       <label for="UPPER_FILM_BATCH_NUM_2">Upper Film Batch Number 2:</label>
-      <input id="UPPER_FILM_BATCH_NUM_2" name="UPPER_FILM_BATCH_NUM_2" type="text" value="<?php echo isset($_POST['UPPER_FILM_BATCH_NUM_2'])&&(!$state) ? $_POST['UPPER_FILM_BATCH_NUM_2'] : '' ?>"/>
+      <input id="UPPER_FILM_BATCH_NUM_2" name="UPPER_FILM_BATCH_NUM_2" type="text" value="<?php echo isset($_POST['UPPER_FILM_BATCH_NUM_2'])&&(!$batch_state) ? $_POST['UPPER_FILM_BATCH_NUM_2'] : '' ?>"/>
     </p>
     <p style="<?php echo $sql_task_manager->color_ls_read("LOWER_FILM_BATCH_NUM_2") ?>">
       <label for="LOWER_FILM_BATCH_NUM_2">Lower Film Batch Number 2:</label>
-      <input id="LOWER_FILM_BATCH_NUM_2" name="LOWER_FILM_BATCH_NUM_2" type="text" value="<?php echo isset($_POST['LOWER_FILM_BATCH_NUM_2'])&&(!$state) ? $_POST['LOWER_FILM_BATCH_NUM_2'] : '' ?>"/>
+      <input id="LOWER_FILM_BATCH_NUM_2" name="LOWER_FILM_BATCH_NUM_2" type="text" value="<?php echo isset($_POST['LOWER_FILM_BATCH_NUM_2'])&&(!$batch_state) ? $_POST['LOWER_FILM_BATCH_NUM_2'] : '' ?>"/>
     </p>
     <p style="<?php echo $sql_task_manager->color_ls_read("UPPER_FILM_BATCH_NUM_3") ?>">
       <label for="UPPER_FILM_BATCH_NUM_3">Upper Film Batch Number 3:</label>
-      <input id="UPPER_FILM_BATCH_NUM_3" name="UPPER_FILM_BATCH_NUM_3" type="text" value="<?php echo isset($_POST['UPPER_FILM_BATCH_NUM_3'])&&(!$state) ? $_POST['UPPER_FILM_BATCH_NUM_3'] : '' ?>"/>
+      <input id="UPPER_FILM_BATCH_NUM_3" name="UPPER_FILM_BATCH_NUM_3" type="text" value="<?php echo isset($_POST['UPPER_FILM_BATCH_NUM_3'])&&(!$batch_state) ? $_POST['UPPER_FILM_BATCH_NUM_3'] : '' ?>"/>
     </p>
     <p style="<?php echo $sql_task_manager->color_ls_read("LOWER_FILM_BATCH_NUM_3") ?>">
       <label for="LOWER_FILM_BATCH_NUM_3">Lower Film Batch Number 3:</label>
-      <input id="LOWER_FILM_BATCH_NUM_3" name="LOWER_FILM_BATCH_NUM_3" type="text" value="<?php echo isset($_POST['LOWER_FILM_BATCH_NUM_3'])&&(!$state) ? $_POST['LOWER_FILM_BATCH_NUM_3'] : '' ?>"/>
+      <input id="LOWER_FILM_BATCH_NUM_3" name="LOWER_FILM_BATCH_NUM_3" type="text" value="<?php echo isset($_POST['LOWER_FILM_BATCH_NUM_3'])&&(!$batch_state) ? $_POST['LOWER_FILM_BATCH_NUM_3'] : '' ?>"/>
     </p>
     <hr>
     <p>
       <label for="ELECTRODE_LENGTH">Length:</label>
-      <input type="text" name="ELECTRODE_LENGTH" value="<?php echo isset($_POST["ELECTRODE_LENGTH"])&&(!$state) ? $_POST["ELECTRODE_LENGTH"] : '' ?>">
+      <input type="text" name="ELECTRODE_LENGTH" value="<?php echo isset($_POST["ELECTRODE_LENGTH"])&&(!$batch_state) ? $_POST["ELECTRODE_LENGTH"] : '' ?>">
     </p>
     <p style="<?php echo $sql_task_manager->color_ls_read("END_OP") ?>">
       <label for="END_OP">Ending Operator Side Thickness:</label>
-      <input id="END_OP" name="END_OP" type="text" style="max-width: 100px;" value="<?php echo isset($_POST["END_OP"])&&(!$state) ? $_POST["END_OP"] : '' ?>"/>
+      <input id="END_OP" name="END_OP" type="text" style="max-width: 100px;" value="<?php echo isset($_POST["END_OP"])&&(!$batch_state) ? $_POST["END_OP"] : '' ?>"/>
     </p>
     <p style="<?php echo $sql_task_manager->color_ls_read("END_CENTER") ?>">
       <label for="END_CENTER">Ending Center Thickness:</label>
-      <input id="END_CENTER" name="END_CENTER" type="text" style="max-width: 100px;" value="<?php echo isset($_POST["END_CENTER"])&&(!$state) ? $_POST["END_CENTER"] : '' ?>"/>
+      <input id="END_CENTER" name="END_CENTER" type="text" style="max-width: 100px;" value="<?php echo isset($_POST["END_CENTER"])&&(!$batch_state) ? $_POST["END_CENTER"] : '' ?>"/>
     </p>
     <p style="<?php echo $sql_task_manager->color_ls_read("END_MACHINE") ?>">
       <label for="END_MACHINE">Ending Machine Side Thickness:</label>
-      <input id="END_MACHINE" name="END_MACHINE" type="text" style="max-width: 100px;" value="<?php echo isset($_POST["END_MACHINE"])&&(!$state) ? $_POST["END_MACHINE"] : '' ?>"/>
+      <input id="END_MACHINE" name="END_MACHINE" type="text" style="max-width: 100px;" value="<?php echo isset($_POST["END_MACHINE"])&&(!$batch_state) ? $_POST["END_MACHINE"] : '' ?>"/>
     </p>
     <hr>
     <p>
       <label for="ROLL_DIAMETER">Roll Diameter:</label>
-      <input id="ROLL_DIAMETER" name="ROLL_DIAMETER" type="text" style="max-width: 100px;" value="<?php echo isset($_POST["ROLL_DIAMETER"])&&(!$state) ? $_POST["ROLL_DIAMETER"] : '' ?>"/>
+      <input id="ROLL_DIAMETER" name="ROLL_DIAMETER" type="text" style="max-width: 100px;" value="<?php echo isset($_POST["ROLL_DIAMETER"])&&(!$batch_state) ? $_POST["ROLL_DIAMETER"] : '' ?>"/>
       &nbsp;&nbsp;
     <hr>
       <label for="NUM_HOLE">Number of Holes:</label>
-      <input type="text" name="NUM_HOLE" id="NUM_HOLE" style="max-width: 100px;" value="<?php echo isset($_POST["NUM_HOLE"])&&(!$state) ? $_POST["NUM_HOLE"] : '' ?>"/>
+      <input type="text" name="NUM_HOLE" id="NUM_HOLE" style="max-width: 100px;" value="<?php echo isset($_POST["NUM_HOLE"])&&(!$batch_state) ? $_POST["NUM_HOLE"] : '' ?>"/>
       <label for="NUM_DELAM">Number of Delaminations:</label>
-      <input type="text" name="NUM_DELAM" id="NUM_DELAM" style="max-width: 100px;" value="<?php echo isset($_POST["NUM_DELAM"])&&(!$state) ? $_POST["NUM_DELAM"] : '' ?>"/>
+      <input type="text" name="NUM_DELAM" id="NUM_DELAM" style="max-width: 100px;" value="<?php echo isset($_POST["NUM_DELAM"])&&(!$batch_state) ? $_POST["NUM_DELAM"] : '' ?>"/>
       <label for="NUM_SPLICE">Number of Splices:</label>
-      <input type="text" name="NUM_SPLICE" id="NUM_SPLICE" style="max-width: 100px;" value="<?php echo isset($_POST["NUM_SPLICE"])&&(!$state) ? $_POST["NUM_SPLICE"] : '' ?>"/>
+      <input type="text" name="NUM_SPLICE" id="NUM_SPLICE" style="max-width: 100px;" value="<?php echo isset($_POST["NUM_SPLICE"])&&(!$batch_state) ? $_POST["NUM_SPLICE"] : '' ?>"/>
     </p>
     <hr>
     <p>
@@ -134,9 +133,12 @@
 
     <?php
       if (count($_REQUEST)!==0) {
-        if (!($state)) {
-             $sql_task_manager->error_msg_print();
-             return;
+        if (!$batch_state) {
+          $sql_task_manager->error_msg_print();
+          echo "<h3>"."Above user inputs are not in standards. Records are not added!"."</h3>";
+          return;
+        } elseif (!$spec_state) {
+          $sql_task_manager->error_msg_print();
         }
         //Sets date and timestamp
         $_REQUEST['LAM_DATE'] = date("m/d/Y");
