@@ -25,9 +25,9 @@ th, td {
     var sql_arr = <?php echo json_encode($sql_arr) ?>;
     document.open();
     document.write("<h1 style='text-align:center'>Two week Powder Room Operaors</h1>");
-    document.write("<h2 style='text-align:center'>This table will display the Timestamp, Batch ID, Mixer Operator Name, Jet Mill Operator in recent two weeks</h2>");
+    document.write("<h2 style='text-align:center'>This table will display the Batch ID, Timestamp, Mixer Operator Name, Jet Mill Operator in recent two weeks</h2>");
     document.write("<table style='width:100%'>");
-    document.write("<tr> <th>Timestamp</th> <th>Batch ID</th> <th>Mixer Operator Name</th> <th> Jet Mill Operator </th> </tr>");
+    document.write("<tr> <th>Batch ID</th> <th>Timestamp</th> <th>Mixer Operator Name</th> <th> Jet Mill Operator </th> </tr>");
     for (i=0; i<sql_arr.length; i++) {
       var line_str = "<tr>";
       for (j=0; j<sql_arr[i].length; j++) {
