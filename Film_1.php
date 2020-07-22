@@ -21,18 +21,8 @@
      // check if this is before user inputs, error handlings on the existing user inputs
      if (count($_REQUEST)!==0) {
        # error handling on userinput for END_OP, END_CENTER and END_MACHINE
-       $opt_batch_state = $_REQUEST['MIX_BATCH_NUM_2'] ? $sql_task_manager->user_Input_batch_vali('BATCH_NUM', 'BLEND', $_REQUEST, 'MIX_BATCH_NUM_2') : true;
-       $batch_state = $sql_task_manager->user_Input_batch_vali('BATCH_NUM', 'BLEND', $_REQUEST, 'MIX_BATCH_NUM');
-       if (!$batch_state) {
-         $sql_task_manager->error_msg_append("<br/>"."Powder Batch 1 is out of Spec!"."<br/>");
-         $sql_task_manager->color_ls_update('MIX_BATCH_NUM');
-       }
-       if (!$opt_batch_state) {
-         $sql_task_manager->error_msg_append("<br/>"."Powder Batch 2 is out of Spec!"."<br/>");
-         $sql_task_manager->color_ls_update('MIX_BATCH_NUM_2');
-       }
+       $batch_state = $sql_task_manager->batch_opt_db_vali(array('MIX_BATCH_NUM'), array("Powder Batch"), 'BATCH_NUM', 'BLEND', 1);
        $spec_state = $sql_task_manager->user_Input_spec_vali($_REQUEST, $langs_trans, 156, 94, 2);
-       $state = $spec_state && $batch_state && $opt_batch_state;
      }
    ?>
 
@@ -41,7 +31,7 @@
    <input id="FILM_MILL" name="FILM_MILL" type="hidden" value="1"/>
    <p>
      <label for="LENGTH">Length:</label>
-     <input type="text" name="LENGTH" id="LENGTH", value="<?php echo isset($_POST['LENGTH'])&&(!$state) ? $_POST['LENGTH'] : '' ?>">
+     <input type="text" name="LENGTH" id="LENGTH", value="<?php echo isset($_POST['LENGTH'])&&(!$batch_state) ? $_POST['LENGTH'] : '' ?>">
      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
      <label for="THICKNESS">Thickness Spec</label>
@@ -50,15 +40,15 @@
 
    <p style="<?php echo $sql_task_manager->color_ls_read("END_OP") ?>">
      <label for="END_OP">Ending Operator Thickness:</label>
-     <input id="END_OP" name="END_OP" value="<?php echo isset($_POST['END_OP'])&&(!$state) ? $_POST['END_OP'] : '' ?>" type="text" onchange="changeBackground4(this);" />
+     <input id="END_OP" name="END_OP" value="<?php echo isset($_POST['END_OP'])&&(!$batch_state) ? $_POST['END_OP'] : '' ?>" type="text" onchange="changeBackground4(this);" />
    </p>
    <p style="<?php echo $sql_task_manager->color_ls_read("END_CENTER") ?>">
      <label for="END_CENTER">End Center Thickness:</label>
-     <input id="END_CENTER" name="END_CENTER" value="<?php echo isset($_POST['END_CENTER'])&&(!$state) ? $_POST['END_CENTER'] : '' ?>" type="text" onchange="changeBackground6(this);" />
+     <input id="END_CENTER" name="END_CENTER" value="<?php echo isset($_POST['END_CENTER'])&&(!$batch_state) ? $_POST['END_CENTER'] : '' ?>" type="text" onchange="changeBackground6(this);" />
    </p>
    <p style="<?php echo $sql_task_manager->color_ls_read("END_MACHINE") ?>">
      <label for="END_MACHINE">Ending Machine Side Thickness:</label>
-     <input id="END_MACHINE" name="END_MACHINE" value="<?php echo isset($_POST['END_MACHINE'])&&(!$state) ? $_POST['END_MACHINE'] : '' ?>" type="text" onchange="changeBackground6(this);" />
+     <input id="END_MACHINE" name="END_MACHINE" value="<?php echo isset($_POST['END_MACHINE'])&&(!$batch_state) ? $_POST['END_MACHINE'] : '' ?>" type="text" onchange="changeBackground6(this);" />
    </p>
 
    <hr>
@@ -76,18 +66,18 @@
 
    <p>
      <label for="DEFECT_NUM">Number of Defects:</label>
-     <input type="text" name="DEFECT_NUM" id="DEFECT_NUM" value="<?php echo isset($_POST['DEFECT_NUM'])&&(!$state) ? $_POST['DEFECT_NUM'] : '' ?>">
+     <input type="text" name="DEFECT_NUM" id="DEFECT_NUM" value="<?php echo isset($_POST['DEFECT_NUM'])&&(!$batch_state) ? $_POST['DEFECT_NUM'] : '' ?>">
    </p>
 
    <p>
      <label for="FILM_WEIGHT">Weight of 8-Layer Punch:</label>
-     <input type="text" name="FILM_WEIGHT" id="FILM_WEIGHT" value="<?php echo isset($_POST['FILM_WEIGHT'])&&(!$state) ? $_POST['FILM_WEIGHT'] : '' ?>">
+     <input type="text" name="FILM_WEIGHT" id="FILM_WEIGHT" value="<?php echo isset($_POST['FILM_WEIGHT'])&&(!$batch_state) ? $_POST['FILM_WEIGHT'] : '' ?>">
      <label for="FILM_WEIGHT">g</label>
    </p>
 
    <p>
      <label for="FILM_NOTE">Note:</label>
-     <input type="text" name="FILM_NOTE" id="FILM_NOTE" value="<?php echo isset($_POST['FILM_NOTE'])&&(!$state) ? $_POST['FILM_NOTE'] : '' ?>">
+     <input type="text" name="FILM_NOTE" id="FILM_NOTE" value="<?php echo isset($_POST['FILM_NOTE'])&&(!$batch_state) ? $_POST['FILM_NOTE'] : '' ?>">
    </p>
 
    <hr>
@@ -122,9 +112,12 @@
 
    <?php
      if (count($_REQUEST)!==0) {
-       if (!($state)) {
+       if (!$batch_state) {
             $sql_task_manager->error_msg_print();
+            echo "<h3>"."Above ERRORS needed to be corrected before records can be added!"."</h3>";
             return;
+       } elseif (!$spec_state) {
+         $sql_task_manager->error_msg_print();
        }
        # compute values from above features
        $_REQUEST['DATE'] = date("m/d/Y");

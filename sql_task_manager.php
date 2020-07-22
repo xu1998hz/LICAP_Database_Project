@@ -81,7 +81,7 @@
         return array($state_exec, $this->stmt->rowCount());
       }
 
-      public function user_Input_batch_vali($col_name, $table_name, $request_array, $target) {
+      private function user_Input_batch_vali($col_name, $table_name, $request_array, $target) {
         $sql_cmd = "SELECT ".$col_name." FROM ".$table_name." WHERE ".$col_name."=:str_1";
         $this->pdo_sql_vali_execute($sql_cmd, array(':str_1'=>$request_array[$target]));
         $row = $this->stmt->fetch(PDO::FETCH_ASSOC);
@@ -100,21 +100,21 @@
         return $row ? true : false;
       }
 
-      public function batch_opt_db_vali($batch_str, $size, $col_name, $table_name, $opt_num) {
+      public function batch_opt_db_vali($var_names, $display_names, $col_name, $table_name, $opt_num) {
         $batch_state = true;
-        for ($j=0; $j<count($batch_str); $j++) {
-          $cur_state = $this->user_Input_batch_vali($col_name, $table_name, $_REQUEST, $batch_str[$j]);
+        for ($j=0; $j<count($var_names); $j++) {
+          $cur_state = $this->user_Input_batch_vali($col_name, $table_name, $_REQUEST, $var_names[$j]);
           $batch_state = $batch_state && $cur_state;
           if (!$cur_state) {
-            $this->error_msg_append("ERROR: ".$size[$j]." is out of Spec!"."<br/>");
-            $this->color_ls_update($batch_str[$j]);
+            $this->error_msg_append("ERROR: ".$display_names[$j]." ". ($j+1) . " is out of Spec!"."<br/>");
+            $this->color_ls_update($var_names[$j]);
           }
           for ($i=2; $i<$opt_num+2; $i++) {
-              $request_str =$batch_str[$j].'_'.$i;
+              $request_str =$var_names[$j].'_'.$i;
               $cur_state = $_REQUEST[$request_str] ? $this->user_Input_batch_vali($col_name, $table_name, $_REQUEST, $request_str) : true;
               $batch_state = $batch_state && $cur_state;
               if (!$cur_state) {
-                $this->error_msg_append("ERROR: ".$size[$j]." ".$i." is out of Spec!"."<br/>");
+                $this->error_msg_append("ERROR: ".$display_names[$j]." ".$i." is out of Spec!"."<br/>");
                 $this->color_ls_update($request_str);
               }
           }

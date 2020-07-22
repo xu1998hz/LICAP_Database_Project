@@ -52,11 +52,11 @@
     </p>
     <hr>
     <p style="<?php echo $sql_task_manager->color_ls_read("UPPER_FILM_BATCH_NUM") ?>">
-      <label for="UPPER_FILM_BATCH_NUM">Upper Film Batch Number:</label>
+      <label for="UPPER_FILM_BATCH_NUM">Upper Film Batch Number 1:</label>
       <input id="UPPER_FILM_BATCH_NUM" name="UPPER_FILM_BATCH_NUM" type="text" value="<?php echo isset($_POST['UPPER_FILM_BATCH_NUM'])&&(!$batch_state) ? $_POST['UPPER_FILM_BATCH_NUM'] : '' ?>"/>
     </p>
     <p style="<?php echo $sql_task_manager->color_ls_read("LOWER_FILM_BATCH_NUM") ?>">
-      <label for="LOWER_FILM_BATCH_NUM">Lower Film Batch Number:</label>
+      <label for="LOWER_FILM_BATCH_NUM">Lower Film Batch Number 1:</label>
       <input id="LOWER_FILM_BATCH_NUM" name="LOWER_FILM_BATCH_NUM" type="text" value="<?php echo isset($_POST['LOWER_FILM_BATCH_NUM'])&&(!$batch_state) ? $_POST['LOWER_FILM_BATCH_NUM'] : '' ?>"/>
     </p>
     <p style="<?php echo $sql_task_manager->color_ls_read("UPPER_FILM_BATCH_NUM_2") ?>">
@@ -135,7 +135,7 @@
       if (count($_REQUEST)!==0) {
         if (!$batch_state) {
           $sql_task_manager->error_msg_print();
-          echo "<h3>"."Above user inputs are not in standards. Records are not added!"."</h3>";
+          echo "<h3>"."Above ERRORS needed to be corrected before records can be added!"."</h3>";
           return;
         } elseif (!$spec_state) {
           $sql_task_manager->error_msg_print();
