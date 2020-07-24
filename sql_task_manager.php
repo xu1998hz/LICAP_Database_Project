@@ -113,13 +113,13 @@
       }
 
       # batch validation function which can check both required boxes and optional boxes valeus existed in the specific databse column
-      public function batch_opt_db_vali($var_names, $display_names, $col_name, $table_name, $opt_num) {
+      public function batch_opt_db_vali($var_names, $display_names, $col_name, $table_name, $opt_num, $added_val) {
         $batch_state = true;
         for ($j=0; $j<count($var_names); $j++) {
           $cur_state = $this->query_record_exists($col_name, $table_name, $_REQUEST[$var_names[$j]]);
           $batch_state = $batch_state && $cur_state;
           if (!$cur_state) {
-            $this->error_msg_append("ERROR: ".$display_names[$j]." ". ($j+1) . " is out of Spec!"."<br/>");
+            $this->error_msg_append("ERROR: ".$display_names[$j]." ".$added_val." is out of Spec!"."<br/>");
             $this->color_ls_update($var_names[$j]);
           }
           for ($i=2; $i<$opt_num+2; $i++) {

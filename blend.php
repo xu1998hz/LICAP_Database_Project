@@ -16,15 +16,16 @@
     $Batch_num = $sql_task_manager->ID_computation($row['BATCH_NUM'], '', '', 'M', 1);
     echo "<h1>" . "Current Batch:" . $Batch_num . "</h1>";
     // error handlings to check Operator input their names
+    $state = true;
     if (count($_REQUEST)!==0) {
       if ($_REQUEST["MIXING_OP"]==='') {
         $sql_task_manager->color_ls_update("MIXING_OP");
-        $sql_task_manager->error_msg_append("Mixer Operator name can't be empty"."<br/>");
+        $sql_task_manager->error_msg_append("ERROR: Mixer Operator name can't be empty"."<br/>");
         $state = false;
       }
       if ($_REQUEST["GRIND_OP"]==='') {
         $sql_task_manager->color_ls_update("GRIND_OP");
-        $sql_task_manager->error_msg_append("Jet Mill Operator name can't be empty"."<br/>");
+        $sql_task_manager->error_msg_append("ERROR: Jet Mill Operator name can't be empty"."<br/>");
         $state = false;
       }
     }
@@ -122,11 +123,13 @@
     }
     if (!$state) {
       $sql_task_manager->error_msg_print();
+      echo "<h3>"."Above ERRORS needed to be corrected before records can be added!"."</h3>";
       return;
     }
     $_REQUEST['BATCH_NUM'] = $Batch_num;
     $_REQUEST['AC_LOT_NUM'] = $_REQUEST['AC_LOT_1']."-".$_REQUEST['AC_NUM_1'];
     $_REQUEST['AC_LOT_NUM_2'] = $_REQUEST['AC_LOT_2']."-".$_REQUEST['AC_NUM_2'];
+    $_REQUEST['AC_LOT_NUM_3'] = 0;
     unset($_REQUEST['AC_LOT_1']); unset($_REQUEST['AC_NUM_1']);
     unset($_REQUEST['AC_LOT_2']); unset($_REQUEST['AC_NUM_2']);
     $_REQUEST['DATE'] = date("m/d/Y");
@@ -136,11 +139,54 @@
     $_REQUEST['PTFE_RECYCLE'] = (0.0204 * ($_REQUEST['STRIP_RECYCLE'] + $_REQUEST['BAGHOUSE_RECYCLE'] + $_REQUEST['OUTSIDE_RECYCLE']));
     $_REQUEST['ACETONE_PERCENT'] = (($_REQUEST['ACETONE_WEIGHT']/($_REQUEST['BATCH_WEIGHT'] - $_REQUEST['PTFE_RECYCLE']))*100);
     $_REQUEST['PTFE_PERCENT'] = ((($_REQUEST['PTFE_WEIGHT'] - $_REQUEST['PTFE_RECYCLE'])/($_REQUEST['AC_WEIGHT'] + $_REQUEST['PTFE_WEIGHT'] - $_REQUEST['PTFE_RECYCLE']))*100);
-    if ($sql_task_manager->sql_insert_gen($_REQUEST, 'BLEND')) {
+    if ($sql_task_manager->sql_insert_gen($_REQUEST, 'blend')) {
       echo "<h3>"."Records added successfully!"."</h3>";
     } else {
       echo "<h3>"."Unsuccessful insertion! Check all the input values! Contact IT Department if you need further assitance"."</h3>";
     }
-  ?>
+
+//Creates new label
+error_reporting(E_ALL);
+
+/* Get the port for the service. */
+$port = "9100";
+
+/* Get the IP address for the target host. */
+$host = "10.1.10.196";
+
+/* construct the label */
+$label = "﻿CT~~CD,~CC^~CT~
+^XA~TA000~JSN^LT0^MNW^MTD^PON^PMN^LH0,0^JMA^PR5,5~SD15^JUS^LRN^CI0^XZ
+^XA
+^MMT
+^PW609
+^LL0203
+^LS0
+^FO192,96^GFA,03584,03584,00028,:Z64:
+eJzt1D1u7CAQB3CQC0qSE3AUzpQTQJRiy1zJuQlPuQDuKAiTGQZ7MbaeXvM6Rivvip/X5uMPQsyaNWvWfywJn4BfCrywQQiTLZSLiYUaySAc9mhmAFa21JkXQoNwAJEtD1YEUGO1ctgHPgptAWqsBmczWQE1svnd3tk0mWdbn4Z9tsmQrQb74Z7m2SwE/JCpfYBkkf+HjZFMDuaizvi7mqCGZo7eFFV89S5Vc4MFFbZoL2arya8N5dZW+diKZrNP45EJvYEuvVk4zGzw6G2B3XAKX9TJaBK9hn16l97sYYIf0xkNzdesXA2aqVLv++5MVluQ2f50tuym7yxLtnxjAU3CemOKgMykS1+wh2gCo5AuYzisze7JSjX3N4u7dfOpd3OYrGGNmtlEhmv7eWtrtT4T7X0m4bJTXsyNZbwsmDObL+PTP3hR4S207J6MIqEThX2cTzIcQsGhx3Ed8Bag6GBwwri2aIVjxXuzz0Q7ddqePmeJTbezYDAJdSfzGXLOJ5tsZ89hplniZ0Qx7gdsTpz/0JtsxhNBM9Dvza6Os3HWrFmz/qF+AdfROhU=:6460
+^FT593,94^A0I,23,24^FH\^FDBATCH NUMBER: " . $Batch_num . "^FS
+^BY2,3,32^FT593,53^BCI,,N,N
+^FD>:" . $Batch_num . "^FS
+^FT593,11^A0I,28,28^FH\
+^PQ1,0,1,Y^XZ";
+
+$socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+if ($socket === false) {
+    echo "socket_create() failed: reason: " . socket_strerror(socket_last_error    ()) . "\n";
+} else {
+    echo "OK.\n";
+}
+
+echo "Attempting to connect to '$host' on port '$port'...";
+$result = socket_connect($socket, $host, $port);
+if ($result === false) {
+    echo "socket_connect() failed.\nReason: ($result) " . socket_strerror    (socket_last_error($socket)) . "\n";
+} else {
+    echo "OK.\n";
+}
+
+socket_write($socket, $label, strlen($label));
+socket_close($socket);
+?>
   </body>
 </html>

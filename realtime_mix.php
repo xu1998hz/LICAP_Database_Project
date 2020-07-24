@@ -49,7 +49,17 @@ mysqli_close($link);
 
 ?>
 <form action="material_export.php" method="get">
+  <p>
+    <label for="T1">Begin Time:</label>
+    <input type="text" name="T1" id="T1">
+    <label for="T1">Month/Day/Year Ex: 05/04/2020</label>
+  </p>
+  <p>
+    <label for="T2">End Time:</label>
+    <input type="text" name="T2" id="T2">
+    <label for="T2">Month/Day/Year</label>
+  </p>
   <input type="submit" value="Download CSV">
-
+</form>
 </body>
 </html>

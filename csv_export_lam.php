@@ -1,8 +1,7 @@
 <?php
 /* vars for export */
 // database record to be exported
-$db_record = 'FILM';
-// optional where query
+$db_record = 'LAMINATOR';
 // filename for export
 $csv_filename = 'db_export_'.$db_record.'_'.date('Y-m-d').'.csv';
 // database variables
@@ -11,14 +10,14 @@ $user = "operator";
 $password = "Licap123!";
 $database = "Manufacture";
 $conn = mysqli_connect($hostname, $user, $password, $database);
+if (mysqli_connect_errno()) {
+    die("Failed to connect to MySQL: " . mysqli_connect_error());
+}
 $T1 = mysqli_real_escape_string($conn, $_REQUEST['T1']);
 $T2 = mysqli_real_escape_string($conn, $_REQUEST['T2']);
 $T1_year = explode('/', $T1)[2];
 $T2_year = explode('/', $T2)[2];
-$where = "WHERE DATE >= '$T1' AND DATE <= '$T2' AND RIGHT(DATE, 4) >= '$T1_year' AND RIGHT(DATE, 4) >= '$T2_year'";
-if (mysqli_connect_errno()) {
-    die("Failed to connect to MySQL: " . mysqli_connect_error());
-}
+$where = "WHERE LAM_DATE >= '$T1' AND LAM_DATE <= '$T2' AND RIGHT(LAM_DATE, 4) >= '$T1_year' AND RIGHT(LAM_DATE, 4) >= '$T2_year'";
 // create empty variable to be filled with export data
 $csv_export = '';
 // query to get data from database

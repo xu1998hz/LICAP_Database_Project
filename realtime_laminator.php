@@ -37,7 +37,7 @@ WHILE($row = mysqli_fetch_assoc($result))
 	echo "&nbsp&nbsp&nbsp&nbspTOTAL LENGTH:" . $TOTAL_LENGTH;
 	$AVG = $count_count['COUNT(ELECTRODE_SERIAL)'];
 	$AVG_LENGTH = $TOTAL_LENGTH/$AVG;
-	echo "&nbsp&nbspAVG_LENGTH:" . $AVG_LENGTH; 
+	echo "&nbsp&nbspAVG_LENGTH:" . $AVG_LENGTH;
 
 
 
@@ -45,9 +45,19 @@ WHILE($row = mysqli_fetch_assoc($result))
 
 mysqli_close($link);
 
-?> 
+?>
 <form action="csv_export_lam.php" method="get">
+  <p>
+    <label for="T1">Begin Time:</label>
+    <input type="text" name="T1" id="T1">
+    <label for="T1">Month/Day/Year Ex: 05/04/2020</label>
+  </p>
+  <p>
+    <label for="T2">End Time:</label>
+    <input type="text" name="T2" id="T2">
+    <label for="T2">Month/Day/Year</label>
+  </p>
   <input type="submit" value="Download CSV">
-
+</form>
 </body>
 </html>

@@ -9,7 +9,7 @@
      require_once('sql_task_manager.php');
      $langs_trans = array("END_OP" => "Ending Operator Thickness", "END_CENTER" => "End Center Thickness", "END_MACHINE" => "Ending Machine Side Thickness");
      $sql_task_manager = new sql_task_manager("localhost", "operator", "Licap123!", "Manufacture");
-     $sql_command = "SELECT FILM_1_OP, FILM_2_OP, MIX_BATCH_NUM, MIX_BATCH_NUM_2, THICKNESS, MILL_TEMP, CAL_1_TEMP, CAL_2_TEMP, LINE_SPEED FROM FILM WHERE FILM_MILL=1 ORDER BY ID DESC LIMIT 1";
+     $sql_command = "SELECT FILM_1_OP, FILM_2_OP, MIX_BATCH_NUM, MIX_BATCH_NUM_2, THICKNESS, MILL_TEMP, CAL_1_TEMP, CAL_2_TEMP, LINE_SPEED FROM FILM WHERE FILM_MILL=2 ORDER BY ID DESC LIMIT 1";
      $row = $sql_task_manager->pdo_sql_row_fetch($sql_command);
      //Pull last Film Lot Number
      $sql_command = "SELECT FILM_ID FROM FILM ORDER BY ID DESC LIMIT 1";
@@ -21,7 +21,7 @@
      // check if this is before user inputs, error handlings on the existing user inputs
      if (count($_REQUEST)!==0) {
        # error handling on userinput for END_OP, END_CENTER and END_MACHINE
-       $batch_state = $sql_task_manager->batch_opt_db_vali(array('MIX_BATCH_NUM'), array("Powder Batch"), 'BATCH_NUM', 'BLEND', 1);
+       $batch_state = $sql_task_manager->batch_opt_db_vali(array('MIX_BATCH_NUM'), array("Powder Batch"), 'BATCH_NUM', 'blend', 1, '1');
        $spec_state = $sql_task_manager->user_Input_spec_vali($_REQUEST, $langs_trans, 156, 94, 2);
      }
    ?>
@@ -130,11 +130,51 @@
        $NORMALIZE_WEIGHT = $_REQUEST['FILM_WEIGHT']/8;
        $_REQUEST['FILM_DENSITY'] = $NORMALIZE_WEIGHT/(5.064506 * $_REQUEST['AVG_THICKNESS']/10000);
 
-       if ($sql_task_manager->sql_insert_gen($_REQUEST, 'Film')) {
+       if ($sql_task_manager->sql_insert_gen($_REQUEST, 'FILM')) {
          echo "<h3>"."Records added successfully!"."</h3>";
        } else {
          echo "<h3>"."Unsuccessful insertion! Check all the input values! Contact IT Department if you need further assitance"."</h3>";
        }
+       //Creates new label
+       /* Get the port for the service. */
+       $port = "9100";
+
+       /* Get the IP address for the target host. */
+       $host = "10.1.10.192";
+
+       /* construct the label */
+       $label = "﻿CT~~CD,~CC^~CT~
+       ^XA~TA000~JSN^LT0^MNW^MTD^PON^PMN^LH0,0^JMA^PR5,5~SD15^JUS^LRN^CI0^XZ
+       ^XA
+       ^MMT
+       ^PW609
+       ^LL0203
+       ^LS0
+       ^FO256,128^GFA,02304,02304,00024,:Z64:
+       eJzt0rFtxDAMBVAaKlQyG3iNdF4sgLTBraRNottAhzQqBDGfupwty84AB5iFITwQBE2S6Ior3jP4pxLZQi4SP0Q2f+Bts5HSPA7OSFVPqyc451kkqOfOPT4OJdTL4IIS6nVz52m+wzMn4t6DepgL3MjmS6AlCNkKn3pHjfBFRp1G/0Rqc786Whf/AVJ3g+PlendoW57jcrfNjWy+dG7h9sRZPU919Fm9HB29J1OmcvDEcHNwFzhN1eSDe3V76iT/ejo4qXMa59Dc3SINc1t9mHOrv3xHeu1l74Fee+z+C0MK2KstnS+xuZ/+7qSf29Ofd9XPGUtAM7q4E293u98XltkSAu/3jgtsCdTfibqpmlB2voaLdMUVbx2/69wvHw==:09F5
+       ^FT596,109^A0I,23,24^FH\^FDLOT: " . $_REQUEST['FILM_ID']. "^FS
+       ^BY2,3,32^FT597,68^BCI,,N,N
+       ^FD>:" . $_REQUEST['FILM_ID'] . "^FS
+       ^FT597,38^A0I,28,28^FH\^FDLENGTH: " . $_REQUEST['LENGTH'] . " METERS^FS
+       ^FT597,7^A0I,28,28^FH\^FDMS: ". $_REQUEST['END_MACHINE'] ."             C:". $_REQUEST['END_CENTER'] ."                  OS:". $_REQUEST['END_OP'] ." ^FS
+       ^PQ1,0,1,Y^XZ";
+       $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+       if ($socket === false) {
+           echo "socket_create() failed: reason: " . socket_strerror(socket_last_error    ()) . "\n";
+       } else {
+           echo "OK.\n";
+       }
+
+       echo "Attempting to connect to '$host' on port '$port'...";
+       $result = socket_connect($socket, $host, $port);
+       if ($result === false) {
+           echo "socket_connect() failed.\nReason: ($result) " . socket_strerror    (socket_last_error($socket)) . "\n";
+       } else {
+           echo "OK.\n";
+       }
+
+       socket_write($socket, $label, strlen($label));
+       socket_close($socket);
      }
    ?>
  </body>
