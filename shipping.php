@@ -65,7 +65,6 @@
     $result_arr = $sql_task_manager->pdo_sql_vali_execute($sql, array($_REQUEST['WEIGHT'], $_REQUEST['ROLL_DIAMETER'], $_REQUEST['PALLET_NUM'], $_REQUEST['BOX_NUM'],
     $_REQUEST['NOTES'],  $_REQUEST['PACKAGE_OP'], $_REQUEST['COMBINED_SERIAL']));
     if ($result_arr[1]) {
-      //print_r($_REQUEST['COMBINED_SERIAL']);
       echo "<h3>"."Records updated successfully!"."</h3>";
     } elseif (!$result_arr[0]) {
       echo "<h3>"."Internal Error! Contact IT Department for further helps"."</h3>";
@@ -113,10 +112,10 @@
   ^LS0
   ^FO384,96^GFA,03584,03584,00028,:Z64:
   eJzt1LFuxCAMAFAiBkY+Aak/wqdxUoeO/SU69Teo8gOMDAjXxuGAJCd17IB1wyXvxBlsI8SKFStW/MNwOzyEkCA2CPj0A5BG80IoEBoKW+n2c5gFXICM1hlNF4EvA5sfLJBJfBnZwtNCtayAsqgWZzNZA2VRLXVz+DuTDL4EtjybTZYN1xjN4ho2WhAGHmS2nM0k3KR3NefBaLWoI50amRqsZhGU3/0rk+97dLEadKOdgd/UnuwLE2bPs0n6p2bFJDJ5mGtW6zLZBpPp0VTNsJ7WxTTbQ94YbS1saLhd/PqZB7NsXrF9XEw87Xs0V6hi4HW+sVQtHDatiSXHJzy2dM2FOhI/VNjLHvAY8QmLHl+bfWkmkdkdzK0FsnJnNb1nbSfT2XkhdeuJG6NeCpf9qYKl1V+tB9u5dDPxTXJfT2cmqSVsbj3fLB9GXdVmZapftT5jk210bRie21O/sOk6sOc+40k97oJTf7Idd0g3yeZowutQjPNwWOK8xGSmm6aVRxuj32MrVqxY8Yf4BfwKIv4=:5FAF
-  ^FT593,54^A0I,14,14^FH\^FDLOT:" . $COMBINED_SERIAL . "^FS
-  ^FT593,11^A0I,28,28^FH\^FDLENGTH:" . $ELECTRODE_LENGTH . " METERS^FS
+  ^FT593,54^A0I,14,14^FH\^FDLOT:" . $_REQUEST['COMBINED_SERIAL'] . "^FS
+  ^FT593,11^A0I,28,28^FH\^FDLENGTH:" . $row_result['ELECTRODE_LENGTH'] . " METERS^FS
   ^FT175,204^BQN,2,5
-  ^FH\^FDLA," . $COMBINED_SERIAL . "^FS
+  ^FH\^FDLA," . $_REQUEST['COMBINED_SERIAL'] . "^FS
   ^PQ1,0,1,Y^XZ";
   $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
   if ($socket === false) {
