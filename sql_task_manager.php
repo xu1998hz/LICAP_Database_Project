@@ -141,11 +141,11 @@
         $DATE_TEST = date("mdY");
         if ($Batch_Digit[$indice] === $DATE_TEST) {
           	$INC_DIGIT = $Batch_Digit[$indice+1] + 1;
-          	$FILM_ID = $prefix . $letter . $mid_var . "-" . $Batch_Digit[$indice] . "-" . $INC_DIGIT;
+          	$ID = $prefix . $letter . $mid_var . "-" . $Batch_Digit[$indice] . "-" . $INC_DIGIT;
         } else {
-          	$FILM_ID = $prefix . $letter . $mid_var . "-" . $DATE_TEST . "-1";
+          	$ID = $prefix . $letter . $mid_var . "-" . $DATE_TEST . "-1";
         }
-        return $FILM_ID;
+        return $ID;
       }
 
       # release the PDO object and close connection

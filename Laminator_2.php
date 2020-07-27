@@ -142,6 +142,7 @@
         $_REQUEST['LAM_DATE'] = date("m/d/Y");
         $_REQUEST['TIMESTAMP'] = date("m/d/Y-H:i:s");
         $_REQUEST['TAPE_TEST'] = 0; $_REQUEST['BEGIN_OP'] = 0; $_REQUEST['BEGIN_CENTER'] = 0; $_REQUEST['BEGIN_MACHINE']=0;
+        //Update Amount of CAF used based on serial number
         $inventory_manager = new sql_task_manager("localhost", "root", "PQch782tdk@@", "INVENTORY");
         $update_length = "UPDATE INVENTORY_TABLE SET AMOUNT_USED = AMOUNT_USED + ? WHERE SERIAL=?";
         $inventory_manager->pdo_sql_vali_execute($update_length, array($_REQUEST['ELECTRODE_LENGTH'], $_REQUEST['CAF_BATCH_NUM']));
@@ -149,7 +150,7 @@
         # get the last record
         $row = $sql_task_manager->pdo_sql_row_fetch("SELECT ELECTRODE_SERIAL FROM LAMINATOR ORDER BY ID DESC LIMIT 1");
         # sprcific ELECTRODE seiral compuation in Laminator
-        $_REQUEST['ELECTRODE_SERIAL'] = $sql_task_manager->ID_computation($row['ELECTRODE_SERIAL'], $_REQUEST['THICKNESS'], $_REQUEST['LAM_ID'], "E-".explode("-", $_REQUEST['UPPER_FILM_BATCH_NUM'])[0], 3);
+        $_REQUEST['ELECTRODE_SERIAL'] = $sql_task_manager->ID_computation($row['ELECTRODE_SERIAL'], $_REQUEST['THICKNESS'], $_REQUEST['LAM_ID'], "E-"."2".explode("-", $_REQUEST['UPPER_FILM_BATCH_NUM'])[0]."-", 3);
         $_REQUEST['AVG_THICKNESS'] = ($_REQUEST['END_OP'] + $_REQUEST['END_CENTER'] + $_REQUEST['END_MACHINE'])/3;
         $_REQUEST['NUM_DEFECT'] = $_REQUEST['NUM_SPLICE'] + $_REQUEST['NUM_HOLE'] + $_REQUEST['NUM_DELAM'];
         if ($sql_task_manager->sql_insert_gen($_REQUEST, 'LAMINATOR')) {
@@ -157,49 +158,49 @@
         } else {
           echo "<h3>"."Unsuccessful insertion! Check all the input values! Contact IT Department if you need further assitance"."</h3>";
         }
+      }
 
-        //Creates new label
-        for ($x =1; $x<=3; $x++) {
-        /* Get the port for the service. */
-        $port = "9100";
+      //Creates new label
+      for ($x =1; $x<=3; $x++) {
+      /* Get the port for the service. */
+      $port = "9100";
 
-        /* Get the IP address for the target host. */
-        $host = "10.1.10.191";
+      /* Get the IP address for the target host. */
+      $host = "10.1.10.191";
 
-        /* construct the label */
-        $label = "﻿CT~~CD,~CC^~CT~
-        ^XA~TA000~JSN^LT0^MNW^MTD^PON^PMN^LH0,0^JMA^PR5,5~SD15^JUS^LRN^CI0^XZ
-        ^XA
-        ^MMT
-        ^PW609
-        ^LL0203
-        ^LS0
-        ^FO192,96^GFA,03584,03584,00028,:Z64:
-        eJzt1D1u7CAQB3CQC0qSE3AUzpQTQJRiy1zJuQlPuQDuKAiTGQZ7MbaeXvM6Rivvip/X5uMPQsyaNWvWfywJn4BfCrywQQiTLZSLiYUaySAc9mhmAFa21JkXQoNwAJEtD1YEUGO1ctgHPgptAWqsBmczWQE1svnd3tk0mWdbn4Z9tsmQrQb74Z7m2SwE/JCpfYBkkf+HjZFMDuaizvi7mqCGZo7eFFV89S5Vc4MFFbZoL2arya8N5dZW+diKZrNP45EJvYEuvVk4zGzw6G2B3XAKX9TJaBK9hn16l97sYYIf0xkNzdesXA2aqVLv++5MVluQ2f50tuym7yxLtnxjAU3CemOKgMykS1+wh2gCo5AuYzisze7JSjX3N4u7dfOpd3OYrGGNmtlEhmv7eWtrtT4T7X0m4bJTXsyNZbwsmDObL+PTP3hR4S207J6MIqEThX2cTzIcQsGhx3Ed8Bag6GBwwri2aIVjxXuzz0Q7ddqePmeJTbezYDAJdSfzGXLOJ5tsZ89hplniZ0Qx7gdsTpz/0JtsxhNBM9Dvza6Os3HWrFmz/qF+AdfROhU=:6460
-        ^FT593,94^A0I,23,24^FH\^FDSerial: " . $_REQUEST['ELECTRODE_SERIAL'] . "^FS
-        ^BY2,3,32^FT593,53^BCI,,N,N
-        ^FD>:" . $_REQUEST['ELECTRODE_SERIAL'] . "^FS
-        ^FT593,11^A0I,28,28^FH\
-        ^FT593,9^A0I,23,24^FH\^FDLENGTH: " . $_REQUEST['ELECTRODE_LENGTH'] . "meters Diameter:" . $_REQUEST['ROLL_DIAMETER']."^FS
-        ^PQ1,0,1,Y^XZ";
-        $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
-        if ($socket === false) {
-            echo "socket_create() failed: reason: " . socket_strerror(socket_last_error    ()) . "<br/>";
-        } else {
-            echo "OK"."<br/>";
-        }
+      /* construct the label */
+      $label = "﻿CT~~CD,~CC^~CT~
+      ^XA~TA000~JSN^LT0^MNW^MTD^PON^PMN^LH0,0^JMA^PR5,5~SD15^JUS^LRN^CI0^XZ
+      ^XA
+      ^MMT
+      ^PW609
+      ^LL0203
+      ^LS0
+      ^FO192,96^GFA,03584,03584,00028,:Z64:
+      eJzt1D1u7CAQB3CQC0qSE3AUzpQTQJRiy1zJuQlPuQDuKAiTGQZ7MbaeXvM6Rivvip/X5uMPQsyaNWvWfywJn4BfCrywQQiTLZSLiYUaySAc9mhmAFa21JkXQoNwAJEtD1YEUGO1ctgHPgptAWqsBmczWQE1svnd3tk0mWdbn4Z9tsmQrQb74Z7m2SwE/JCpfYBkkf+HjZFMDuaizvi7mqCGZo7eFFV89S5Vc4MFFbZoL2arya8N5dZW+diKZrNP45EJvYEuvVk4zGzw6G2B3XAKX9TJaBK9hn16l97sYYIf0xkNzdesXA2aqVLv++5MVluQ2f50tuym7yxLtnxjAU3CemOKgMykS1+wh2gCo5AuYzisze7JSjX3N4u7dfOpd3OYrGGNmtlEhmv7eWtrtT4T7X0m4bJTXsyNZbwsmDObL+PTP3hR4S207J6MIqEThX2cTzIcQsGhx3Ed8Bag6GBwwri2aIVjxXuzz0Q7ddqePmeJTbezYDAJdSfzGXLOJ5tsZ89hplniZ0Qx7gdsTpz/0JtsxhNBM9Dvza6Os3HWrFmz/qF+AdfROhU=:6460
+      ^FT593,94^A0I,23,24^FH\^FDSerial: " . $_REQUEST['ELECTRODE_SERIAL'] . "^FS
+      ^BY2,3,32^FT593,53^BCI,,N,N
+      ^FD>:" . $_REQUEST['ELECTRODE_SERIAL'] . "^FS
+      ^FT593,11^A0I,28,28^FH\
+      ^FT593,9^A0I,23,24^FH\^FDLENGTH: " . $_REQUEST['ELECTRODE_LENGTH'] . "meters Diameter:" . $_REQUEST['ROLL_DIAMETER']."^FS
+      ^PQ1,0,1,Y^XZ";
+      $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+      if ($socket === false) {
+          echo "socket_create() failed: reason: " . socket_strerror(socket_last_error    ()) . "<br/>";
+      } else {
+          echo "OK"."<br/>";
+      }
 
-        echo "Attempting to connect to '$host' on port '$port'...";
-        $result = socket_connect($socket, $host, $port);
-        if ($result === false) {
-            echo "socket_connect() failed.\nReason: ($result) " . socket_strerror    (socket_last_error($socket)) . "<br/>";
-        } else {
-            echo "OK"."<br/>";
-        }
+      echo "Attempting to connect to '$host' on port '$port'...";
+      $result = socket_connect($socket, $host, $port);
+      if ($result === false) {
+          echo "socket_connect() failed.\nReason: ($result) " . socket_strerror    (socket_last_error($socket)) . "<br/>";
+      } else {
+          echo "OK"."<br/>";
+      }
 
-        socket_write($socket, $label, strlen($label));
-        socket_close($socket);
-        }
+      socket_write($socket, $label, strlen($label));
+      socket_close($socket);
       }
     ?>
   </body>
