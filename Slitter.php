@@ -13,8 +13,8 @@
       $sql_command = "SELECT SLIT_OP FROM SLITTER ORDER BY ID DESC LIMIT 1";
       $row = $sql_task_manager->pdo_sql_row_fetch($sql_command);
       if (count($_REQUEST)!==0) {
-        $state = $sql_task_manager->batch_opt_db_vali(array('ELECTRODE_SERIAL_1', 'ELECTRODE_SERIAL_2', 'ELECTRODE_SERIAL_3'),
-        array("Electrode Serial 1", "Electrode Serial 2", "Electrode Serial 3"), 'ELECTRODE_SERIAL', 'LAMINATOR', 0, "");
+        $state = $sql_task_manager->batch_opt_db_vali(array('ELECTRODE_SERIAL'),
+        array("Electrode Serial"), 'ELECTRODE_SERIAL', 'LAMINATOR', 2, "");
       }
     ?>
     <p>
@@ -22,9 +22,9 @@
       <input id="SLIT_OP" name="SLIT_OP" type="text" value="<?php echo htmlentities($row['SLIT_OP']); ?>" />
     </p>
     <HR>
-    <p style="<?php echo $sql_task_manager->color_ls_read("ELECTRODE_SERIAL_1") ?>">
-        <label for="ELECTRODE_SERIAL_1">Electrode Serial 1</label>
-        <input id="ELECTRODE_SERIAL_1" name="ELECTRODE_SERIAL_1" type="text" value = "<?php echo isset($_POST['ELECTRODE_SERIAL_1'])&&(!$state) ? $_POST['ELECTRODE_SERIAL_1'] : '' ?>">
+    <p style="<?php echo $sql_task_manager->color_ls_read("ELECTRODE_SERIAL") ?>">
+        <label for="ELECTRODE_SERIAL">Electrode Serial 1</label>
+        <input id="ELECTRODE_SERIAL" name="ELECTRODE_SERIAL" type="text" value = "<?php echo isset($_POST['ELECTRODE_SERIAL'])&&(!$state) ? $_POST['ELECTRODE_SERIAL'] : '' ?>">
     </p>
     <p>
         <label for="ELECTRODE_LENGTH_1">Electrode Length 1</label>
@@ -96,19 +96,19 @@
         } elseif (!$result_arr[0]) {
           echo "<h3>"."Internal Error! Contact IT Department for further helps"."</h3>";
         } else {
-          echo "<h3>"."Electrode Serial ".$i." Input has already updated yield percentage in laminator!"."</h3>";
+          echo "<h3>"."Electrode Serial ".$i." Yield percentage in laminator has not changed!"."</h3>";
         }
       }
       $_REQUEST['ELECTRODE_AREA'] = $_REQUEST['STRIP_LENGTH_METERS'] / 4;
       $_REQUEST['NUM_DEFECT'] = $_REQUEST['NUM_HOLE'] + $_REQUEST['NUM_DELAM'] + $_REQUEST['NUM_SPLICE'];
       // intermediate procees of ELECTRODE serial numbers
-      $electrode_arr_vals = array($_REQUEST['ELECTRODE_SERIAL_1'], $_REQUEST['ELECTRODE_SERIAL_2'], $_REQUEST['ELECTRODE_SERIAL_3']);
+      $electrode_arr_vals = array($_REQUEST['ELECTRODE_SERIAL'], $_REQUEST['ELECTRODE_SERIAL_2'], $_REQUEST['ELECTRODE_SERIAL_3']);
       // number of processes within pipeline, compute serial number and remove the intermediate results
      for ($i=0; $i<3; $i++) {
        if ($_REQUEST['PERFORATED'] === '1') $electrode_arr_vals[$i] = $electrode_arr_vals[$i].'-PF';
-       unset($_REQUEST['ELECTRODE_SERIAL_'.($i+1)]);
        unset($_REQUEST['ELECTRODE_LENGTH_'.($i+1)]);
      }
+     unset($_REQUEST['ELECTRODE_SERIAL']); unset($_REQUEST['ELECTRODE_SERIAL_2']); unset($_REQUEST['ELECTRODE_SERIAL_3']);
      $_REQUEST['COMBINED_SERIAL']= implode("/", $electrode_arr_vals);
 
      if ($sql_task_manager->sql_insert_gen($_REQUEST, 'SLITTER')) {
