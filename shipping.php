@@ -134,8 +134,6 @@
 
   socket_write($socket, $label, strlen($label));
   socket_close($socket);
-
-
   }
   ?>
  </body>

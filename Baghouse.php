@@ -8,8 +8,9 @@
    <?php
     require_once('sql_task_manager.php');
     $sql_task_manager = new sql_task_manager("localhost", "operator", "Licap123!", "Manufacture");
-    $sql_command = "SELECT * FROM SLITTER ORDER BY ID DESC LIMIT 1";
-    $row = $sql_task_manager->pdo_sql_row_fetch($sql_command);
+    # pull out the ID based on last non-null value of baghouse column in table blend
+    $sql_cmd = "SELECT ID FROM blend WHERE BAGHOUSE_WEIGHT IS NOT NULL ORDER BY ID DESC LIMIT 1";
+    $ID_Val = $sql_task_manager->pdo_sql_row_fetch($sql_cmd)['ID'];
    ?>
 
    <form action="Baghouse.php" method="post">
@@ -28,8 +29,9 @@
       $row['DATE'] = date("m/d/Y");
       $row['TIMESTAMP'] = date("m/d/Y-H:i:s");
       $row['BAGHOUSE_WEIGHT'] = $_REQUEST['BAGHOUSE_WEIGHT'];
-      if ($sql_task_manager->sql_insert_gen($row, 'SLITTER')) {
-        echo "<h3>"."Records added successfully!"."</h3>";
+      $sql_update = "UPDATE blend SET DATE = ?, TIMESTAMP = ?, ";
+      if ($sql_task_manager->sql_insert_gen($row, 'blend')) {
+        echo "<h3>"."Records updated successfully!"."</h3>";
       } else {
         echo "<h3>"."Unsuccessful insertion. Check the input value. Contact IT Department if you need further assitance"."</h3>";
       }
