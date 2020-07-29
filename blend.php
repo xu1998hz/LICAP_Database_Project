@@ -78,7 +78,7 @@
       var BAGHOUSE_RECYCLE = document.getElementById("BAGHOUSE_RECYCLE").value;
       var STRIP_RECYCLE = document.getElementById("STRIP_RECYCLE").value;
       var OUTSIDE_RECYCLE = document.getElementById("OUTSIDE_RECYCLE").value;
-      document.getElementById("PTFE").innerHTML = (0.08*AC_WEIGHT/0.92)+(0.018/0.987)*(BAGHOUSE_RECYCLE+STRIP_RECYCLE+OUTSIDE_RECYCLE);
+      document.getElementById("PTFE").innerHTML = (0.08*AC_WEIGHT/0.92)+((0.018/0.987)*(BAGHOUSE_RECYCLE+STRIP_RECYCLE+OUTSIDE_RECYCLE));
     }
   </script>
   <p>
