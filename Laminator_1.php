@@ -9,12 +9,6 @@
       require_once('sql_task_manager.php');
       $langs_trans = array("END_OP" => "Ending Operator Side Thickness", "END_CENTER" => "End Center Thickness", "END_MACHINE" => "Ending Machine Side Thickness");
       $sql_task_manager = new sql_task_manager("localhost", "operator", "Licap123!", "Manufacture");
-      # check whether yield percentage column exists
-      // $sql_check_col = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'LAMINATOR' AND COLUMN_NAME = 'YIELD_PERCENTAGE'";
-      // if yield percentage not exists it will add into the table
-      // if (!$sql_task_manager->pdo_sql_row_fetch($sql_check_col)) {
-      //   $sql_task_manager->pdo_sql_row_fetch("ALTER TABLE LAMINATOR ADD YIELD_PERCENTAGE FLOAT(24)");
-      // }
       $sql_command = "SELECT LAM_OP, FOIL_TYPE, CAF_BATCH_NUM, CAF_BATCH_NUM_2, LAM_TEMP_UPPER, LAM_TEMP_LOWER, LAM_SPEED, GAP_OP, GAP_MACHINE, THICKNESS FROM LAMINATOR WHERE LAM_ID=1 ORDER BY ID DESC LIMIT 1";
       $row = $sql_task_manager->pdo_sql_row_fetch($sql_command);
       $CAF_BATCH_NUM_FINAL_RESULT = $row['CAF_BATCH_NUM_2'] ? $row['CAF_BATCH_NUM_2'] : $row['CAF_BATCH_NUM'];
