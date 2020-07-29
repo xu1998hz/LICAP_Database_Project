@@ -25,15 +25,14 @@
 
    <?php
     if (count($_REQUEST)!==0) {
-      $row['ID']++;
-      $row['DATE'] = date("m/d/Y");
-      $row['TIMESTAMP'] = date("m/d/Y-H:i:s");
-      $row['BAGHOUSE_WEIGHT'] = $_REQUEST['BAGHOUSE_WEIGHT'];
-      $sql_update = "UPDATE blend SET DATE = ?, TIMESTAMP = ?, ";
-      if ($sql_task_manager->sql_insert_gen($row, 'blend')) {
+      $sql_update = "UPDATE blend SET DATE = ?, TIMESTAMP = ?, BAGHOUSE_WEIGHT = ? WHERE ID = ? + 1";
+      $result_arr = $sql_task_manager->pdo_sql_vali_execute($sql_update, array(date("m/d/Y"), date("m/d/Y-H:i:s"), $_REQUEST['BAGHOUSE_WEIGHT'], $ID_Val));
+      if ($result_arr[1]) {
         echo "<h3>"."Records updated successfully!"."</h3>";
+      } elseif (!$result_arr[0]) {
+        echo "<h3>"."Internal Error! Contact IT Department for further helps"."</h3>";
       } else {
-        echo "<h3>"."Unsuccessful insertion. Check the input value. Contact IT Department if you need further assitance"."</h3>";
+        echo "<h3>"."All bag weights in the database have been updated!"."</h3>";
       }
     }
    ?>
