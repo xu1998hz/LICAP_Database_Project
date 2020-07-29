@@ -132,49 +132,50 @@
 
        if ($sql_task_manager->sql_insert_gen($_REQUEST, 'FILM')) {
          echo "<h3>"."Records added successfully!"."</h3>";
+         //Creates new label
+         /* Get the port for the service. */
+         $port = "9100";
+
+         /* Get the IP address for the target host. */
+         $host = "10.1.10.192";
+
+         /* construct the label */
+         $label = "﻿CT~~CD,~CC^~CT~
+         ^XA~TA000~JSN^LT0^MNW^MTD^PON^PMN^LH0,0^JMA^PR5,5~SD15^JUS^LRN^CI0^XZ
+         ^XA
+         ^MMT
+         ^PW609
+         ^LL0203
+         ^LS0
+         ^FO256,128^GFA,02304,02304,00024,:Z64:
+         eJzt0rFtxDAMBVAaKlQyG3iNdF4sgLTBraRNottAhzQqBDGfupwty84AB5iFITwQBE2S6Ior3jP4pxLZQi4SP0Q2f+Bts5HSPA7OSFVPqyc451kkqOfOPT4OJdTL4IIS6nVz52m+wzMn4t6DepgL3MjmS6AlCNkKn3pHjfBFRp1G/0Rqc786Whf/AVJ3g+PlendoW57jcrfNjWy+dG7h9sRZPU919Fm9HB29J1OmcvDEcHNwFzhN1eSDe3V76iT/ejo4qXMa59Dc3SINc1t9mHOrv3xHeu1l74Fee+z+C0MK2KstnS+xuZ/+7qSf29Ofd9XPGUtAM7q4E293u98XltkSAu/3jgtsCdTfibqpmlB2voaLdMUVbx2/69wvHw==:09F5
+         ^FT596,109^A0I,23,24^FH\^FDLOT: " . $_REQUEST['FILM_ID']. "^FS
+         ^BY2,3,32^FT597,68^BCI,,N,N
+         ^FD>:" . $_REQUEST['FILM_ID'] . "^FS
+         ^FT597,38^A0I,28,28^FH\^FDLENGTH: " . $_REQUEST['LENGTH'] . " METERS^FS
+         ^FT597,7^A0I,28,28^FH\^FDMS: ". $_REQUEST['END_MACHINE'] ."             C:". $_REQUEST['END_CENTER'] ."                  OS:". $_REQUEST['END_OP'] ." ^FS
+         ^PQ1,0,1,Y^XZ";
+         $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+         if ($socket === false) {
+             echo "socket_create() failed: reason: " . socket_strerror(socket_last_error    ()) . "\n";
+         } else {
+             echo "OK.\n";
+         }
+
+         echo "Attempting to connect to '$host' on port '$port'...";
+         $result = socket_connect($socket, $host, $port);
+         if ($result === false) {
+             echo "socket_connect() failed.\nReason: ($result) " . socket_strerror    (socket_last_error($socket)) . "\n";
+         } else {
+             echo "OK.\n";
+         }
+
+         socket_write($socket, $label, strlen($label));
+         socket_close($socket);
+         header("refresh: 1"); 
        } else {
          echo "<h3>"."Unsuccessful insertion! Check all the input values! Contact IT Department if you need further assitance"."</h3>";
        }
-       //Creates new label
-       /* Get the port for the service. */
-       $port = "9100";
-
-       /* Get the IP address for the target host. */
-       $host = "10.1.10.192";
-
-       /* construct the label */
-       $label = "﻿CT~~CD,~CC^~CT~
-       ^XA~TA000~JSN^LT0^MNW^MTD^PON^PMN^LH0,0^JMA^PR5,5~SD15^JUS^LRN^CI0^XZ
-       ^XA
-       ^MMT
-       ^PW609
-       ^LL0203
-       ^LS0
-       ^FO256,128^GFA,02304,02304,00024,:Z64:
-       eJzt0rFtxDAMBVAaKlQyG3iNdF4sgLTBraRNottAhzQqBDGfupwty84AB5iFITwQBE2S6Ior3jP4pxLZQi4SP0Q2f+Bts5HSPA7OSFVPqyc451kkqOfOPT4OJdTL4IIS6nVz52m+wzMn4t6DepgL3MjmS6AlCNkKn3pHjfBFRp1G/0Rqc786Whf/AVJ3g+PlendoW57jcrfNjWy+dG7h9sRZPU919Fm9HB29J1OmcvDEcHNwFzhN1eSDe3V76iT/ejo4qXMa59Dc3SINc1t9mHOrv3xHeu1l74Fee+z+C0MK2KstnS+xuZ/+7qSf29Ofd9XPGUtAM7q4E293u98XltkSAu/3jgtsCdTfibqpmlB2voaLdMUVbx2/69wvHw==:09F5
-       ^FT596,109^A0I,23,24^FH\^FDLOT: " . $_REQUEST['FILM_ID']. "^FS
-       ^BY2,3,32^FT597,68^BCI,,N,N
-       ^FD>:" . $_REQUEST['FILM_ID'] . "^FS
-       ^FT597,38^A0I,28,28^FH\^FDLENGTH: " . $_REQUEST['LENGTH'] . " METERS^FS
-       ^FT597,7^A0I,28,28^FH\^FDMS: ". $_REQUEST['END_MACHINE'] ."             C:". $_REQUEST['END_CENTER'] ."                  OS:". $_REQUEST['END_OP'] ." ^FS
-       ^PQ1,0,1,Y^XZ";
-       $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
-       if ($socket === false) {
-           echo "socket_create() failed: reason: " . socket_strerror(socket_last_error    ()) . "\n";
-       } else {
-           echo "OK.\n";
-       }
-
-       echo "Attempting to connect to '$host' on port '$port'...";
-       $result = socket_connect($socket, $host, $port);
-       if ($result === false) {
-           echo "socket_connect() failed.\nReason: ($result) " . socket_strerror    (socket_last_error($socket)) . "\n";
-       } else {
-           echo "OK.\n";
-       }
-
-       socket_write($socket, $label, strlen($label));
-       socket_close($socket);
      }
    ?>
  </body>
