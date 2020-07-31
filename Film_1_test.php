@@ -8,15 +8,15 @@
    <?php
      require_once('sql_task_manager.php');
      $langs_trans = array("END_OP" => "Ending Operator Thickness", "END_CENTER" => "End Center Thickness", "END_MACHINE" => "Ending Machine Side Thickness");
-     $sql_task_manager = new sql_task_manager("localhost", "operator", "Licap123!", "Manufacture");
-     $sql_command = "SELECT FILM_1_OP, FILM_2_OP, MIX_BATCH_NUM, MIX_BATCH_NUM_2, THICKNESS, MILL_TEMP, CAL_1_TEMP, CAL_2_TEMP, LINE_SPEED FROM FILM WHERE FILM_MILL=2 ORDER BY ID DESC LIMIT 1";
+     $sql_task_manager = new sql_task_manager("localhost", "operator", "Licap123!", "Manufacture_test");
+     $sql_command = "SELECT FILM_1_OP, FILM_2_OP, MIX_BATCH_NUM, MIX_BATCH_NUM_2, THICKNESS, MILL_TEMP, CAL_1_TEMP, CAL_2_TEMP, LINE_SPEED FROM FILM WHERE FILM_MILL=1 ORDER BY ID DESC LIMIT 1";
      $row = $sql_task_manager->pdo_sql_row_fetch($sql_command);
      //Pull last Film Lot Number
      $sql_command = "SELECT FILM_ID FROM FILM ORDER BY ID DESC LIMIT 1";
      $row_2 = $sql_task_manager->pdo_sql_row_fetch($sql_command);
      //Compare last batch date with current date
-     $FILM_ID = $sql_task_manager->ID_computation($row_2['FILM_ID'], $row['THICKNESS'], 2, 'F-', 2);
-     echo "<H1>FILM MILL 2 Log</H1>";
+     $FILM_ID = $sql_task_manager->ID_computation($row_2['FILM_ID'], $row['THICKNESS'], 1, 'F-', 2);
+     echo "<H1>FILM MILL 1 Log</H1>";
      echo "<h1>" . "Current Roll:" . $FILM_ID . "</h1>";
      // check if this is before user inputs, error handlings on the existing user inputs
      if (count($_REQUEST)!==0) {
@@ -24,11 +24,12 @@
        $batch_state = $sql_task_manager->batch_opt_db_vali(array('MIX_BATCH_NUM'), array("Powder Batch"), 'BATCH_NUM', 'blend', 1, '1');
        $spec_state = $sql_task_manager->user_Input_spec_vali($_REQUEST, $langs_trans, 156, 94, 2);
      }
+     $MIX_2 = $row['MIX_BATCH_NUM_2'];
    ?>
 
-   <form action="Film_2.php" method="post">
+   <form action="Film_1_test.php" method="post">
 
-   <input id="FILM_MILL" name="FILM_MILL" type="hidden" value="2"/>
+   <input id="FILM_MILL" name="FILM_MILL" type="hidden" value="1"/>
    <p>
      <label for="LENGTH">Length:</label>
      <input type="text" name="LENGTH" id="LENGTH", value="<?php echo isset($_POST['LENGTH'])&&(!$batch_state) ? $_POST['LENGTH'] : '' ?>">
@@ -59,7 +60,7 @@
    </p>
    <p style="<?php echo $sql_task_manager->color_ls_read("MIX_BATCH_NUM_2") ?>">
      <label for="MIX_BATCH_NUM_2">Powder Batch 2</label>
-     <input type="text" name="MIX_BATCH_NUM_2"/>
+     <input type="text" name="MIX_BATCH_NUM_2" />
    </p>
 
    <hr>

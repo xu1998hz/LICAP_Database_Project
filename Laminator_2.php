@@ -8,7 +8,7 @@
     <?php
       require_once('sql_task_manager.php');
       $langs_trans = array("END_OP" => "Ending Operator Side Thickness", "END_CENTER" => "End Center Thickness", "END_MACHINE" => "Ending Machine Side Thickness");
-      $sql_task_manager = new sql_task_manager("localhost", "operator", "Licap123!", "Manufacture");
+      $sql_task_manager = new sql_task_manager("localhost", "operator", "Licap123!", "Manufacture_test");
       $sql_command = "SELECT LAM_OP, FOIL_TYPE, CAF_BATCH_NUM, CAF_BATCH_NUM_2, LAM_TEMP_UPPER, LAM_TEMP_LOWER, LAM_SPEED, GAP_OP, GAP_MACHINE, THICKNESS FROM LAMINATOR WHERE LAM_ID=2 ORDER BY ID DESC LIMIT 1";
       $row = $sql_task_manager->pdo_sql_row_fetch($sql_command);
       $CAF_BATCH_NUM_FINAL_RESULT = $row['CAF_BATCH_NUM_2'] ? $row['CAF_BATCH_NUM_2'] : $row['CAF_BATCH_NUM'];
@@ -137,7 +137,7 @@
         $_REQUEST['TIMESTAMP'] = date("m/d/Y-H:i:s");
         $_REQUEST['TAPE_TEST'] = 0; $_REQUEST['BEGIN_OP'] = 0; $_REQUEST['BEGIN_CENTER'] = 0; $_REQUEST['BEGIN_MACHINE']=0;
         //Update Amount of CAF used based on serial number
-        $inventory_manager = new sql_task_manager("localhost", "root", "PQch782tdk@@", "INVENTORY");
+        $inventory_manager = new sql_task_manager("localhost", "root", "PQch782tdk@@", "INVENTORY_TEST");
         $update_length = "UPDATE INVENTORY_TABLE SET AMOUNT_USED = AMOUNT_USED + ? WHERE SERIAL=?";
         $inventory_manager->pdo_sql_vali_execute($update_length, array($_REQUEST['ELECTRODE_LENGTH'], $_REQUEST['CAF_BATCH_NUM']));
         $inventory_manager->pdo_sql_vali_execute($update_length, array($_REQUEST['ELECTRODE_LENGTH'], $_REQUEST['CAF_BATCH_NUM_2']));
@@ -150,7 +150,6 @@
         if ($sql_task_manager->sql_insert_gen($_REQUEST, 'LAMINATOR')) {
           echo "<h3>"."Records added successfully!"."</h3>";
           //Creates new label
-          for ($x =1; $x<=3; $x++) {
           /* Get the port for the service. */
           $port = "9100";
 
@@ -187,13 +186,12 @@
           } else {
               echo "OK"."<br/>";
           }
-
           socket_write($socket, $label, strlen($label));
           socket_close($socket);
-          }
         } else {
           echo "<h3>"."Unsuccessful insertion! Check all the input values! Contact IT Department if you need further assitance"."</h3>";
         }
+        header("refresh: 1");
       }
     ?>
   </body>

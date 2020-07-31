@@ -2,21 +2,21 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>LAMINATOR 1</title>
+<title>LAMINATOR 2</title>
 </head>
   <body>
     <?php
       require_once('sql_task_manager.php');
       $langs_trans = array("END_OP" => "Ending Operator Side Thickness", "END_CENTER" => "End Center Thickness", "END_MACHINE" => "Ending Machine Side Thickness");
-      $sql_task_manager = new sql_task_manager("localhost", "operator", "Licap123!", "Manufacture");
-      $sql_command = "SELECT LAM_OP, FOIL_TYPE, CAF_BATCH_NUM, CAF_BATCH_NUM_2, LAM_TEMP_UPPER, LAM_TEMP_LOWER, LAM_SPEED, GAP_OP, GAP_MACHINE, THICKNESS FROM LAMINATOR WHERE LAM_ID=1 ORDER BY ID DESC LIMIT 1";
+      $sql_task_manager = new sql_task_manager("localhost", "operator", "Licap123!", "Manufacture_test");
+      $sql_command = "SELECT LAM_OP, FOIL_TYPE, CAF_BATCH_NUM, CAF_BATCH_NUM_2, LAM_TEMP_UPPER, LAM_TEMP_LOWER, LAM_SPEED, GAP_OP, GAP_MACHINE, THICKNESS FROM LAMINATOR WHERE LAM_ID=2 ORDER BY ID DESC LIMIT 1";
       $row = $sql_task_manager->pdo_sql_row_fetch($sql_command);
       $CAF_BATCH_NUM_FINAL_RESULT = $row['CAF_BATCH_NUM_2'] ? $row['CAF_BATCH_NUM_2'] : $row['CAF_BATCH_NUM'];
       //Pull last Film Lot Number
       $sql_command = "SELECT ELECTRODE_SERIAL FROM LAMINATOR ORDER BY ID DESC LIMIT 1";
       $row_2 = $sql_task_manager->pdo_sql_row_fetch($sql_command);
       $ELECTRODE_SERIAL = $sql_task_manager->ID_computation($row_2['ELECTRODE_SERIAL'], $row['THICKNESS'], '', 'E-', 3);
-      echo "<h1> LAMINATOR 1 </h1>";
+      echo "<h1> LAMINATOR 2 </h1>";
       echo "<h1>" . "Current Roll:" . $ELECTRODE_SERIAL . "</h1>";
       // check if this is before user inputs, error handlings on existing user inputs
       if (count($_REQUEST)!==0) {
@@ -24,9 +24,9 @@
         $spec_state = $sql_task_manager->user_Input_spec_vali($_REQUEST, $langs_trans, 315, 210, 5);
       }
     ?>
-    <form action="Laminator_1.php" method="post">
+    <form action="Laminator_2_test.php" method="post">
     <p>
-      <input id="LAM_ID" name="LAM_ID" type="hidden" value="1"/>
+      <input id="LAM_ID" name="LAM_ID" type="hidden" value="2"/>
       <label for="LAM_OP">Laminator Operator:</label>
       <input id="LAM_OP" name="LAM_OP" type="text" value="<?php echo htmlentities($row['LAM_OP']); ?>" />
       <label for="FOIL_TYPE">Foil Type:</label>
@@ -137,7 +137,7 @@
         $_REQUEST['TIMESTAMP'] = date("m/d/Y-H:i:s");
         $_REQUEST['TAPE_TEST'] = 0; $_REQUEST['BEGIN_OP'] = 0; $_REQUEST['BEGIN_CENTER'] = 0; $_REQUEST['BEGIN_MACHINE']=0;
         //Update Amount of CAF used based on serial number
-        $inventory_manager = new sql_task_manager("localhost", "root", "PQch782tdk@@", "INVENTORY");
+        $inventory_manager = new sql_task_manager("localhost", "root", "PQch782tdk@@", "INVENTORY_TEST");
         $update_length = "UPDATE INVENTORY_TABLE SET AMOUNT_USED = AMOUNT_USED + ? WHERE SERIAL=?";
         $inventory_manager->pdo_sql_vali_execute($update_length, array($_REQUEST['ELECTRODE_LENGTH'], $_REQUEST['CAF_BATCH_NUM']));
         $inventory_manager->pdo_sql_vali_execute($update_length, array($_REQUEST['ELECTRODE_LENGTH'], $_REQUEST['CAF_BATCH_NUM_2']));
@@ -151,47 +151,47 @@
           echo "<h3>"."Records added successfully!"."</h3>";
           //Creates new label
           /* Get the port for the service. */
-          $port = "9100";
-
-          /* Get the IP address for the target host. */
-          $host = "10.1.10.191";
-
-          /* construct the label */
-          $label = "﻿CT~~CD,~CC^~CT~
-          ^XA~TA000~JSN^LT0^MNW^MTD^PON^PMN^LH0,0^JMA^PR5,5~SD15^JUS^LRN^CI0^XZ
-          ^XA
-          ^MMT
-          ^PW609
-          ^LL0203
-          ^LS0
-          ^FO192,96^GFA,03584,03584,00028,:Z64:
-          eJzt1D1u7CAQB3CQC0qSE3AUzpQTQJRiy1zJuQlPuQDuKAiTGQZ7MbaeXvM6Rivvip/X5uMPQsyaNWvWfywJn4BfCrywQQiTLZSLiYUaySAc9mhmAFa21JkXQoNwAJEtD1YEUGO1ctgHPgptAWqsBmczWQE1svnd3tk0mWdbn4Z9tsmQrQb74Z7m2SwE/JCpfYBkkf+HjZFMDuaizvi7mqCGZo7eFFV89S5Vc4MFFbZoL2arya8N5dZW+diKZrNP45EJvYEuvVk4zGzw6G2B3XAKX9TJaBK9hn16l97sYYIf0xkNzdesXA2aqVLv++5MVluQ2f50tuym7yxLtnxjAU3CemOKgMykS1+wh2gCo5AuYzisze7JSjX3N4u7dfOpd3OYrGGNmtlEhmv7eWtrtT4T7X0m4bJTXsyNZbwsmDObL+PTP3hR4S207J6MIqEThX2cTzIcQsGhx3Ed8Bag6GBwwri2aIVjxXuzz0Q7ddqePmeJTbezYDAJdSfzGXLOJ5tsZ89hplniZ0Qx7gdsTpz/0JtsxhNBM9Dvza6Os3HWrFmz/qF+AdfROhU=:6460
-          ^FT593,94^A0I,23,24^FH\^FDSerial: " . $_REQUEST['ELECTRODE_SERIAL'] . "^FS
-          ^BY2,3,32^FT593,53^BCI,,N,N
-          ^FD>:" . $_REQUEST['ELECTRODE_SERIAL'] . "^FS
-          ^FT593,11^A0I,28,28^FH\
-          ^FT593,9^A0I,23,24^FH\^FDLENGTH: " . $_REQUEST['ELECTRODE_LENGTH'] . "meters Diameter:" . $_REQUEST['ROLL_DIAMETER']."^FS
-          ^PQ1,0,1,Y^XZ";
-          $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
-          if ($socket === false) {
-              echo "socket_create() failed: reason: " . socket_strerror(socket_last_error    ()) . "<br/>";
-          } else {
-              echo "OK"."<br/>";
-          }
-
-          echo "Attempting to connect to '$host' on port '$port'...";
-          $result = socket_connect($socket, $host, $port);
-          if ($result === false) {
-              echo "socket_connect() failed.\nReason: ($result) " . socket_strerror    (socket_last_error($socket)) . "<br/>";
-          } else {
-              echo "OK"."<br/>";
-          }
-
-          socket_write($socket, $label, strlen($label));
-          socket_close($socket);
+          // $port = "9100";
+          //
+          // /* Get the IP address for the target host. */
+          // $host = "10.1.10.191";
+          //
+          // /* construct the label */
+          // $label = "﻿CT~~CD,~CC^~CT~
+          // ^XA~TA000~JSN^LT0^MNW^MTD^PON^PMN^LH0,0^JMA^PR5,5~SD15^JUS^LRN^CI0^XZ
+          // ^XA
+          // ^MMT
+          // ^PW609
+          // ^LL0203
+          // ^LS0
+          // ^FO192,96^GFA,03584,03584,00028,:Z64:
+          // eJzt1D1u7CAQB3CQC0qSE3AUzpQTQJRiy1zJuQlPuQDuKAiTGQZ7MbaeXvM6Rivvip/X5uMPQsyaNWvWfywJn4BfCrywQQiTLZSLiYUaySAc9mhmAFa21JkXQoNwAJEtD1YEUGO1ctgHPgptAWqsBmczWQE1svnd3tk0mWdbn4Z9tsmQrQb74Z7m2SwE/JCpfYBkkf+HjZFMDuaizvi7mqCGZo7eFFV89S5Vc4MFFbZoL2arya8N5dZW+diKZrNP45EJvYEuvVk4zGzw6G2B3XAKX9TJaBK9hn16l97sYYIf0xkNzdesXA2aqVLv++5MVluQ2f50tuym7yxLtnxjAU3CemOKgMykS1+wh2gCo5AuYzisze7JSjX3N4u7dfOpd3OYrGGNmtlEhmv7eWtrtT4T7X0m4bJTXsyNZbwsmDObL+PTP3hR4S207J6MIqEThX2cTzIcQsGhx3Ed8Bag6GBwwri2aIVjxXuzz0Q7ddqePmeJTbezYDAJdSfzGXLOJ5tsZ89hplniZ0Qx7gdsTpz/0JtsxhNBM9Dvza6Os3HWrFmz/qF+AdfROhU=:6460
+          // ^FT593,94^A0I,23,24^FH\^FDSerial: " . $_REQUEST['ELECTRODE_SERIAL'] . "^FS
+          // ^BY2,3,32^FT593,53^BCI,,N,N
+          // ^FD>:" . $_REQUEST['ELECTRODE_SERIAL'] . "^FS
+          // ^FT593,11^A0I,28,28^FH\
+          // ^FT593,9^A0I,23,24^FH\^FDLENGTH: " . $_REQUEST['ELECTRODE_LENGTH'] . "meters Diameter:" . $_REQUEST['ROLL_DIAMETER']."^FS
+          // ^PQ1,0,1,Y^XZ";
+          // $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+          // if ($socket === false) {
+          //     echo "socket_create() failed: reason: " . socket_strerror(socket_last_error    ()) . "<br/>";
+          // } else {
+          //     echo "OK"."<br/>";
+          // }
+          //
+          // echo "Attempting to connect to '$host' on port '$port'...";
+          // $result = socket_connect($socket, $host, $port);
+          // if ($result === false) {
+          //     echo "socket_connect() failed.\nReason: ($result) " . socket_strerror    (socket_last_error($socket)) . "<br/>";
+          // } else {
+          //     echo "OK"."<br/>";
+          // }
+          // socket_write($socket, $label, strlen($label));
+          // socket_close($socket);
         } else {
           echo "<h3>"."Unsuccessful insertion! Check all the input values! Contact IT Department if you need further assitance"."</h3>";
         }
+        header("refresh: 1");
       }
     ?>
   </body>
