@@ -90,7 +90,6 @@
       if ($sql_task_manager->sql_insert_gen($_REQUEST, 'SLITTER')) {
         echo "<h3>"."Records created successfully!"."</h3>";
         //Creates new label
-        for ($x =1; $x<=1; $x++) {
         /* Get the port for the service. */
         $port = "9100";
 
@@ -128,7 +127,7 @@
         }
         socket_write($socket, $label, strlen($label));
         socket_close($socket);
-        }
+        header("refresh: 1"); 
       } else {
         echo "<h3>"."Unsuccessful update! Check all the input values! Contact IT Department if you need further assitance"."</h3>";
       }
