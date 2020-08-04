@@ -189,7 +189,6 @@
 
           socket_write($socket, $label, strlen($label));
           socket_close($socket);
-          header("refresh: 1");
         } else {
           echo "<h3>"."Unsuccessful insertion! Check all the input values! Contact IT Department if you need further assitance"."</h3>";
         }

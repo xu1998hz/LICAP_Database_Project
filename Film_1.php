@@ -55,11 +55,11 @@
 
    <p style="<?php echo $sql_task_manager->color_ls_read("MIX_BATCH_NUM") ?>">
      <label for="MIX_BATCH_NUM">Powder Batch 1</label>
-     <input type="text" name="MIX_BATCH_NUM" value="<?php echo htmlentities($row['MIX_BATCH_NUM']); ?>" />
+     <input type="text" name="MIX_BATCH_NUM" value="<?php echo $row['MIX_BATCH_NUM_2'] ? $row['MIX_BATCH_NUM_2'] : $row['MIX_BATCH_NUM'] ?>" />
    </p>
    <p style="<?php echo $sql_task_manager->color_ls_read("MIX_BATCH_NUM_2") ?>">
      <label for="MIX_BATCH_NUM_2">Powder Batch 2</label>
-     <input type="text" name="MIX_BATCH_NUM_2" value="<?php echo htmlentities($row['MIX_BATCH_NUM_2']); ?>" />
+     <input type="text" name="MIX_BATCH_NUM_2"/>
    </p>
 
    <hr>
@@ -172,7 +172,7 @@
 
          socket_write($socket, $label, strlen($label));
          socket_close($socket);
-         header("refresh: 1"); 
+         header("refresh: 1");
        } else {
          echo "<h3>"."Unsuccessful insertion! Check all the input values! Contact IT Department if you need further assitance"."</h3>";
        }

@@ -53,6 +53,13 @@
   </p>
   <hr>
   <p>
+    <label for="CNT_SERIAL">CNT Lot Number:</label>
+    <input type="text" name="CNT_SERIAL"/>
+    <label for="CNT_AMOUNT">CNT Weight:</label>
+    <input type="text" name="CNT_AMOUNT"/>
+  </p>
+  <hr>
+  <p>
     <label for="AC_WEIGHT">Active Carbon Weight:</label>
     <input type="text" id="AC_WEIGHT" name="AC_WEIGHT" value="<?php echo htmlentities($row['AC_WEIGHT']); ?>" onkeyup="PTFE_compute()"/>
   </p>
@@ -183,7 +190,7 @@
 
       socket_write($socket, $label, strlen($label));
       socket_close($socket);
-      header("refresh: 1"); 
+      header("refresh: 1");
     } else {
       echo "<h3>"."Unsuccessful insertion! Check all the input values! Contact IT Department if you need further assitance"."</h3>";
     }
