@@ -1,3 +1,10 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Shipping Quality Check</title>
+</head>
+<body>
 <?php
     if (count($_REQUEST) === 0){
       return;
@@ -17,55 +24,58 @@
 ?>
 
 <form action="Shipping_QC.php" method="post">
-  <h1> Data Information for Shipping </h1>
-  <p>
+  <h1 style='text-align:center'> Data Information for Shipping </h1>
+  <p style='text-align:center'>
   <label for='PALLET_BOX_NUM'>Pallet # - Box #:</label>
   <input id="PALLET_BOX_NUM" name="PALLET_BOX_NUM" type="text" value ="<?php echo $_REQUEST['PALLET_BOX_NUM'] ?>">
   </p>
-  <p>
+  <p style='text-align:center'>
   <label for='ELECTRODE_BATCH_NUM'>Electrode #:</label>
   <input id="ELECTRODE_BATCH_NUM" name="ELECTRODE_BATCH_NUM" type="text" value ="<?php echo $_REQUEST['ELECTRODE_BATCH_NUM'] ?>">
   </p>
-  <p>
+  <p style='text-align:center'>
   <label for='TYPE'>P/N:</label>
   <input id="TYPE" name="TYPE" type="text" value ="<?php echo $_REQUEST['TYPE'] ?>">
   </p>
-  <p>
+  <p style='text-align:center'>
   <label for='ELECTRODE_LENGTH'>Electrode length (M):</label>
   <input id="ELECTRODE_LENGTH" name="ELECTRODE_LENGTH" type="text" value ="<?php echo $_REQUEST['ELECTRODE_LENGTH'] ?>">
   </p>
-  <p>
+  <p style='text-align:center'>
   <label for='ELECTRODE_AREA'>Electrode area (M2):</label>
   <input id="ELECTRODE_AREA" name="ELECTRODE_AREA" type="text" value ="<?php echo $_REQUEST['ELECTRODE_AREA'] ?>">
   </p>
-  <p>
+  <p style='text-align:center'>
   <label for='END_CENTER'>Electrode thickness center (um):</label>
   <input id="END_CENTER" name="END_CENTER" type="text" value ="<?php echo $_REQUEST['END_CENTER'] ?>">
   </p>
-  <p>
+  <p style='text-align:center'>
   <label for='ROLL_DIAMETER'>Roll Diameter (um):</label>
   <input id="ROLL_DIAMETER" name="ROLL_DIAMETER" type="text" value ="<?php echo $_REQUEST['ROLL_DIAMETER'] ?>">
   </p>
-  <p>
+  <p style='text-align:center'>
   <label for='PACK_DATE'>Packing Date:</label>
   <input id="PACK_DATE" name="PACK_DATE" type="text" value ="<?php echo $_REQUEST['PACK_DATE'] ?>">
   </p>
-  <p>
+  <p style='text-align:center'>
   <label for='SHIPPING_DATE'>Current Shipping Date:</label>
   <input id="SHIPPING_DATE" name="SHIPPING_DATE" type="text" value ="<?php echo $_REQUEST['SHIPPING_DATE'] ?>">
   </p>
-
+  <div style='text-align:center'>
   <input type="submit" value="Submit" name="Submit_QC">
+  </div>
 </form>
 
 <?php
   if(isset($_REQUEST["Submit_QC"])) {
     unset($_REQUEST["Submit_QC"]);
     if ($sql_task_manager->sql_insert_gen($_REQUEST, 'SHIPPING')) {
-      echo "<h3>"."Records added to SHIPPING Database successfully!"."</h3>";
+      echo "<h3 style='text-align:center'>"."Records added to SHIPPING Database successfully!"."</h3>";
       echo "<script>setTimeout(\"location.href = 'http://localhost/LICAP_Database_Project/Scanner_Reader.php';\",2000);</script>";
     } else {
       echo "<h3>"."Unsuccessful insertion! Check all the input values! Contact IT Department if you need further assitance"."</h3>";
     }
   }
 ?>
+</body>
+</html>

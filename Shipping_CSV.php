@@ -29,7 +29,7 @@
     fputcsv($file, array('Pallet# -Box #', 'Electrode #', 'P/N', 'Electrode length (M)', 'Electrode area (M2)', 'Electrode thickness center (um)', 'Roll Diameter (mm)'));
     foreach ($sql_results as $row) { fputcsv($file, $row); }
     fclose($file);
-    echo "<h2 style='text-align:center'>"."CSV is successfully downloaded!"."</h2>";
+    echo "<h2 style='text-align:center; color:red'>"."CSV is successfully downloaded!"."</h2>";
   }
   if (isset($_REQUEST["Submit_Num"])) {
     $Num_Rec = $_REQUEST['Num_Rec']; $query_date = $_REQUEST['SHIPPING_DATE'];

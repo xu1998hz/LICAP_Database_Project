@@ -18,14 +18,8 @@ th, td {
      # calulate the timestamp range
      $date_range = date("m/d/Y-H:i:s", strtotime('-14 days'));
      $cur_year = date("Y");
-     $sql_command = "SELECT BATCH_NUM, TIMESTAMP, GRIND_OP, MIXING_OP FROM blend WHERE TIMESTAMP > '$date_range' ORDER BY TIMESTAMP DESC";
-     $sql_temp = $sql_task_manager->pdo_sql_rows_fetch($sql_command, array('BATCH_NUM', 'TIMESTAMP', 'GRIND_OP', 'MIXING_OP'));
-     $sql_arr = array();
-     for ($i=0; $i<count($sql_temp); $i++) {
-       if (explode('-', explode('/', $sql_temp[$i][1])[2])[0]==='2020'){
-         array_push($sql_arr, $sql_temp[$i]);
-       }
-     }
+     $sql_command = "SELECT BATCH_NUM, TIMESTAMP, GRIND_OP, MIXING_OP FROM blend WHERE TIMESTAMP > '$date_range' AND RIGHT(DATE, 4) = $cur_year ORDER BY TIMESTAMP DESC";
+     $sql_arr = $sql_task_manager->pdo_sql_rows_fetch($sql_command, array('BATCH_NUM', 'TIMESTAMP', 'GRIND_OP', 'MIXING_OP'));
     ?>
 
     <script type="text/javascript">
