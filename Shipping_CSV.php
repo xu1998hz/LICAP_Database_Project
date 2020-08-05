@@ -4,6 +4,9 @@
     <label for='SHIPPING_DATE'>Shipping Date:</label>
     <input id="SHIPPING_DATE" name="SHIPPING_DATE" type="text">
   </p>
+  <p style='text-align:center; color:red'>
+  <label>Hint: Date format is Month-Day-Year, Ex: 8-5-2020</label>
+</p>
   <div style="text-align:center">
   <input type="submit" value="Download CSV" name="Submit_Date">
   </div>
@@ -20,8 +23,8 @@
 <?php
   require_once('sql_task_manager.php');
   $sql_task_manager = new sql_task_manager("localhost", "operator", "Licap123!", "Manufacture_test");
+  $query_date = date('Y-d-m', strtotime($_REQUEST['SHIPPING_DATE']));
   if(isset($_REQUEST["Submit_Date"])) {
-    $query_date = $_REQUEST['SHIPPING_DATE'];
     $sql_command = "SELECT PALLET_BOX_NUM, ELECTRODE_BATCH_NUM, TYPE, ELECTRODE_LENGTH, ELECTRODE_AREA, END_CENTER, ROLL_DIAMETER FROM SHIPPING WHERE SHIPPING_DATE = '$query_date'";
     $sql_results = $sql_task_manager->pdo_sql_rows_fetch($sql_command, array('PALLET_BOX_NUM', 'ELECTRODE_BATCH_NUM', 'TYPE', 'ELECTRODE_LENGTH', 'ELECTRODE_AREA', 'END_CENTER', "ROLL_DIAMETER"));
     $file_name = 'Shipping_Record_'.date("m_d_Y_H_i_s").'.csv';
@@ -32,7 +35,7 @@
     echo "<h2 style='text-align:center; color:red'>"."CSV is successfully downloaded!"."</h2>";
   }
   if (isset($_REQUEST["Submit_Num"])) {
-    $Num_Rec = $_REQUEST['Num_Rec']; $query_date = $_REQUEST['SHIPPING_DATE'];
+    $Num_Rec = $_REQUEST['Num_Rec'];
     $sql_command = "SELECT PALLET_BOX_NUM, ELECTRODE_BATCH_NUM, TYPE, ELECTRODE_LENGTH, ELECTRODE_AREA, END_CENTER, ROLL_DIAMETER FROM SHIPPING WHERE SHIPPING_DATE = '$query_date' ORDER BY ID DESC LIMIT ".$Num_Rec;
     $sql_results = $sql_task_manager->pdo_sql_rows_fetch($sql_command, array('PALLET_BOX_NUM', 'ELECTRODE_BATCH_NUM', 'TYPE', 'ELECTRODE_LENGTH', 'ELECTRODE_AREA', 'END_CENTER', "ROLL_DIAMETER"));
   }

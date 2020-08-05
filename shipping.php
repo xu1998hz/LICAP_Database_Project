@@ -95,24 +95,26 @@
         $port = "9100";
         $host = "10.1.10.193";
         /* construct the label for small label */
-        $label_small = "﻿CT~~CD,~CC^~CT~
+        $label_small = "CT~~CD,~CC^~CT~
         ^XA~TA000~JSN^LT0^MNW^MTD^PON^PMN^LH0,0^JMA^PR5,5~SD15^JUS^LRN^CI0^XZ
         ^XA
-        ^MMC
+        ^MMT
         ^PW609
         ^LL0203
         ^LS0
-        ^FO384,96^GFA,03584,03584,00028,:Z64:
-        eJzt1LFuxCAMAFAiBkY+Aak/wqdxUoeO/SU69Teo8gOMDAjXxuGAJCd17IB1wyXvxBlsI8SKFStW/MNwOzyEkCA2CPj0A5BG80IoEBoKW+n2c5gFXICM1hlNF4EvA5sfLJBJfBnZwtNCtayAsqgWZzNZA2VRLXVz+DuTDL4EtjybTZYN1xjN4ho2WhAGHmS2nM0k3KR3NefBaLWoI50amRqsZhGU3/0rk+97dLEadKOdgd/UnuwLE2bPs0n6p2bFJDJ5mGtW6zLZBpPp0VTNsJ7WxTTbQ94YbS1saLhd/PqZB7NsXrF9XEw87Xs0V6hi4HW+sVQtHDatiSXHJzy2dM2FOhI/VNjLHvAY8QmLHl+bfWkmkdkdzK0FsnJnNb1nbSfT2XkhdeuJG6NeCpf9qYKl1V+tB9u5dDPxTXJfT2cmqSVsbj3fLB9GXdVmZapftT5jk210bRie21O/sOk6sOc+40k97oJTf7Idd0g3yeZowutQjPNwWOK8xGSmm6aVRxuj32MrVqxY8Yf4BfwKIv4=:5FAF
-        ^FT593,54^A0I,14,14^FH\^FDLOT:" . $_REQUEST['COMBINED_SERIAL'] . "^FS
-        ^FT593,11^A0I,28,28^FH\^FDLENGTH:" . $row_result['ELECTRODE_LENGTH'] . " METERS^FS
-        ^FT175,204^BQN,2,5
-        ^FH\^FDLA," . $_REQUEST['COMBINED_SERIAL'] . "^FS
+        ^FO352,128^GFA,03072,03072,00032,:Z64:
+        eJzt1TGS3CAQBVAoAhKXOQJH4WhoawJfS1u+CEdQqICi3U03Egi868zJKFjN8Gq0Lfg0Sr0vBQdkugdQStMnAwkAlh7gaH7eHqvHoiyOb+LQeamelcfh1Hy/PDSPOHw0T7eDONT/K35c7tlPTcO5+flwOA0Nl9kdFk13Kh9fQDx3jrVqek6tW7xcbtlTwGdi3aaWvvQdp+Bgj3B5HTCwU52ueZjdFbqJ+965MJv9T02vSe5mN2dwG+Tm29P1AQ4Xi93ertk39QHu9LMrdiruWy8eZo8ynxbdjV4XurkDB3Zwv/BX5xyU0K3n4Ibd42+D5MH0br9xx05zHQ+u5tW7X/nvhW80DfXrx8LpMw1OXhP3pe/su6YMTk47k3ecWXuefHi/eA4+zY+4pj2wLZxe+h8c9+4VZ/uF0/r/Gjyxx5OWkPIFQ74ejvnMQz7b80P23Bkf+X7462/us8eZ0Dt6WHqheOkUXYrZTPOHLxbwr83BfcLguTnFyxXz4+oP/fpSThO3DDd4kOCxD/2pzw/tgyRpa/2tz6f43R+fbqq7q78ufJfdBqpz2X8YEPp29/fmZvD7fGiu20HBx1EEOV+ay0hzKmcfPIhzt7bSxW53zQtnl7rM0L8COx9x+Jjj4e/rfb2v/3T9AQ7vY/c=:6EFC
+        ^FT599,108^A0I,25,24^FH\^FDLOT:".$_REQUEST['COMBINED_SERIAL']."^FS
+        ^FT600,8^A0I,20,19^FH\^FDLENGTH:".$row_result['ELECTRODE_LENGTH']." METERS^FS
+        ^FT17,222^BQN,2,7
+        ^FH\^FDLA,".$_REQUEST['COMBINED_SERIAL']."^FS
         ^PQ1,0,1,Y^XZ";
         $sql_task_manager->socket_connect_label($host, $port, $label_small);
         // print the large label for shipping
         $host = "10.1.10.194";
         $P_N = implode('-',array($row_result['FOIL_TYPE'], $row_result['THICKNESS']));
+        $PALLET_NUM_label = $_REQUEST['PALLET_NUM'] < 10 ? "0".$_REQUEST['PALLET_NUM'] : $_REQUEST['PALLET_NUM'];
+        $BOX_NUM_label = $_REQUEST['BOX_NUM'] < 10 ? "0".$_REQUEST['BOX_NUM'] : $_REQUEST['BOX_NUM'];
         /* construct the label for big label */
         $label_big = "CT~~CD,~CC^~CT~
               ^XA~TA000~JSN^LT0^MNW^MTD^PON^PMN^LH0,0^JMA^PR6,6~SD15^JUS^LRN^CI0^XZ
@@ -125,9 +127,9 @@
               ^FT567,33^A0R,39,31^FH\^FDLot:".$_REQUEST['COMBINED_SERIAL']."^FS
               ^FT400,31^A0R,62,62^FH\^FDLength:".$row_result['ELECTRODE_LENGTH']." Meters^FS
               ^BY3,3,68^FT471,30^BCR,,N,N
-              ^FD>:2E2F-150->508052020>6-18^FS
-              ^FT143,534^A0R,135,134^FB327,1,0,C^FH\^FDP08-^FS
-              ^FT146,854^A0R,135,134^FH\^FDB04^FS
+              ^FD>:".$_REQUEST['COMBINED_SERIAL']."^FS
+              ^FT143,534^A0R,135,134^FB327,1,0,C^FH\^FDP".$PALLET_NUM_label."-^FS
+              ^FT146,854^A0R,135,134^FH\^FDB".$BOX_NUM_label."^FS
               ^FT314,27^A0R,51,50^FH\^FDDiameter:".$_REQUEST['ROLL_DIAMETER']."mm^FS
               ^FT397,813^A0R,37,38^FH\^FDWEIGHT:".$_REQUEST['WEIGHT']."KG^FS
               ^FT314,818^A0R,39,38^FH\^FDP/N:".$P_N."^FS

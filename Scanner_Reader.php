@@ -9,7 +9,7 @@
   require_once('sql_task_manager.php');
   $sql_task_manager = new sql_task_manager("localhost", "operator", "Licap123!", "Manufacture_test");
   $sql_command = "SELECT SHIPPING_DATE FROM SHIPPING ORDER BY ID DESC LIMIT 1";
-  $ship_date = $sql_task_manager->pdo_sql_row_fetch($sql_command)['SHIPPING_DATE'];
+  $ship_date = date('m-d-Y', strtotime($sql_task_manager->pdo_sql_row_fetch($sql_command)['SHIPPING_DATE']));
 ?>
 
 <form action="Shipping_QC.php" method="post">
@@ -23,7 +23,8 @@
   <input id="ELECTRODE_BATCH_NUM" name="ELECTRODE_BATCH_NUM" onmouseover="this.focus();" type="text">
   </p>
   <p style="color:red; text-align:center">
-    <label>Hint: Move the mouse around Bar Code input box and Scan the Bar Code</label>
+    <label>Hint1: Move the mouse around Bar Code input box and Scan the Bar Code</label><br/>
+    <label>Hint2: Date format is Month-Day-Year, Ex: 8-5-2020</label>
   </p>
   <input type="submit" id="Submit" value="Submit">
 </form>
