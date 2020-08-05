@@ -5,15 +5,15 @@
     require_once('sql_task_manager.php');
     $sql_task_manager = new sql_task_manager("localhost", "operator", "Licap123!", "Manufacture_test");
     $sql_command = "SELECT FOIL_TYPE, THICKNESS, END_CENTER FROM LAMINATOR WHERE ELECTRODE_SERIAL = ?";
-    $sql_task_manager->pdo_sql_vali_execute($sql_command, array($_REQUEST['ELECTRODE_BATCH_NUM']));
+    $sql_task_manager->pdo_sql_vali_execute($sql_command, array(explode('/', $_REQUEST['ELECTRODE_BATCH_NUM'])[0]));
     $row_result_LAM = $sql_task_manager->row_fetch();
-    $sql_command = "SELECT STRIP_LENGTH_METERS, ELECTRODE_AREA, TIMESTAMP, PALLET_NUM, BOX_NUM FROM SLITTER WHERE COMBINED_SERIAL = ?";
+    $sql_command = "SELECT STRIP_LENGTH_METERS, ELECTRODE_AREA, TIMESTAMP, PALLET_NUM, BOX_NUM, ROLL_DIAMETER FROM SLITTER WHERE COMBINED_SERIAL = ?";
     $sql_task_manager->pdo_sql_vali_execute($sql_command, array($_REQUEST['ELECTRODE_BATCH_NUM']));
     $row_result_SLITTER = $sql_task_manager->row_fetch();
     $_REQUEST['TYPE'] = implode('-', array($row_result_LAM["THICKNESS"], $row_result_LAM['FOIL_TYPE']));
-    $_REQUEST['PALLET_BOX_NUM'] = implode('-', array($row_result_SLITTER['PALLET_NUM'], $row_result_SLITTER['BOX_NUM']));
+    $_REQUEST['PALLET_BOX_NUM'] = implode('--', array($row_result_SLITTER['PALLET_NUM'], $row_result_SLITTER['BOX_NUM']));
     $_REQUEST['ELECTRODE_LENGTH'] = $row_result_SLITTER['STRIP_LENGTH_METERS']; $_REQUEST['ELECTRODE_AREA'] = $row_result_SLITTER['ELECTRODE_AREA'];
-    $_REQUEST['PACK_DATE'] = $row_result_SLITTER['TIMESTAMP']; $_REQUEST['END_CENTER'] = $row_result_LAM['END_CENTER'];
+    $_REQUEST['PACK_DATE'] = $row_result_SLITTER['TIMESTAMP']; $_REQUEST['END_CENTER'] = $row_result_LAM['END_CENTER']; $_REQUEST['ROLL_DIAMETER'] = $row_result_SLITTER['ROLL_DIAMETER'];
 ?>
 
 <form action="Shipping_QC.php" method="post">
@@ -39,8 +39,12 @@
   <input id="ELECTRODE_AREA" name="ELECTRODE_AREA" type="text" value ="<?php echo $_REQUEST['ELECTRODE_AREA'] ?>">
   </p>
   <p>
-  <label for='END_CENTER'>Roll Diameter (mm):</label>
+  <label for='END_CENTER'>Electrode thickness center (um):</label>
   <input id="END_CENTER" name="END_CENTER" type="text" value ="<?php echo $_REQUEST['END_CENTER'] ?>">
+  </p>
+  <p>
+  <label for='ROLL_DIAMETER'>Roll Diameter (um):</label>
+  <input id="ROLL_DIAMETER" name="ROLL_DIAMETER" type="text" value ="<?php echo $_REQUEST['ROLL_DIAMETER'] ?>">
   </p>
   <p>
   <label for='PACK_DATE'>Packing Date:</label>
