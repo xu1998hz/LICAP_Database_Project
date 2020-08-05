@@ -158,7 +158,7 @@
 
        socket_write($socket, $label, strlen($label));
        socket_close($socket);
-       header("refresh: 1");
+       echo "<script>setTimeout(\"location.href = 'http://10.1.10.190/Slitter.php';\",2000);</script>";
      } else {
        echo "<h3>"."Unsuccessful insertion! Check all the input values! Contact IT Department if you need further assitance"."</h3>";
      }

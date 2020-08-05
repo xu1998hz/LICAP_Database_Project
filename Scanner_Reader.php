@@ -6,10 +6,10 @@
 </head>
 <body>
 <?php
-    require_once('sql_task_manager.php');
-    $sql_task_manager = new sql_task_manager("localhost", "operator", "Licap123!", "Manufacture_test");
-    $sql_command = "SELECT SHIPPING_DATE FROM SHIPPING ORDER BY ID DESC LIMIT 1";
-    $ship_date = $sql_task_manager->pdo_sql_row_fetch($sql_command)['SHIPPING_DATE'];
+  require_once('sql_task_manager.php');
+  $sql_task_manager = new sql_task_manager("localhost", "operator", "Licap123!", "Manufacture_test");
+  $sql_command = "SELECT SHIPPING_DATE FROM SHIPPING ORDER BY ID DESC LIMIT 1";
+  $ship_date = $sql_task_manager->pdo_sql_row_fetch($sql_command)['SHIPPING_DATE'];
 ?>
 
 <form action="Shipping_QC.php" method="post">
@@ -37,7 +37,7 @@
 
 <?php
   if (count($_REQUEST)===0) return;
-  else header("Location:http://localhost/LICAP_Database_Project/Shipping_QC.php");
+  else header("Location:http://10.1.10.190/Shipping_QC.php");
 ?>
 
 </body>

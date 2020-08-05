@@ -144,7 +144,7 @@
         # get the last record
         $row = $sql_task_manager->pdo_sql_row_fetch("SELECT ELECTRODE_SERIAL FROM LAMINATOR ORDER BY ID DESC LIMIT 1");
         # sprcific ELECTRODE seiral compuation in Laminator
-        $_REQUEST['ELECTRODE_SERIAL'] = $sql_task_manager->ID_computation($row['ELECTRODE_SERIAL'], $_REQUEST['THICKNESS'], $_REQUEST['LAM_ID'], "E-1".explode("-", $_REQUEST['UPPER_FILM_BATCH_NUM'])[0]."-", 3);
+        $_REQUEST['ELECTRODE_SERIAL'] = $sql_task_manager->ID_computation($row['ELECTRODE_SERIAL'], $_REQUEST['THICKNESS'], $_REQUEST['LAM_ID'], "E-".explode("-", $_REQUEST['UPPER_FILM_BATCH_NUM'])[0]."-", 3);
         $_REQUEST['AVG_THICKNESS'] = ($_REQUEST['END_OP'] + $_REQUEST['END_CENTER'] + $_REQUEST['END_MACHINE'])/3;
         $_REQUEST['NUM_DEFECT'] = $_REQUEST['NUM_SPLICE'] + $_REQUEST['NUM_HOLE'] + $_REQUEST['NUM_DELAM'];
         if ($sql_task_manager->sql_insert_gen($_REQUEST, 'LAMINATOR')) {
@@ -186,9 +186,9 @@
           } else {
               echo "OK"."<br/>";
           }
-
           socket_write($socket, $label, strlen($label));
           socket_close($socket);
+          echo "<script>setTimeout(\"location.href = 'http://10.1.10.190/Laminator_1.php';\",2000);</script>";
         } else {
           echo "<h3>"."Unsuccessful insertion! Check all the input values! Contact IT Department if you need further assitance"."</h3>";
         }

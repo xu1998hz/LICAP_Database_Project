@@ -39,22 +39,22 @@
 ?>
 
 <script type="text/javascript">
-var sql_arr = <?php echo json_encode($sql_results) ?>;
-document.open();
-document.write("<h1 style='text-align:center'>Shipping records display Table</h1>");
-document.write("<h2 style='text-align:center'>This table will display the most recent records specified by your inputs</h2>");
-document.write("<table style='width:100%'>");
-document.write("<tr> <th>Pallet# -Box #</th> <th>Electrode #</th> <th>P/N</th> <th>Electrode length (M)</th> <th>Electrode area (M2)</th> <th>Electrode thickness center (um)</th> <th>Roll Diameter (mm)</th></tr>");
-for (i=0; i<sql_arr.length; i++) {
-  var line_str = "<tr>";
-  for (j=0; j<sql_arr[i].length; j++) {
-    line_str+="<td>";
-    line_str+=sql_arr[i][j];
-    line_str+="</td>";
+  var sql_arr = <?php echo json_encode($sql_results) ?>;
+  document.open();
+  document.write("<h1 style='text-align:center'>Shipping records display Table</h1>");
+  document.write("<h2 style='text-align:center'>This table will display the most recent records specified by your inputs</h2>");
+  document.write("<table style='width:100%'>");
+  document.write("<tr> <th>Pallet# -Box #</th> <th>Electrode #</th> <th>P/N</th> <th>Electrode length (M)</th> <th>Electrode area (M2)</th> <th>Electrode thickness center (um)</th> <th>Roll Diameter (mm)</th></tr>");
+  for (i=0; i<sql_arr.length; i++) {
+    var line_str = "<tr>";
+    for (j=0; j<sql_arr[i].length; j++) {
+      line_str+="<td>";
+      line_str+=sql_arr[i][j];
+      line_str+="</td>";
+    }
+    line_str += "</tr>";
+    document.write(line_str);
   }
-  line_str += "</tr>";
-  document.write(line_str);
-}
-document.write("</table>");
-document.close();
+  document.write("</table>");
+  document.close();
 </script>

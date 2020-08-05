@@ -8,7 +8,7 @@
     <?php
       require_once('sql_task_manager.php');
       $langs_trans = array("END_OP" => "Ending Operator Side Thickness", "END_CENTER" => "End Center Thickness", "END_MACHINE" => "Ending Machine Side Thickness");
-      $sql_task_manager = new sql_task_manager("localhost", "operator", "Licap123!", "Manufacture_test");
+      $sql_task_manager = new sql_task_manager("localhost", "operator", "Licap123!", "Manufacture");
       $sql_command = "SELECT LAM_OP, FOIL_TYPE, CAF_BATCH_NUM, CAF_BATCH_NUM_2, LAM_TEMP_UPPER, LAM_TEMP_LOWER, LAM_SPEED, GAP_OP, GAP_MACHINE, THICKNESS FROM LAMINATOR WHERE LAM_ID=2 ORDER BY ID DESC LIMIT 1";
       $row = $sql_task_manager->pdo_sql_row_fetch($sql_command);
       $CAF_BATCH_NUM_FINAL_RESULT = $row['CAF_BATCH_NUM_2'] ? $row['CAF_BATCH_NUM_2'] : $row['CAF_BATCH_NUM'];
@@ -144,7 +144,7 @@
         # get the last record
         $row = $sql_task_manager->pdo_sql_row_fetch("SELECT ELECTRODE_SERIAL FROM LAMINATOR ORDER BY ID DESC LIMIT 1");
         # sprcific ELECTRODE seiral compuation in Laminator
-        $_REQUEST['ELECTRODE_SERIAL'] = $sql_task_manager->ID_computation($row['ELECTRODE_SERIAL'], $_REQUEST['THICKNESS'], $_REQUEST['LAM_ID'], "E-2".explode("-", $_REQUEST['UPPER_FILM_BATCH_NUM'])[0]."-", 3);
+        $_REQUEST['ELECTRODE_SERIAL'] = $sql_task_manager->ID_computation($row['ELECTRODE_SERIAL'], $_REQUEST['THICKNESS'], $_REQUEST['LAM_ID'], "E-".explode("-", $_REQUEST['UPPER_FILM_BATCH_NUM'])[0]."-", 3);
         $_REQUEST['AVG_THICKNESS'] = ($_REQUEST['END_OP'] + $_REQUEST['END_CENTER'] + $_REQUEST['END_MACHINE'])/3;
         $_REQUEST['NUM_DEFECT'] = $_REQUEST['NUM_SPLICE'] + $_REQUEST['NUM_HOLE'] + $_REQUEST['NUM_DELAM'];
         if ($sql_task_manager->sql_insert_gen($_REQUEST, 'LAMINATOR')) {
@@ -188,10 +188,10 @@
           }
           socket_write($socket, $label, strlen($label));
           socket_close($socket);
+          echo "<script>setTimeout(\"location.href = 'http://10.1.10.190/Laminator_2.php';\",2000);</script>";
         } else {
           echo "<h3>"."Unsuccessful insertion! Check all the input values! Contact IT Department if you need further assitance"."</h3>";
         }
-        header("refresh: 1");
       }
     ?>
   </body>

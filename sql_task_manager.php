@@ -148,6 +148,25 @@
         return $ID;
       }
 
+      # socket function to build the connection
+      public function socket_connect_label($host, $port, $label) {
+        $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+        if ($socket === false) {
+            echo "socket_create() failed: reason: " . socket_strerror(socket_last_error    ()) . "<br/>";
+        } else {
+            echo "OK"."<br/>";
+        }
+        echo "Attempting to connect to '$host' on port '$port'...";
+        $result = socket_connect($socket, $host, $port);
+        if ($result === false) {
+            echo "socket_connect() failed.\nReason: ($result) " . socket_strerror    (socket_last_error($socket)) . "<br/>";
+        } else {
+            echo "OK"."<br/>";
+        }
+        socket_write($socket, $label, strlen($label));
+        socket_close($socket);
+      }
+
       # release the PDO object and close connection
       public function __destructor() {
         $this->pdo = NULL;
