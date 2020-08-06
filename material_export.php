@@ -17,7 +17,7 @@ $T1 = mysqli_real_escape_string($conn, $_REQUEST['T1']);
 $T2 = mysqli_real_escape_string($conn, $_REQUEST['T2']);
 $T1_year = explode('/', $T1)[2];
 $T2_year = explode('/', $T2)[2];
-$where = "WHERE DATE >= '$T1' AND DATE <= '$T2' AND RIGHT(DATE, 4) >= '$T1_year' AND RIGHT(DATE, 4) >= '$T2_year'";
+$where = "WHERE DATE >= '$T1' AND DATE <= '$T2' AND RIGHT(DATE, 4) >= '$T1_year' AND RIGHT(DATE, 4) <= '$T2_year'";
 // create empty variable to be filled with export data
 $csv_export = '';
 // query to get data from database

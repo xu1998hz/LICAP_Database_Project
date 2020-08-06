@@ -17,7 +17,7 @@ $T1 = mysqli_real_escape_string($conn, $_REQUEST['T1']);
 $T2 = mysqli_real_escape_string($conn, $_REQUEST['T2']);
 $T1_year = explode('/', $T1)[2];
 $T2_year = explode('/', $T2)[2];
-$where = "WHERE LAM_DATE >= '$T1' AND LAM_DATE <= '$T2' AND RIGHT(LAM_DATE, 4) >= '$T1_year' AND RIGHT(LAM_DATE, 4) >= '$T2_year'";
+$where = "WHERE LAM_DATE >= '$T1' AND LAM_DATE <= '$T2' AND RIGHT(LAM_DATE, 4) >= '$T1_year' AND RIGHT(LAM_DATE, 4) <= '$T2_year'";
 // create empty variable to be filled with export data
 $csv_export = '';
 // query to get data from database

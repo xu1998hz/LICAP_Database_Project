@@ -33,6 +33,19 @@
         return $this->stmt->fetch(PDO::FETCH_ASSOC);
       }
 
+      # fetch the rows from the last query command in which query needs to be validated
+      public function rows_fetch($name_ls) {
+        $sql_arr = array();
+        while ($row = $this->stmt->fetch(PDO::FETCH_ASSOC)) {
+          $ret_arr = array();
+          for ($i=0; $i<count($name_ls); $i++) {
+            array_push($ret_arr, $row[$name_ls[$i]]);
+          }
+          array_push($sql_arr, $ret_arr);
+        }
+        return $sql_arr;
+      }
+
       # check if record exists in the specific table column
       public function query_record_exists($col_name, $table_name, $content) {
         $sql_cmd = "SELECT ".$col_name." FROM ".$table_name." WHERE ".$col_name." = :str_1";
