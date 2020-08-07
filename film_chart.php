@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Daily Film Chart</title>
+    <title>Date Range Film Chart</title>
 
     <link href="../../assets/styles.css" rel="stylesheet" />
 
@@ -43,7 +43,7 @@
       $sql_task_manager = new sql_task_manager("localhost", "operator", "Licap123!", "Manufacture");
       $T1 = $_REQUEST['LOWER_DATE']; $T2 = $_REQUEST['UPPER_DATE']; $T1_year = explode('/', $T1)[2]; $T2_year = explode('/', $T2)[2];
       $THICKNESS = $_REQUEST['THICKNESS']; $Label_State = $_REQUEST['LABEL'];
-      # besides specific date range condition and thickness specification
+      # besides specific date range condition and thickness specification, +/-6 for the spec to determine the displayed range
       $sql_daily_film = "SELECT AVG_THICKNESS, FILM_ID FROM FILM WHERE DATE >= ? AND DATE <= ? AND RIGHT(DATE, 4) >= ? AND RIGHT(DATE, 4) <= ? AND THICKNESS = ? AND AVG_THICKNESS >= ?-4  AND AVG_THICKNESS <= ?+12";
       $sql_task_manager->pdo_sql_vali_execute($sql_daily_film, array($T1, $T2, $T1_year, $T2_year, $THICKNESS, $THICKNESS, $THICKNESS));
       $sql_arr = $sql_task_manager->rows_fetch(array('AVG_THICKNESS', 'FILM_ID'));
@@ -114,7 +114,7 @@
           curve: 'straight'
         },
         title: {
-          text: 'Daily Film Average Thickness Trend',
+          text: 'Date Range Film Average Thickness Trend',
           align: 'center'
         },
         grid: {
