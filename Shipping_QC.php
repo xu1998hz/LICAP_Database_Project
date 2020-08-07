@@ -10,7 +10,7 @@
       return;
     }
     require_once('sql_task_manager.php');
-    $sql_task_manager = new sql_task_manager("localhost", "operator", "Licap123!", "Manufacture_test");
+    $sql_task_manager = new sql_task_manager("localhost", "operator", "Licap123!", "Manufacture");
     $sql_command = "SELECT FOIL_TYPE, THICKNESS, END_CENTER FROM LAMINATOR WHERE ELECTRODE_SERIAL = ?";
     $sql_task_manager->pdo_sql_vali_execute($sql_command, array(explode('/', $_REQUEST['ELECTRODE_BATCH_NUM'])[0]));
     $row_result_LAM = $sql_task_manager->row_fetch();

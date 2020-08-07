@@ -22,8 +22,10 @@
 
 <?php
   require_once('sql_task_manager.php');
-  $sql_task_manager = new sql_task_manager("localhost", "operator", "Licap123!", "Manufacture_test");
-  $query_date = date('Y-d-m', strtotime($_REQUEST['SHIPPING_DATE']));
+  $sql_task_manager = new sql_task_manager("localhost", "operator", "Licap123!", "Manufacture");
+  if (isset($_REQUEST['SHIPPING_DATE'])) {
+    $query_date = date('Y-d-m', strtotime($_REQUEST['SHIPPING_DATE']));
+  }
   if(isset($_REQUEST["Submit_Date"])) {
     $sql_command = "SELECT PALLET_BOX_NUM, ELECTRODE_BATCH_NUM, TYPE, ELECTRODE_LENGTH, ELECTRODE_AREA, END_CENTER, ROLL_DIAMETER FROM SHIPPING WHERE SHIPPING_DATE = '$query_date'";
     $sql_results = $sql_task_manager->pdo_sql_rows_fetch($sql_command, array('PALLET_BOX_NUM', 'ELECTRODE_BATCH_NUM', 'TYPE', 'ELECTRODE_LENGTH', 'ELECTRODE_AREA', 'END_CENTER', "ROLL_DIAMETER"));

@@ -57,12 +57,12 @@
       $sql_update = "UPDATE blend SET DATE = ?, TIMESTAMP = ?, BAGHOUSE_WEIGHT = ? WHERE ID = ? + 1";
       $result_arr = $sql_task_manager->pdo_sql_vali_execute($sql_update, array(date("m/d/Y"), date("m/d/Y-H:i:s"), $_REQUEST['BAGHOUSE_WEIGHT'], $ID_Val));
       if ($result_arr[1]) {
-        echo "<h3>"."Records updated successfully!"."</h3>";
+        echo "<h3 style='text-align:center'>"."Records updated successfully!"."</h3>";
         header("refresh: 1");
       } elseif (!$result_arr[0]) {
-        echo "<h3>"."Internal Error! Contact IT Department for further helps"."</h3>";
+        echo "<h3 style='text-align:center'>"."Internal Error! Contact IT Department for further helps"."</h3>";
       } else {
-        echo "<h3>"."All bag weights in the database have been updated!"."</h3>";
+        echo "<h3 style='text-align:center'>"."All bag weights in the database have been updated!"."</h3>";
         header("refresh: 1");
       }
     }
