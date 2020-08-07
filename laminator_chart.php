@@ -46,7 +46,6 @@
       # set the min and max average thickness to show better visualization
       $Min_THICKNESS = $THICKNESS === "150" ?  295 : 190;
       $Max_THICKNESS = $THICKNESS === "150" ?  335 : 230;
-      echo $Min_THICKNESS; echo $Max_THICKNESS;
       # besides specific date range condition and thickness specification
       $sql_daily_lam = "SELECT AVG_THICKNESS, ELECTRODE_SERIAL FROM LAMINATOR WHERE LAM_DATE >= ? AND LAM_DATE <= ? AND RIGHT(LAM_DATE, 4) >= ? AND RIGHT(LAM_DATE, 4) <= ?
       AND THICKNESS = ? AND AVG_THICKNESS >= ".$Min_THICKNESS." AND AVG_THICKNESS <= ".$Max_THICKNESS;
