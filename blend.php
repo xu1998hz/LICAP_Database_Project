@@ -61,20 +61,20 @@
   <hr>
   <p>
     <label for="AC_WEIGHT">Active Carbon Weight:</label>
-    <input type="text" id="AC_WEIGHT" name="AC_WEIGHT" value="<?php echo htmlentities($row['AC_WEIGHT']); ?>" onkeyup="PTFE_compute()"/>
+    <input type="text" id="AC_WEIGHT" name="AC_WEIGHT" value="<?php echo 20; ?>" onkeyup="PTFE_compute()"/>
   </p>
   <p>
     <label for="BAGHOUSE_RECYCLE">Bag House Recycle Weight:</label>
-    <input type="text" id="BAGHOUSE_RECYCLE" name="BAGHOUSE_RECYCLE" value="<?php echo htmlentities($row['BAGHOUSE_RECYCLE']); ?>" onkeyup="PTFE_compute()"/>
+    <input type="text" id="BAGHOUSE_RECYCLE" name="BAGHOUSE_RECYCLE" onkeyup="PTFE_compute()"/>
   </p>
   <p>
     <label for="STRIP_RECYCLE">Strip Recycle Weight:</label>
-    <input type="text" id="STRIP_RECYCLE" name="STRIP_RECYCLE" value="<?php echo htmlentities($row['STRIP_RECYCLE']); ?>" onkeyup="PTFE_compute()"/>
+    <input type="text" id="STRIP_RECYCLE" name="STRIP_RECYCLE" onkeyup="PTFE_compute()"/>
     <label for="BAGHOUSE_RECYCLE">*Must enter a zero if no recycle is used!</label>
   </p>
   <p>
     <label for="OUTSIDE_RECYCLE">Outside Recycle Weight:</label>
-    <input type"text" id="OUTSIDE_RECYCLE" name="OUTSIDE_RECYCLE" value="<?php echo htmlentities($row['OUTSIDE_RECYCLE']); ?>" onkeyup="PTFE_compute()"/>
+    <input type"text" id="OUTSIDE_RECYCLE" name="OUTSIDE_RECYCLE" onkeyup="PTFE_compute()"/>
   </p>
   <p style="color:red;">
     Real time PTFE value: <span id="PTFE"></span>
