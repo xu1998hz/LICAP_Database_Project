@@ -102,7 +102,7 @@
   </p>
   <p>
     <label for="PTFE_WEIGHT">PTFE Weight:</label>
-    <input type="text" name="PTFE_WEIGHT" id="PTFE_WEIGHT" value="<?php echo htmlentities($row['PTFE_WEIGHT']); ?>" />
+    <input type="text" name="PTFE_WEIGHT" id="PTFE_WEIGHT"/>
   </p>
   <p>
     <label for="MIX_TIME">Blend Time:</label>
