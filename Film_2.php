@@ -120,7 +120,7 @@
          $sql_task_manager->error_msg_print();
        }
        # compute values from above features
-       $_REQUEST['DATE'] = date("m/d/Y");
+       $_REQUEST['DATE'] = date("Y-m-d");
        $_REQUEST['TIMESTAMP'] = date("m/d/Y-H:i:s");
        //Compute the film ID
        $sql_command = "SELECT FILM_ID FROM FILM ORDER BY ID DESC LIMIT 1";

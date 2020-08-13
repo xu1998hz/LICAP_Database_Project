@@ -28,6 +28,17 @@
         return array($state_exec, $this->stmt->rowCount());
       }
 
+      # Obtain all the column names from a table
+      public function column_name_table($table_name) {
+        $sql_column_names = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '$table_name'";
+        $this->pdo_sql_vali_execute($sql_column_names, array());
+        $sql_arr = array();
+        while ($row = $this->stmt->fetch(PDO::FETCH_ASSOC)) {
+          array_push($sql_arr, $row['COLUMN_NAME']);
+        }
+        return $sql_arr;
+      }
+
       # fetch the row from the last query command in which query needs to be validated
       public function row_fetch() {
         return $this->stmt->fetch(PDO::FETCH_ASSOC);

@@ -41,11 +41,11 @@
     <?php
       require_once('sql_task_manager.php');
       $sql_task_manager = new sql_task_manager("localhost", "operator", "Licap123!", "Manufacture");
-      $T1 = $_REQUEST['LOWER_DATE']; $T2 = $_REQUEST['UPPER_DATE']; $T1_year = explode('/', $T1)[2]; $T2_year = explode('/', $T2)[2];
+      $T1 = date('Y-m-d', strtotime($_REQUEST['LOWER_DATE'])); $T2 = date('Y-m-d', strtotime($_REQUEST['UPPER_DATE']));
       $THICKNESS = $_REQUEST['THICKNESS']; $Label_State = $_REQUEST['LABEL'];
       # besides specific date range condition and thickness specification, +/-6 for the spec to determine the displayed range
-      $sql_daily_film = "SELECT AVG_THICKNESS, FILM_ID FROM FILM WHERE DATE >= ? AND DATE <= ? AND RIGHT(DATE, 4) >= ? AND RIGHT(DATE, 4) <= ? AND THICKNESS = ? AND AVG_THICKNESS >= ?-4  AND AVG_THICKNESS <= ?+12";
-      $sql_task_manager->pdo_sql_vali_execute($sql_daily_film, array($T1, $T2, $T1_year, $T2_year, $THICKNESS, $THICKNESS, $THICKNESS));
+      $sql_daily_film = "SELECT AVG_THICKNESS, FILM_ID FROM FILM WHERE DATE >= ? AND DATE <= ?  AND THICKNESS = ? AND AVG_THICKNESS >= ?-4  AND AVG_THICKNESS <= ?+12";
+      $sql_task_manager->pdo_sql_vali_execute($sql_daily_film, array($T1, $T2, $THICKNESS, $THICKNESS, $THICKNESS));
       $sql_arr = $sql_task_manager->rows_fetch(array('AVG_THICKNESS', 'FILM_ID'));
     ?>
     <script>

@@ -133,7 +133,7 @@
           $sql_task_manager->error_msg_print();
         }
         //Sets date and timestamp
-        $_REQUEST['LAM_DATE'] = date("m/d/Y");
+        $_REQUEST['LAM_DATE'] = date("Y-m-d");
         $_REQUEST['TIMESTAMP'] = date("m/d/Y-H:i:s");
         $_REQUEST['TAPE_TEST'] = 0; $_REQUEST['BEGIN_OP'] = 0; $_REQUEST['BEGIN_CENTER'] = 0; $_REQUEST['BEGIN_MACHINE']=0;
         //Update Amount of CAF used based on serial number

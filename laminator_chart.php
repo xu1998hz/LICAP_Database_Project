@@ -41,22 +41,23 @@
     <?php
       require_once('sql_task_manager.php');
       $sql_task_manager = new sql_task_manager("localhost", "operator", "Licap123!", "Manufacture");
-      $T1 = $_REQUEST['LOWER_DATE']; $T2 = $_REQUEST['UPPER_DATE']; $T1_year = explode('/', $T1)[2]; $T2_year = explode('/', $T2)[2];
+      $T1 = date('Y-m-d', strtotime($_REQUEST['LOWER_DATE'])); $T2 = date('Y-m-d', strtotime($_REQUEST['UPPER_DATE']));
       $THICKNESS = $_REQUEST['THICKNESS']; $Label_State = $_REQUEST['LABEL'];
       # set the min and max average thickness to show better visualization
       $Min_THICKNESS = $THICKNESS === "150" ?  295 : 190;
       $Max_THICKNESS = $THICKNESS === "150" ?  335 : 230;
       # besides specific date range condition and thickness specification
-      $sql_daily_lam = "SELECT AVG_THICKNESS, ELECTRODE_SERIAL FROM LAMINATOR WHERE LAM_DATE >= ? AND LAM_DATE <= ? AND RIGHT(LAM_DATE, 4) >= ? AND RIGHT(LAM_DATE, 4) <= ?
+      $sql_daily_lam = "SELECT AVG_THICKNESS, ELECTRODE_SERIAL FROM LAMINATOR WHERE LAM_DATE >= ? AND LAM_DATE <= ?
       AND THICKNESS = ? AND AVG_THICKNESS >= ".$Min_THICKNESS." AND AVG_THICKNESS <= ".$Max_THICKNESS;
-      $sql_task_manager->pdo_sql_vali_execute($sql_daily_lam, array($T1, $T2, $T1_year, $T2_year, $THICKNESS));
+      $sql_task_manager->pdo_sql_vali_execute($sql_daily_lam, array($T1, $T2, $THICKNESS));
       $sql_arr = $sql_task_manager->rows_fetch(array('AVG_THICKNESS', 'ELECTRODE_SERIAL'));
     ?>
     <script>
-      function getcol(matrix, col){
+      function getcol(matrix, col, parse_indicator){
         var column = [];
         for(var i=0; i<matrix.length; i++){
-          column.push(matrix[i][col]);
+          if (parse_indicator === 1) column.push(parseInt(matrix[i][col]));
+          else column.push(matrix[i][col]);
         }
         return column;
       }
@@ -64,8 +65,8 @@
     <script>
         var sql_arr = <?php echo json_encode($sql_arr) ?>;
         var state = <?php echo $Label_State ?>;
-        var data_ls = getcol(sql_arr, 0);
-        var batch_ls = getcol(sql_arr, 1);
+        var data_ls = getcol(sql_arr, 0, 1);
+        var batch_ls = getcol(sql_arr, 1, 0);
         var options = {
           series: [{
             name: "Laminator Avg Thickness",

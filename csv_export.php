@@ -11,11 +11,9 @@ $user = "operator";
 $password = "Licap123!";
 $database = "Manufacture";
 $conn = mysqli_connect($hostname, $user, $password, $database);
-$T1 = mysqli_real_escape_string($conn, $_REQUEST['T1']);
-$T2 = mysqli_real_escape_string($conn, $_REQUEST['T2']);
-$T1_year = explode('/', $T1)[2];
-$T2_year = explode('/', $T2)[2];
-$where = "WHERE DATE >= '$T1' AND DATE <= '$T2' AND RIGHT(DATE, 4) >= '$T1_year' AND RIGHT(DATE, 4) <= '$T2_year'";
+$T1 = mysqli_real_escape_string($conn, $_REQUEST['LOWER_DATE']);
+$T2 = mysqli_real_escape_string($conn, $_REQUEST['UPPER_DATE']);
+$where = "WHERE DATE >= '$T1' AND DATE <= '$T2'";
 if (mysqli_connect_errno()) {
     die("Failed to connect to MySQL: " . mysqli_connect_error());
 }
