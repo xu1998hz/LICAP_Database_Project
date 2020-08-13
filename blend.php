@@ -139,7 +139,7 @@
     $_REQUEST['AC_LOT_NUM_3'] = 0;
     unset($_REQUEST['AC_LOT_1']); unset($_REQUEST['AC_NUM_1']);
     unset($_REQUEST['AC_LOT_2']); unset($_REQUEST['AC_NUM_2']);
-    $_REQUEST['DATE'] = date("m/d/Y");
+    $_REQUEST['DATE'] = date("Y-m-d");
     $_REQUEST['TIMESTAMP'] = date("m/d/Y-H:i:s");
     $_REQUEST['BATCH_WEIGHT'] = $_REQUEST['AC_WEIGHT'] + $_REQUEST['ACETONE_WEIGHT'] + $_REQUEST['STRIP_RECYCLE']
      + $_REQUEST['BAGHOUSE_RECYCLE'] + $_REQUEST['OUTSIDE_RECYCLE'] + $_REQUEST['PTFE_WEIGHT'];

@@ -2,11 +2,8 @@
   <h1 style='text-align:center'>Real Time Shpping Page</h1>
   <p style='text-align:center'>
     <label for='SHIPPING_DATE'>Shipping Date:</label>
-    <input id="SHIPPING_DATE" name="SHIPPING_DATE" type="text">
+    <input id="SHIPPING_DATE" name="SHIPPING_DATE" type="date">
   </p>
-  <p style='text-align:center; color:red'>
-  <label>Hint: Date format is Month-Day-Year, Ex: 8-5-2020</label>
-</p>
   <div style="text-align:center">
   <input type="submit" value="Download CSV" name="Submit_Date">
   </div>
@@ -24,7 +21,7 @@
   require_once('sql_task_manager.php');
   $sql_task_manager = new sql_task_manager("localhost", "operator", "Licap123!", "Manufacture");
   if (isset($_REQUEST['SHIPPING_DATE'])) {
-    $query_date = date('Y-d-m', strtotime($_REQUEST['SHIPPING_DATE']));
+    $query_date = date('Y-m-d', strtotime($_REQUEST['SHIPPING_DATE']));
   }
   if(isset($_REQUEST["Submit_Date"])) {
     $sql_command = "SELECT PALLET_BOX_NUM, ELECTRODE_BATCH_NUM, TYPE, ELECTRODE_LENGTH, ELECTRODE_AREA, END_CENTER, ROLL_DIAMETER FROM SHIPPING WHERE SHIPPING_DATE = '$query_date'";
@@ -53,7 +50,7 @@
   for (i=0; i<sql_arr.length; i++) {
     var line_str = "<tr>";
     for (j=0; j<sql_arr[i].length; j++) {
-      line_str+="<td>";
+      line_str+="<td style='text-align:center'>";
       line_str+=sql_arr[i][j];
       line_str+="</td>";
     }

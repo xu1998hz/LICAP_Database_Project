@@ -59,7 +59,7 @@
   </p>
   <p style='text-align:center'>
   <label for='SHIPPING_DATE'>Current Shipping Date:</label>
-  <input id="SHIPPING_DATE" name="SHIPPING_DATE" type="text" value ="<?php echo $_REQUEST['SHIPPING_DATE'] ?>">
+  <input id="SHIPPING_DATE" name="SHIPPING_DATE" type="date" value ="<?php echo $_REQUEST['SHIPPING_DATE'] ?>">
   </p>
   <div style='text-align:center'>
   <input type="submit" value="Submit" name="Submit_QC">
@@ -70,7 +70,7 @@
   if(isset($_REQUEST["Submit_QC"])) {
     unset($_REQUEST["Submit_QC"]);
     // Y-d-m will reflect in the database as m/d/Y
-    $_REQUEST['SHIPPING_DATE'] = date('Y-d-m', strtotime($_REQUEST['SHIPPING_DATE']));
+    $_REQUEST['SHIPPING_DATE'] = date('Y-m-d', strtotime($_REQUEST['SHIPPING_DATE']));
     if ($sql_task_manager->sql_insert_gen($_REQUEST, 'SHIPPING')) {
       echo "<h3 style='text-align:center'>"."Records added to SHIPPING Database successfully!"."</h3>";
       echo "<script>setTimeout(\"location.href = 'http://10.1.10.190/Scanner_Reader.php';\",2000);</script>";

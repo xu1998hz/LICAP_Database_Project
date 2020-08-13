@@ -1,65 +1,96 @@
 <!DOCTYPE html>
 <html>
 <body>
+  <form action="realtime_mix.php" method="post">
+    <h1 style='text-align:center'>Real Time Blend Page</h1>
+    <p style='text-align:center'>
+      <label for='LOWER_DATE'>Begin Query Date:</label>
+      <input id="LOWER_DATE" name="LOWER_DATE" type="date">
+    </p>
+    <p style='text-align:center'>
+      <label for='UPPER_DATE'>End Query Date:</label>
+      <input id="UPPER_DATE" name="UPPER_DATE" type="date">
+    </p>
+
+    <div style="text-align:center">
+    <input type="submit" value="Download CSV" name="Submit_CSV">
+    </div>
+
+    <br/>
+
+    <div style="text-align:center">
+    <input type="submit" value="Display Records" name="Submit_Display">
+    </div>
+    <br/><br/>
+  </form>
+
 <?php
-
-$link = mysqli_connect("localhost", "operator", "Licap123!", "Manufacture");
-// Check connection
-if($link->connect_errno){
-    die('ERROR: Could not connect. ' . $link->connect_error);
-
-}
-$DATE = date("m/d/Y");
-$TIMESTAMP = date("m/d/Y-H:i:s");
-
-echo "Current Time: " . $TIMESTAMP . "<br>";
-echo "Time Stamp &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp |Batch ID &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp |AC Used (KG) &nbsp&nbsp&nbsp&nbsp |Acetone Used (KG) &nbsp&nbsp |PTFE WEIGHT (KG) |Strip Recycle  |Baghouse Recycle |Outside Recycle (KG)  <br>";
-//Pulls data for query
-$myquery = "SELECT AC_WEIGHT, ACETONE_WEIGHT, STRIP_RECYCLE, BAGHOUSE_RECYCLE, OUTSIDE_RECYCLE, PTFE_WEIGHT, BATCH_NUM, TIMESTAMP FROM blend WHERE DATE = '$DATE' ORDER BY ID DESC";
-$result = mysqli_query($link, $myquery);
-$count = "SELECT COUNT(FILM_ID) FROM FILM WHERE DATE = '$DATE'";
-$count_result = mysqli_query($link, $count);
-$count_count = mysqli_fetch_array($count_result);
-WHILE($row = mysqli_fetch_assoc($result))
-{
-	echo $row['TIMESTAMP']." |";
-	echo $row['BATCH_NUM']." &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp|";
-	echo $row['AC_WEIGHT']." &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp|";
-	echo $row['ACETONE_WEIGHT']."&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp|  ";
-	echo number_format($row['PTFE_WEIGHT'], 2, ".", ",")." &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp|";
-	echo $row['STRIP_RECYCLE']."&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp|        ";
-	echo $row['BAGHOUSE_RECYCLE']." "."&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp|";
-	echo $row['OUTSIDE_RECYCLE']." "."&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp <br> ";
-
-$TOTAL_AC = $row['AC_WEIGHT'];
-$TOTAL_ACETONE = $row['ACETONE_WEIGHT'];
-$TOTAL_PTFE = $row['PTFE_WEIGHT'];
-$TOTAL_RECYCLE = $row['STRIP_RECYCLE'] + $row['BAGHOUSE_RECYCLE'] + $row['OUTSIDE_RECYCLE'];
-
-}
-	echo "<hr>Total AC Used: " . $TOTAL_AC ."kg". "<br>";
-	echo "Total Acetone Used: " . $TOTAL_ACETONE."kg". "<br>";
-	echo "Total PTFE Used: " . $TOTAL_PTFE."kg". "<br>";
-	echo "Total Recycle Used: " . $TOTAL_RECYCLE."kg";
-
-
-// close connection
-
-mysqli_close($link);
-
+  require_once('sql_task_manager.php');
+  $sql_task_manager = new sql_task_manager("localhost", "root", "PQch782tdk@@", "Manufacture");
+  # convert html date format to sql date format
+  $T1 = date('Y-m-d', strtotime($_REQUEST['LOWER_DATE'])); $T2 = date('Y-m-d', strtotime($_REQUEST['UPPER_DATE']));
+  if (isset($_REQUEST['Submit_CSV'])) {
+    $row_names = $sql_task_manager->column_name_table('blend');
+    $sql_cmd = "SELECT * FROM blend WHERE DATE >= ? AND DATE <= ? ORDER BY ID DESC";
+    $sql_task_manager->pdo_sql_vali_execute($sql_cmd, array($T1, $T2));
+    $row_values = $sql_task_manager->rows_fetch($row_names);
+    $file_name = 'blend_Record_'.date("m_d_Y_H_i_s").'.csv';
+    header('Content-Type: application/csv');
+    header('Content-Disposition: attachment; filename="'.$file_name.'";');
+    // clean output buffer
+    ob_end_clean();
+    $file = fopen('php://output', 'w');
+    fputcsv($file, $row_names);
+    foreach ($row_values as $row) { fputcsv($file, $row); }
+    fclose($file);
+    // flush buffer
+    ob_flush();
+    // use exit to get rid of unexpected output afterward
+    exit();
+  }
+  if (isset($_REQUEST['Submit_Display'])) {
+    $blend_query = "SELECT AC_WEIGHT, ACETONE_WEIGHT, STRIP_RECYCLE, BAGHOUSE_RECYCLE, OUTSIDE_RECYCLE, PTFE_WEIGHT, BATCH_NUM, TIMESTAMP FROM blend WHERE DATE >= ? AND DATE <= ? ORDER BY ID DESC";
+    $sql_task_manager->pdo_sql_vali_execute($blend_query, array($T1, $T2));
+    $sql_results = $sql_task_manager->rows_fetch(array('TIMESTAMP', 'BATCH_NUM', 'AC_WEIGHT', 'ACETONE_WEIGHT', 'PTFE_WEIGHT', 'STRIP_RECYCLE', 'BAGHOUSE_RECYCLE', 'OUTSIDE_RECYCLE'));
+  }
 ?>
-<form action="material_export.php" method="get">
-  <p>
-    <label for="T1">Begin Time:</label>
-    <input type="text" name="T1" id="T1">
-    <label for="T1">Month/Day/Year Ex: 05/04/2020</label>
-  </p>
-  <p>
-    <label for="T2">End Time:</label>
-    <input type="text" name="T2" id="T2">
-    <label for="T2">Month/Day/Year</label>
-  </p>
-  <input type="submit" value="Download CSV">
-</form>
+
+<script type="text/javascript">
+  var sql_arr = <?php echo json_encode($sql_results) ?>;
+  var total_AC = 0;
+  var total_Acetone = 0;
+  var total_PTFE = 0;
+  var total_Recycle = 0;
+  document.open();
+  document.write("<h1 style='text-align:center'>Blend records display Table</h1>");
+  document.write("<h2 style='text-align:center'>This table will display the records specified by your input dates</h2>");
+  document.write("<table style='width:100%'>");
+  document.write("<tr> <th>Time Stamp</th> <th>Batch ID</th> <th>AC Used (KG)</th> <th>Acetone Used (KG)</th> <th>PTFE WEIGHT (KG)</th> <th>Strip Recycle</th> <th>Baghouse Recycle</th> <th>Outside Recycle (KG)</th></tr>");
+  for (i=0; i<sql_arr.length; i++) {
+    var line_str = "<tr>";
+    for (j=0; j<sql_arr[i].length; j++) {
+      if (j === 2) {
+        total_AC += parseInt(sql_arr[i][j]);
+      } else if (j === 3) {
+        total_Acetone += parseInt(sql_arr[i][j]);
+      } else if (j === 4) {
+        total_PTFE += parseInt(sql_arr[i][j]);
+      } else if (j === 5) {
+        total_Recycle += parseInt(sql_arr[i][j]);
+      }
+      line_str+="<td style='text-align:center'>";
+      line_str+=sql_arr[i][j];
+      line_str+="</td>";
+    }
+    line_str += "</tr>";
+    document.write(line_str);
+  }
+  document.write("</table>");
+  document.write("<h3 style='text-align:center'> Total AC Used: " + total_AC + " kg" + "</h3>");
+  document.write("<h3 style='text-align:center'> Total Acetone Used: " + total_Acetone + " kg" + "</h3>");
+  document.write("<h3 style='text-align:center'> Total PTFE Used: " + total_PTFE + " kg" + "</h3>");
+  document.write("<h3 style='text-align:center'> Total Recycle Used: " + total_Recycle + " kg" + "</h3>");
+  document.close();
+</script>
 </body>
 </html>

@@ -5,18 +5,12 @@
 <title>Scanner Reader</title>
 </head>
 <body>
-<?php
-  require_once('sql_task_manager.php');
-  $sql_task_manager = new sql_task_manager("localhost", "operator", "Licap123!", "Manufacture");
-  $sql_command = "SELECT SHIPPING_DATE FROM SHIPPING ORDER BY ID DESC LIMIT 1";
-  $ship_date = date('m-d-Y', strtotime($sql_task_manager->pdo_sql_row_fetch($sql_command)['SHIPPING_DATE']));
-?>
 
 <form action="Shipping_QC.php" method="post">
   <h1 style='text-align:center'>Shipping Database Updating System</h1>
   <p style='text-align:center'>
   <label for='SHIPPING_DATE'>Current Shipping Date:</label>
-  <input id="SHIPPING_DATE" name="SHIPPING_DATE" type="text" value ="<?php echo $ship_date ?>">
+  <input id="SHIPPING_DATE" name="SHIPPING_DATE" type="date">
   </p>
   <p style='text-align:center'>
   <label for='ELECTRODE_BATCH_NUM'>Current Bar Code:</label>
@@ -24,7 +18,6 @@
   </p>
   <p style="color:red; text-align:center">
     <label>Hint1: Move the mouse around Bar Code input box and Scan the Bar Code</label><br/>
-    <label>Hint2: Date format is Month-Day-Year, Ex: 8-5-2020</label>
   </p>
   <input type="submit" id="Submit" value="Submit">
 </form>

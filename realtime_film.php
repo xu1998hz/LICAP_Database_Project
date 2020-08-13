@@ -53,7 +53,6 @@
     $sql_task_manager->pdo_sql_vali_execute($film_query, array($T1, $T2));
     $sql_results = $sql_task_manager->rows_fetch(array('TIMESTAMP', 'FILM_ID', 'LENGTH', 'AVG_THICKNESS', 'DEFECT_NUM'));
   }
-
 ?>
 
 <script type="text/javascript">
