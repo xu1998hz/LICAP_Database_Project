@@ -87,6 +87,11 @@
       $_REQUEST['TIMESTAMP'] = date("m/d/Y-H:i:s");
       $_REQUEST['STRIP_LENGTH_FEET'] = $_REQUEST['ELECTRODE_LENGTH_1'] + $_REQUEST['ELECTRODE_LENGTH_2'] + $_REQUEST['ELECTRODE_LENGTH_3'];
       $_REQUEST['STRIP_LENGTH_METERS'] = round($_REQUEST['STRIP_LENGTH_FEET'] / 3.28084);
+      $FETCH = "SELECT ELECTRODE_LENGTH, FOIL_TYPE, THICKNESS FROM LAMINATOR WHERE ELECTRODE_SERIAL = :str_1 LIMIT 1";
+      $sql_task_manager->pdo_sql_vali_execute($FETCH, array('str_1'=>$_REQUEST['ELECTRODE_SERIAL']));
+      $row_result = $sql_task_manager->row_fetch();
+      $_REQUEST['P_N'] = implode('-',array($row_result['FOIL_TYPE'], $row_result['THICKNESS']));
+      $_REQUEST['ELECTRODE_LENGTH'] = $row_result['ELECTRODE_LENGTH'];
       # update 3 yield percentage at Laminator based on serial 1, 2, 3
       for ($i=1; $i<4; $i++) {
         $cur_sql = "UPDATE LAMINATOR SET YIELD_PERCENTAGE = ? / ELECTRODE_LENGTH * 100 WHERE ELECTRODE_SERIAL = ?";

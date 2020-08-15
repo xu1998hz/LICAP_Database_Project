@@ -47,10 +47,10 @@
       $Min_THICKNESS = $THICKNESS === "150" ?  295 : 190;
       $Max_THICKNESS = $THICKNESS === "150" ?  335 : 230;
       # besides specific date range condition and thickness specification
-      $sql_daily_lam = "SELECT AVG_THICKNESS, ELECTRODE_SERIAL FROM LAMINATOR WHERE LAM_DATE >= ? AND LAM_DATE <= ?
-      AND THICKNESS = ? AND AVG_THICKNESS >= ".$Min_THICKNESS." AND AVG_THICKNESS <= ".$Max_THICKNESS;
+      $sql_daily_lam = "SELECT END_CENTER, BATCH_NUM FROM LAM_CHART_DATA WHERE DATE >= ? AND DATE <= ?
+      AND THICKNESS = ? AND END_CENTER >= ".$Min_THICKNESS." AND END_CENTER <= ".$Max_THICKNESS;
       $sql_task_manager->pdo_sql_vali_execute($sql_daily_lam, array($T1, $T2, $THICKNESS));
-      $sql_arr = $sql_task_manager->rows_fetch(array('AVG_THICKNESS', 'ELECTRODE_SERIAL'));
+      $sql_arr = $sql_task_manager->rows_fetch(array('END_CENTER', 'BATCH_NUM'));
     ?>
     <script>
       function getcol(matrix, col, parse_indicator){

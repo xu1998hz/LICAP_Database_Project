@@ -145,6 +145,12 @@
         $row = $sql_task_manager->pdo_sql_row_fetch("SELECT ELECTRODE_SERIAL FROM LAMINATOR ORDER BY ID DESC LIMIT 1");
         # sprcific ELECTRODE seiral compuation in Laminator
         $_REQUEST['ELECTRODE_SERIAL'] = $sql_task_manager->ID_computation($row['ELECTRODE_SERIAL'], $_REQUEST['THICKNESS'], $_REQUEST['LAM_ID'], "E-".explode("-", $_REQUEST['UPPER_FILM_BATCH_NUM'])[0]."-", 3);
+        $LAM_DATA_CHART = array("BATCH_NUM"=>$_REQUEST['ELECTRODE_SERIAL'], "END_CENTER"=>$_REQUEST['END_CENTER'], "DATE"=>date("Y-m-d"), "THICKNESS"=>$_REQUEST['THICKNESS']);
+        if ($sql_task_manager->sql_insert_gen($LAM_DATA_CHART, 'LAM_CHART_DATA')) {
+          echo "<h3>"."Chart Records added successfully!"."</h3>";
+        } else {
+          echo "<h3>"."Unsuccessful insertion! Check all the input values! Contact IT Department if you need further assitance"."</h3>";
+        }
         $_REQUEST['AVG_THICKNESS'] = ($_REQUEST['END_OP'] + $_REQUEST['END_CENTER'] + $_REQUEST['END_MACHINE'])/3;
         $_REQUEST['NUM_DEFECT'] = $_REQUEST['NUM_SPLICE'] + $_REQUEST['NUM_HOLE'] + $_REQUEST['NUM_DELAM'];
         if ($sql_task_manager->sql_insert_gen($_REQUEST, 'LAMINATOR')) {
