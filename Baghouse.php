@@ -15,7 +15,7 @@
     $sql_batch = "SELECT BATCH_NUM FROM blend WHERE ID = '$ID_Val' + 1";
     echo "<H1 style='text-align:center'>BagHouse Page</H1>";
     echo "<h2 style='text-align:center'>"."Current Batch Number: ".$sql_task_manager->pdo_sql_row_fetch($sql_batch)['BATCH_NUM']."</h2>";
-    $Cur_Date = date("m/d/Y");
+    $Cur_Date = date("Y-m-d");
     $sql_real_time = "SELECT BATCH_NUM, MIXING_OP, BAGHOUSE_WEIGHT FROM blend WHERE DATE = '$Cur_Date' ORDER BY ID DESC";
     $sql_results = $sql_task_manager->pdo_sql_rows_fetch($sql_real_time, array('BATCH_NUM', 'MIXING_OP', 'BAGHOUSE_WEIGHT'));
    ?>
@@ -23,7 +23,7 @@
    <form action="Baghouse.php" method="post">
      <p style="text-align:center">
        <label for="BAGHOUSE_WEIGHT">BagHouse Weight</label>
-       <input type="text" name="BAGHOUSE_WEIGHT" value="<?php echo htmlentities($Last_Weight); ?>"/>
+       <input type="text" name="BAGHOUSE_WEIGHT"/>
        <div style="text-align:center">
        <input type="submit" value="Submit">
        </div>
@@ -55,7 +55,7 @@
    <?php
     if (count($_REQUEST)!==0) {
       $sql_update = "UPDATE blend SET DATE = ?, TIMESTAMP = ?, BAGHOUSE_WEIGHT = ? WHERE ID = ? + 1";
-      $result_arr = $sql_task_manager->pdo_sql_vali_execute($sql_update, array(date("m/d/Y"), date("m/d/Y-H:i:s"), $_REQUEST['BAGHOUSE_WEIGHT'], $ID_Val));
+      $result_arr = $sql_task_manager->pdo_sql_vali_execute($sql_update, array(date("Y-m-d"), date("m/d/Y-H:i:s"), $_REQUEST['BAGHOUSE_WEIGHT'], $ID_Val));
       if ($result_arr[1]) {
         echo "<h3 style='text-align:center'>"."Records updated successfully!"."</h3>";
         header("refresh: 1");

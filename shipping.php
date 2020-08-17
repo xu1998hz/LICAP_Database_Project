@@ -69,7 +69,6 @@
     $sql_task_manager->pdo_sql_vali_execute($sql_values, array('str_1'=>$_REQUEST['COMBINED_SERIAL']));
     $row_result= $sql_task_manager->row_fetch();
     $P_N = $row_result['P_N'];
-    echo $row_result['ELECTRODE_LENGTH'];
     if ($result_arr[1]) {
       echo "<h3>"."Records updated successfully!"."</h3>";
     } elseif (!$result_arr[0]) {
@@ -149,7 +148,7 @@
         ^PQ1,1,1,Y^XZ
         ^XA^ID000.GRF^FS^XZ";
   $sql_task_manager->socket_connect_label($host, $port, $label_big);
-  //echo "<script>setTimeout(\"location.href = 'http://10.1.10.190/shipping.php';\",2000);</script>";
+  echo "<script>setTimeout(\"location.href = 'http://10.1.10.190/shipping.php';\",2000);</script>";
   ?>
  </body>
 </html>
