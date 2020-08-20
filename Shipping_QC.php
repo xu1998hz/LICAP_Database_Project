@@ -11,13 +11,19 @@
     }
     require_once('sql_task_manager.php');
     $sql_task_manager = new sql_task_manager("localhost", "operator", "Licap123!", "Manufacture");
-    $sql_command = "SELECT FOIL_TYPE, THICKNESS, END_CENTER FROM LAMINATOR WHERE ELECTRODE_SERIAL = ?";
-    $sql_task_manager->pdo_sql_vali_execute($sql_command, array(explode('/', $_REQUEST['ELECTRODE_BATCH_NUM'])[0]));
+    if (substr(explode('/', $_REQUEST['ELECTRODE_BATCH_NUM'])[0], -3)==='-PF') {
+      $LAM_BATCH_NUM = substr(explode('/', $_REQUEST['ELECTRODE_BATCH_NUM'])[0], 0, -3);
+    } else {
+      $LAM_BATCH_NUM = $_REQUEST['ELECTRODE_BATCH_NUM'];
+    }
+    $sql_command = "SELECT END_CENTER FROM LAMINATOR WHERE ELECTRODE_SERIAL = ?";
+    $sql_task_manager->pdo_sql_vali_execute($sql_command, array($LAM_BATCH_NUM));
     $row_result_LAM = $sql_task_manager->row_fetch();
-    $sql_command = "SELECT STRIP_LENGTH_METERS, ELECTRODE_AREA, TIMESTAMP, PALLET_NUM, BOX_NUM, ROLL_DIAMETER FROM SLITTER WHERE COMBINED_SERIAL = ?";
+    $sql_command = "SELECT STRIP_LENGTH_METERS, ELECTRODE_AREA, TIMESTAMP, PALLET_NUM, BOX_NUM, ROLL_DIAMETER, P_N, ELECTRODE_LENGTH FROM SLITTER WHERE COMBINED_SERIAL = ?";
     $sql_task_manager->pdo_sql_vali_execute($sql_command, array($_REQUEST['ELECTRODE_BATCH_NUM']));
     $row_result_SLITTER = $sql_task_manager->row_fetch();
-    $_REQUEST['TYPE'] = implode('-', array($row_result_LAM["THICKNESS"], $row_result_LAM['FOIL_TYPE']));
+    //$_REQUEST['TYPE'] = implode('-', array($row_result_LAM["THICKNESS"], $row_result_LAM['FOIL_TYPE']));
+    $_REQUEST['TYPE'] = $row_result_SLITTER['P_N'];
     $_REQUEST['PALLET_BOX_NUM'] = implode('--', array($row_result_SLITTER['PALLET_NUM'], $row_result_SLITTER['BOX_NUM']));
     $_REQUEST['ELECTRODE_LENGTH'] = $row_result_SLITTER['STRIP_LENGTH_METERS']; $_REQUEST['ELECTRODE_AREA'] = $row_result_SLITTER['ELECTRODE_AREA'];
     $_REQUEST['PACK_DATE'] = $row_result_SLITTER['TIMESTAMP']; $_REQUEST['END_CENTER'] = $row_result_LAM['END_CENTER']; $_REQUEST['ROLL_DIAMETER'] = $row_result_SLITTER['ROLL_DIAMETER'];

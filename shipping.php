@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>SLITTER DATA ENTRY PAGE</title>
+<title>SHIPPING DATA ENTRY PAGE</title>
 </head>
   <body>
   <?php
@@ -65,10 +65,11 @@
     $sql = "UPDATE SLITTER SET WEIGHT = ?, ROLL_DIAMETER = ?, PALLET_NUM = ?, BOX_NUM = ?, NOTES = ?, PACKAGE_OP=? WHERE COMBINED_SERIAL = ?";
     $result_arr = $sql_task_manager->pdo_sql_vali_execute($sql, array($_REQUEST['WEIGHT'], $_REQUEST['ROLL_DIAMETER'], $_REQUEST['PALLET_NUM'], $_REQUEST['BOX_NUM'],
     $_REQUEST['NOTES'],  $_REQUEST['PACKAGE_OP'], $_REQUEST['COMBINED_SERIAL']));
-    $sql_values = "SELECT P_N, ELECTRODE_LENGTH FROM SLITTER WHERE COMBINED_SERIAL = :str_1 ORDER BY ID DESC LIMIT 1";
+    $sql_values = "SELECT P_N, STRIP_LENGTH_METERS FROM SLITTER WHERE COMBINED_SERIAL = :str_1 ORDER BY ID DESC LIMIT 1";
     $sql_task_manager->pdo_sql_vali_execute($sql_values, array('str_1'=>$_REQUEST['COMBINED_SERIAL']));
     $row_result= $sql_task_manager->row_fetch();
     $P_N = $row_result['P_N'];
+    $length = $row_result['STRIP_LENGTH_METERS'];
     if ($result_arr[1]) {
       echo "<h3>"."Records updated successfully!"."</h3>";
     } elseif (!$result_arr[0]) {
@@ -94,6 +95,7 @@
       $_REQUEST['TIMESTAMP'] = date("m/d/Y-H:i:s");
       $_REQUEST['DATE'] = date("m/d/Y");
       $P_N = implode('-',array($row_result['FOIL_TYPE'], $row_result['THICKNESS']));
+      $length = $row_result['ELECTRODE_LENGTH'];
       if ($sql_task_manager->sql_insert_gen($_REQUEST, 'SLITTER')) {
         echo "<h3>"."Records created successfully!"."</h3>";
       } else {
@@ -108,22 +110,22 @@
   $label_small = "CT~~CD,~CC^~CT~
   ^XA~TA000~JSN^LT0^MNW^MTD^PON^PMN^LH0,0^JMA^PR5,5~SD15^JUS^LRN^CI0^XZ
   ^XA
-  ^MMT
+  ^MMC
   ^PW609
   ^LL0203
   ^LS0
   ^FO352,128^GFA,03072,03072,00032,:Z64:
   eJzt1TGS3CAQBVAoAhKXOQJH4WhoawJfS1u+CEdQqICi3U03Egi868zJKFjN8Gq0Lfg0Sr0vBQdkugdQStMnAwkAlh7gaH7eHqvHoiyOb+LQeamelcfh1Hy/PDSPOHw0T7eDONT/K35c7tlPTcO5+flwOA0Nl9kdFk13Kh9fQDx3jrVqek6tW7xcbtlTwGdi3aaWvvQdp+Bgj3B5HTCwU52ueZjdFbqJ+965MJv9T02vSe5mN2dwG+Tm29P1AQ4Xi93ertk39QHu9LMrdiruWy8eZo8ynxbdjV4XurkDB3Zwv/BX5xyU0K3n4Ibd42+D5MH0br9xx05zHQ+u5tW7X/nvhW80DfXrx8LpMw1OXhP3pe/su6YMTk47k3ecWXuefHi/eA4+zY+4pj2wLZxe+h8c9+4VZ/uF0/r/Gjyxx5OWkPIFQ74ejvnMQz7b80P23Bkf+X7462/us8eZ0Dt6WHqheOkUXYrZTPOHLxbwr83BfcLguTnFyxXz4+oP/fpSThO3DDd4kOCxD/2pzw/tgyRpa/2tz6f43R+fbqq7q78ufJfdBqpz2X8YEPp29/fmZvD7fGiu20HBx1EEOV+ay0hzKmcfPIhzt7bSxW53zQtnl7rM0L8COx9x+Jjj4e/rfb2v/3T9AQ7vY/c=:6EFC
   ^FT599,108^A0I,25,24^FH\^FDLOT:".$_REQUEST['COMBINED_SERIAL']."^FS
-  ^FT600,8^A0I,20,19^FH\^FDLENGTH:".$row_result['ELECTRODE_LENGTH']." METERS^FS
+  ^FT600,8^A0I,20,19^FH\^FDLENGTH:".$length." METERS^FS
   ^FT17,222^BQN,2,7
   ^FH\^FDLA,".$_REQUEST['COMBINED_SERIAL']."^FS
   ^PQ1,0,1,Y^XZ";
   $sql_task_manager->socket_connect_label($host, $port, $label_small);
   // print the large label for shipping
   $host = "10.1.10.194";
-  $PALLET_NUM_label = $_REQUEST['PALLET_NUM'] < 10 ? "0".$_REQUEST['PALLET_NUM'] : $_REQUEST['PALLET_NUM'];
-  $BOX_NUM_label = $_REQUEST['BOX_NUM'] < 10 ? "0".$_REQUEST['BOX_NUM'] : $_REQUEST['BOX_NUM'];
+  //$PALLET_NUM_label = $_REQUEST['PALLET_NUM'] < 10 ? "0".$_REQUEST['PALLET_NUM'] : $_REQUEST['PALLET_NUM'];
+  //$BOX_NUM_label = $_REQUEST['BOX_NUM'] < 10 ? "0".$_REQUEST['BOX_NUM'] : $_REQUEST['BOX_NUM'];
   /* construct the label for big label */
   $label_big = "CT~~CD,~CC^~CT~
         ^XA~TA000~JSN^LT0^MNW^MTD^PON^PMN^LH0,0^JMA^PR6,6~SD15^JUS^LRN^CI0^XZ
@@ -134,11 +136,11 @@
         ^LL1218
         ^LS0
         ^FT567,33^A0R,39,31^FH\^FDLot:".$_REQUEST['COMBINED_SERIAL']."^FS
-        ^FT400,31^A0R,62,62^FH\^FDLength:".$row_result['ELECTRODE_LENGTH']." Meters^FS
+        ^FT400,31^A0R,62,62^FH\^FDLength:".$length." Meters^FS
         ^BY3,3,68^FT471,30^BCR,,N,N
         ^FD>:".$_REQUEST['COMBINED_SERIAL']."^FS
-        ^FT143,534^A0R,135,134^FB327,1,0,C^FH\^FDP".$PALLET_NUM_label."-^FS
-        ^FT146,854^A0R,135,134^FH\^FDB".$BOX_NUM_label."^FS
+        ^FT143,534^A0R,135,134^FB327,1,0,C^FH\^FDP". $_REQUEST['PALLET_NUM'] ."-^FS
+        ^FT146,854^A0R,135,134^FH\^FDB".$_REQUEST['BOX_NUM']."^FS
         ^FT314,27^A0R,51,50^FH\^FDDiameter:".$_REQUEST['ROLL_DIAMETER']."mm^FS
         ^FT397,813^A0R,37,38^FH\^FDWEIGHT:".$_REQUEST['WEIGHT']."KG^FS
         ^FT314,818^A0R,39,38^FH\^FDP/N:".$P_N."^FS
