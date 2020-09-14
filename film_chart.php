@@ -43,7 +43,7 @@
       $sql_task_manager = new sql_task_manager("localhost", "operator", "Licap123!", "Manufacture");
       $T1 = date('Y-m-d', strtotime($_REQUEST['LOWER_DATE'])); $T2 = date('Y-m-d', strtotime($_REQUEST['UPPER_DATE']));
       $THICKNESS = $_REQUEST['THICKNESS']; $Label_State = $_REQUEST['LABEL'];
-      # besides specific date range condition and thickness specification, +/-6 for the spec to determine the displayed range
+      # besides specific date range condition and thickness specification, +/-2 for the spec to determine the displayed range
       $sql_daily_film = "SELECT AVG_THICKNESS, FILM_ID FROM FILM WHERE DATE >= ? AND DATE <= ?  AND THICKNESS = ? AND AVG_THICKNESS >= ?-4  AND AVG_THICKNESS <= ?+12";
       $sql_task_manager->pdo_sql_vali_execute($sql_daily_film, array($T1, $T2, $THICKNESS, $THICKNESS, $THICKNESS));
       $sql_arr = $sql_task_manager->rows_fetch(array('AVG_THICKNESS', 'FILM_ID'));
@@ -76,8 +76,8 @@
         },
         annotations: {
           yaxis: [{
-            y: 92,
-            y2: 96,
+            y: 96,
+            y2: 100,
             borderColor: '#000',
             fillColor: '#FEB019',
             opacity: 0.2,
