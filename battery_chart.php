@@ -47,19 +47,25 @@
       if ($_REQUEST['VALUE_TYPE'] === "RESISTIVITY") {
         $max_limit = 2;
         # besides specific date range condition and thickness specification
-        $sql_resistance = "SELECT AVG_RESISTIVITY, LOT FROM RESISTANCE WHERE LOT_DATE >= ? AND LOT_DATE <= ?";
-        $sql_task_manager->pdo_sql_vali_execute($sql_resistance, array($T1, $T2));
+        $sql_resistance = "SELECT AVG_RESISTIVITY, LOT FROM RESISTANCE WHERE LOT_DATE >= ? AND LOT_DATE <= ? AND TYPE = ? AND DEPARTMENT = ?";
+        $sql_task_manager->pdo_sql_vali_execute($sql_resistance, array($T1, $T2, $THICKNESS, $_REQUEST['DEPARTMENT']));
         $sql_arr = $sql_task_manager->rows_fetch(array('AVG_RESISTIVITY', 'LOT'));
-        $title = $_REQUEST['MODE'] == "CUSTOMER" ? "Date Range Composite Resistivity Trend Under Customer Spec" : "Date Range Composite Resistivity Trend Under Internal Spec";
+        $title = $THICKNESS==='150' ? "Date Range Composite Resistivity Thickness 150 Trend < 2 Ω cm" : "Date Range Composite Resistivity Thickness 90 Trend < 2 Ω cm^2";
       } else {
         if ($THICKNESS === '150') {
           $max_limit = $_REQUEST['MODE'] == "CUSTOMER" ? 0.1 : 0.05;
+          $title =  $_REQUEST['MODE'] == "CUSTOMER" ? "Date Range Interface Resistance Thickness 150 Trend < 0.1 Ω cm" : "Date Range Interface Resistance Thickness 150 Trend < 0.05 Ω cm^2";
         } else {
           $max_limit = $_REQUEST['MODE'] == "CUSTOMER" ? 0.04 : 0.02;
+          $title =  $_REQUEST['MODE'] == "CUSTOMER" ? "Date Range Interface Resistance Thickness 90 Trend < 0.04 Ω cm" : "Date Range Interface Resistance Thickness 90 Trend < 0.02 Ω cm^2";
         }
-        $title =  $_REQUEST['MODE'] == "CUSTOMER" ? "Date Range Interface Resistance Trend Under Customer Spec" : "Date Range Interface Resistance Trend Under Internal Spec";
-        $sql_resistance = "SELECT AVG_RESISTANCE, LOT FROM RESISTANCE WHERE LOT_DATE >= ? AND LOT_DATE <= ?";
-        $sql_task_manager->pdo_sql_vali_execute($sql_resistance, array($T1, $T2));
+        if ($_REQUEST['MODE'] === "INTERNAL" && $THICKNESS === "90" && $_REQUEST['VALUE_TYPE']==="RESISTANCE") {
+          $sql_resistance = "SELECT AVG_RESISTANCE, LOT FROM RESISTANCE WHERE LOT_DATE >= ? AND LOT_DATE <= ? AND TYPE = ? AND DEPARTMENT = ? AND AVG_RESISTANCE < 0.0397";
+          $sql_task_manager->pdo_sql_vali_execute($sql_resistance, array($T1, $T2, $THICKNESS, $_REQUEST['DEPARTMENT']));
+        } else {
+          $sql_resistance = "SELECT AVG_RESISTANCE, LOT FROM RESISTANCE WHERE LOT_DATE >= ? AND LOT_DATE <= ? AND TYPE = ? AND DEPARTMENT = ?";
+          $sql_task_manager->pdo_sql_vali_execute($sql_resistance, array($T1, $T2, $THICKNESS, $_REQUEST['DEPARTMENT']));
+        }
         $sql_arr = $sql_task_manager->rows_fetch(array('AVG_RESISTANCE', 'LOT'));
       }
     ?>

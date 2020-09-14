@@ -27,10 +27,18 @@
     $sql_command = "SELECT PALLET_BOX_NUM, ELECTRODE_BATCH_NUM, TYPE, ELECTRODE_LENGTH, ELECTRODE_AREA, END_CENTER, ROLL_DIAMETER FROM SHIPPING WHERE SHIPPING_DATE = '$query_date'";
     $sql_results = $sql_task_manager->pdo_sql_rows_fetch($sql_command, array('PALLET_BOX_NUM', 'ELECTRODE_BATCH_NUM', 'TYPE', 'ELECTRODE_LENGTH', 'ELECTRODE_AREA', 'END_CENTER', "ROLL_DIAMETER"));
     $file_name = 'Shipping_Record_'.date("m_d_Y_H_i_s").'.csv';
-    $file = fopen($file_name, 'w');
+    header('Content-Type: application/csv');
+    header('Content-Disposition: attachment; filename="'.$file_name.'";');
+    // clean output buffer
+    ob_end_clean();
+    $file = fopen('php://output', 'w');
     fputcsv($file, array('Pallet# -Box #', 'Electrode #', 'P/N', 'Electrode length (M)', 'Electrode area (M2)', 'Electrode thickness center (um)', 'Roll Diameter (mm)'));
     foreach ($sql_results as $row) { fputcsv($file, $row); }
     fclose($file);
+    // flush buffer
+    ob_flush();
+    // use exit to get rid of unexpected output afterward
+    exit();
     echo "<h2 style='text-align:center; color:red'>"."CSV is successfully downloaded!"."</h2>";
   }
   if (isset($_REQUEST["Submit_Num"])) {

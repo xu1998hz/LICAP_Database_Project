@@ -16,6 +16,15 @@
       </select>
     </p>
     <p style='text-align:center'>
+    <label for='DEPARTMENT'>Department Type:</label>
+      <select id="DEPARTMENT" name="DEPARTMENT">
+        <option value="">-- Please Select Your Department--</option>
+        <option value="RD">R&D</option>
+        <option value="PROD">Production</option>
+        <option value="QA" selected>QA</option>
+      </select>
+    </p>
+    <p style='text-align:center'>
     <label for='MODE'>Spec Mode Selection:</label>
       <select id="MODE" name="MODE">
         <option value="">-- Please Select Mode Type--</option>

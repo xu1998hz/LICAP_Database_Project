@@ -17,8 +17,8 @@ th, td {
      $sql_task_manager = new sql_task_manager("localhost", "operator", "Licap123!", "Manufacture");
      # calulate the timestamp range
      $date_range = date("Y-m-d", strtotime('-14 days'));
-     $sql_command = "SELECT BATCH_NUM, TIMESTAMP, GRIND_OP, MIXING_OP FROM blend WHERE DATE >= '$date_range' ORDER BY TIMESTAMP DESC";
-     $sql_arr = $sql_task_manager->pdo_sql_rows_fetch($sql_command, array('BATCH_NUM', 'TIMESTAMP', 'GRIND_OP', 'MIXING_OP'));
+     $sql_command = "SELECT BATCH_NUM, TIMESTAMP, GRIND_OP, MIXING_OP FROM blend WHERE DATE >= '$date_range' ORDER BY ID DESC";
+     $sql_arr = $sql_task_manager->pdo_sql_rows_fetch($sql_command, array('BATCH_NUM', 'TIMESTAMP', 'MIXING_OP', 'GRIND_OP'));
     ?>
 
     <script type="text/javascript">
